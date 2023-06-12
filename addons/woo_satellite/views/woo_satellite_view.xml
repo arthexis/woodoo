@@ -29,24 +29,14 @@
         </field>
     </record>
 
-    <record id="view_woo_satellite_search" model="ir.ui.view">
-        <field name="name">woo.satellite.search</field>
-        <field name="model">woo_satellite.satellite</field>
-        <field name="arch" type="xml">
-            <search string="WooCommerce Satellite">
-                <field name="woo_url" string="URL"/>
-            </search>
-        </field>
-    </record>
-
     <record id="action_woo_satellite" model="ir.actions.act_window">
         <field name="name">WooCommerce Satellite</field>
         <field name="res_model">woo_satellite.satellite</field>
         <field name="view_mode">tree,form</field>
-        <field name="search_view_id" ref="view_woo_satellite_search"/>
     </record>
 
-    <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10" 
+    <menuitem id="menu_woo_satellite_sale_config" name="WooCommerce" sequence="10" 
         action="action_woo_satellite" parent="sale.menu_sale_config"/>
+
 
 </odoo>
