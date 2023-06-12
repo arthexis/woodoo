@@ -1,5 +1,5 @@
 {
-    'name': 'WooSatellite',
+    'name': 'WooSatellite 1.0.1',
     'version': '1.0.1',
     'category': 'Tools',
     'summary': 'Simple WooCommerce integration for Odoo',
