@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_woo_satellite_form" model="ir.ui.view">
+        <field name="name">woo.satellite.form</field>
+        <field name="model">woo_satellite.satellite</field>
+        <field name="arch" type="xml">
+            <form string="WooCommerce Satellite">
+                <sheet>
+                    <group>
+                        <field name="woo_url"/>
+                        <field name="woo_consumer_key"/>
+                        <field name="woo_consumer_secret"/>
+                        <field name="woo_verify_ssl"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_woo_satellite_tree" model="ir.ui.view">
+        <field name="name">woo.satellite.tree</field>
+        <field name="model">woo_satellite.satellite</field>
+        <field name="arch" type="xml">
+            <tree string="WooCommerce Satellite">
+                <field name="woo_url"/>
+                <field name="woo_consumer_key"/>
+                <field name="woo_consumer_secret"/>
+                <field name="woo_verify_ssl"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_woo_satellite_search" model="ir.ui.view">
+        <field name="name">woo.satellite.search</field>
+        <field name="model">woo_satellite.satellite</field>
+        <field name="arch" type="xml">
+            <search string="WooCommerce Satellite">
+                <field name="woo_url" string="URL"/>
+                <filter string="Verify SSL" name="filter_verify_ssl" domain="[('woo_verify_ssl', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10" action="action_woo_satellite"/>
+
+    <record id="action_woo_satellite" model="ir.actions.act_window">
+        <field name="name">WooCommerce Satellite</field>
+        <field name="res_model">woo_satellite.satellite</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_woo_satellite_search"/>
+    </record>
+
+</odoo>
