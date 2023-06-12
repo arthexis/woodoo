@@ -12,5 +12,4 @@ class WooSatellite(models.Model):
     woo_url = fields.Char(string='WooCommerce URL', required=True)
     woo_consumer_key = fields.Char(string='WooCommerce Consumer Key', required=True)
     woo_consumer_secret = fields.Char(string='WooCommerce Consumer Secret', required=True)
-    woo_verify_ssl = fields.Boolean(string='Verify SSL', default=True)
 

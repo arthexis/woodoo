@@ -11,7 +11,6 @@
                         <field name="woo_url"/>
                         <field name="woo_consumer_key"/>
                         <field name="woo_consumer_secret"/>
-                        <field name="woo_verify_ssl"/>
                     </group>
                 </sheet>
             </form>
@@ -26,7 +25,6 @@
                 <field name="woo_url"/>
                 <field name="woo_consumer_key"/>
                 <field name="woo_consumer_secret"/>
-                <field name="woo_verify_ssl"/>
             </tree>
         </field>
     </record>
@@ -37,7 +35,6 @@
         <field name="arch" type="xml">
             <search string="WooCommerce Satellite">
                 <field name="woo_url" string="URL"/>
-                <filter string="Verify SSL" name="filter_verify_ssl" domain="[('woo_verify_ssl', '=', True)]"/>
             </search>
         </field>
     </record>
