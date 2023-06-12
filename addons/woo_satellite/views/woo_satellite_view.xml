@@ -21,7 +21,7 @@
         <field name="name">woo.satellite.tree</field>
         <field name="model">woo_satellite.satellite</field>
         <field name="arch" type="xml">
-            <tree string="WooCommerce Satellite">
+            <tree string="WooCommerce Satellites">
                 <field name="woo_url"/>
                 <field name="woo_consumer_key"/>
                 <field name="woo_consumer_secret"/>
@@ -46,6 +46,7 @@
         <field name="search_view_id" ref="view_woo_satellite_search"/>
     </record>
 
-    <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10" action="action_woo_satellite"/>
+    <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10" 
+        action="action_woo_satellite" parent="sale.menu_sale_config"/>
 
 </odoo>
