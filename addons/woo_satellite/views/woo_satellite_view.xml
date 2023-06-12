@@ -39,13 +39,13 @@
         </field>
     </record>
 
-    <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10" action="action_woo_satellite"/>
-
     <record id="action_woo_satellite" model="ir.actions.act_window">
         <field name="name">WooCommerce Satellite</field>
         <field name="res_model">woo_satellite.satellite</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_woo_satellite_search"/>
     </record>
+
+    <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10" action="action_woo_satellite"/>
 
 </odoo>
