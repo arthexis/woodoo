@@ -35,8 +35,5 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_woo_satellite_sale_config" name="WooCommerce" sequence="10" 
-        action="action_woo_satellite" parent="sale.menu_sale_config"/>
-
 
 </odoo>

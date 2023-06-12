@@ -8,13 +8,15 @@
     'author': 'Rafa Guillén',
     'maintainer': 'Rafa Guillén',
     'website': 'https://www.arthexis.com',
-    'depends': ['base'],
+    'depends': ['base', 'sale_management', 'stock', ],
     'external_dependencies': {
         'python': ['woocommerce'],
     },
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
         'views/woo_satellite_view.xml',
+        'views/woo_satellite_menu.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [],
     'installable': True,
