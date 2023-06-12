@@ -4,14 +4,19 @@ Odoo Addons for WooCommerce Integrations
 This repository contains the source code for the various Odoo addons that are used to integrate Odoo with WooCommerce.
 
 1. WooCommerce Site integrator.
-2. OCCP Charging Station integrator.
+2. OCPP Charging Station integrator.
 
-WooCommerce Site integrator
+WooCommerce Satellite
 ---------------------------
 
-This module is used to integrate Odoo with WooCommerce. It is used to import products, customers, orders, etc. from WooCommerce to Odoo and export products, customers, orders, etc. from Odoo to WooCommerce.
+Each WooCommerce store is a satellite. This module allows you to connect multiple WooCommerce stores to a single Odoo instance.
 
-OCCP Charging Station integrator
+* When products are sold on WooCommerce, a Sales Order is created in Odoo.
+* When products are sold or updated in Odoo, the stock is updated in WooCommerce.
+
+Changes in WooCommerce do not affect Odoo and will be overwritten during synchronization, Odoo is the source of truth for the stock.
+
+OCPP Charging Station
 --------------------------------
 
-This module is used to integrate Odoo with OCCP Charging Station. It is used to import charging stations, charging station operators, charging station operators, charging station connectors, charging station connect types, etc.
+This module is used to integrate Odoo with an OCPP compliant charging station. It allows you to manage charging stations, connectors, charging sessions and charging cards.

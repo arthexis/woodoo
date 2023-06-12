@@ -1,5 +1,5 @@
 {
-    'name': 'Woo_Satellite',
+    'name': 'WooSatellite',
     'version': '1.0.0',
     'category': 'Tools',
     'summary': 'Simple WooCommerce integration for Odoo',
@@ -21,7 +21,7 @@
     'application': True,
     'auto_install': False,
     'description': """
-Woo Satellite
+WooSatellite
 =================
 Simple WooCommerce integration for Odoo.
 
