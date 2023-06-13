@@ -61,14 +61,14 @@ class WooSatellite(models.Model):
                         encoded_string = base64.b64encode(response_content).decode()
                         padded_string = encoded_string + '=' * ((4 - len(encoded_string) % 4) % 4)
                         product_id = record.env['woo_satellite.product'].search(
-                            [('woo_id', '=', product['id'])]).product_id.id
-                        record.product_id.image_1920 = record.env['ir.attachment'].create({
+                            [('woo_id', '=', product['id'])]).product_id
+                        product_id.image_1920 = record.env['ir.attachment'].create({
                             'name': product['images'][0]['name'],
                             'type': 'binary',
                             'datas': padded_string,
                             'res_model': 'product.product',
-                            'res_id': product_id,
-                        }).id
+                            'res_id': product_id.id,
+                        })
                 # Update the product in Odoo if it exists.
                 else:
                     record.env['woo_satellite.product'].search(
