@@ -73,6 +73,8 @@
                         <field name="product_id" position="attributes">
                             <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
                         </field>
+                        <!-- Show the product image in woo_image_url -->
+                        <field name="woo_image_url" widget="image" class="oe_left oe_avatar"/>
                     </group>
                 </sheet>
             </form>
