@@ -43,7 +43,7 @@
         <field name="inherit_id" ref="view_woo_satellite_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group" position="inside">
-                <button name="test_connection" string="Test Connection" type="object" class="oe_highlight"/>
+                <button name="test_connection" string="Test Credentials" type="object" class="oe_highlight"/>
             </xpath>
         </field>
     </record>
@@ -65,11 +65,6 @@
         <field name="name">woo.satellite.tree.button</field>
         <field name="model">woo_satellite.satellite</field>
         <field name="inherit_id" ref="view_woo_satellite_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//tree" position="inside">
-                <button name="test_connection" string="Test Connection" type="object" class="oe_highlight"/>
-            </xpath>
-        </field>
     </record>
 
     <!-- Add form and tree for Products -->
@@ -106,5 +101,6 @@
         <field name="res_model">woo_satellite.product</field>
         <field name="view_mode">tree,form</field>
     </record>
+
 
 </odoo>
