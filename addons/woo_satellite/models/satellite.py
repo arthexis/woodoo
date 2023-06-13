@@ -59,13 +59,11 @@ class WooSatellite(models.Model):
                     if product['images']:
                         response_content = wcapi.get(product['images'][0]['src']).content
                         encoded_string = base64.b64encode(response_content).decode()
-                        padded_string = encoded_string + '=' * ((4 - len(encoded_string) % 4) % 4)
-                        product_id = record.env['woo_satellite.product'].search(
-                            [('woo_id', '=', product['id'])]).product_id
+                        product_id = record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id
                         product_id.image_1920 = record.env['ir.attachment'].create({
                             'name': product['images'][0]['name'],
                             'type': 'binary',
-                            'datas': padded_string,
+                            'datas': encoded_string,
                             'res_model': 'product.product',
                             'res_id': product_id.id,
                         })
