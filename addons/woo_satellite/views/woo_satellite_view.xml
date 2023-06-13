@@ -81,9 +81,8 @@
                 <sheet>
                     <group>
                         <field name="woo_id"/>
-                        <field name="woo_name"/>
-                        <field name="woo_price"/>
                         <field name="woo_satellite_id"/>
+                        <field name="product_id"/>
                     </group>
                 </sheet>
             </form>
@@ -96,9 +95,8 @@
         <field name="arch" type="xml">
             <tree string="WooCommerce Products">
                 <field name="woo_id"/>
-                <field name="woo_name"/>
-                <field name="woo_price"/>
                 <field name="woo_satellite_id"/>
+                <field name="product_id"/>
             </tree>
         </field>
     </record>
