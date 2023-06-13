@@ -44,7 +44,22 @@ class WooSatellite(models.Model):
             wcapi = record.get_wcapi()
             products = wcapi.get("products").json()
             for product in products:
-                record.env['woo_satellite.product'].woo_update_product(product)
+                # Create the product in Odoo if it doesn't exist.
+                if not record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]):
+                    record.env['woo_satellite.product'].create({
+                        'woo_id': product['id'],
+                        'woo_satellite_id': record.id,
+                        'product_id': record.env['product.product'].create({
+                            'name': product['name'],
+                            'list_price': product['price'],
+                            'standard_price': product['regular_price'],
+                        }).id,
+                    })
+                # Update the product in Odoo if it exists.
+                else:
+                    record.env['woo_satellite.product'].search(
+                        [('woo_id', '=', product['id'])]).woo_update_product(product)
+
 
 
 # Woo Product holds the information of each product in the WooCommerce store.

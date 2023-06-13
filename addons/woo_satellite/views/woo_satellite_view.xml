@@ -43,7 +43,7 @@
         <field name="inherit_id" ref="view_woo_satellite_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group" position="inside">
-                <button name="test_connection" string="Test Credentials" type="object" class="oe_highlight"/>
+                <button name="test_connection" string="Test Connect" type="object" class="oe_highlight"/>
             </xpath>
         </field>
     </record>
@@ -55,16 +55,9 @@
         <field name="inherit_id" ref="view_woo_satellite_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group" position="inside">
-                <button name="download_products" string="Download Products" type="object" class="oe_highlight"/>
+                <button name="download_products" string="Fetch Products" type="object" class="oe_highlight"/>
             </xpath>
         </field>
-    </record>
-
-    <!-- Add a test button to the tree view -->
-    <record id="view_woo_satellite_tree_button" model="ir.ui.view">
-        <field name="name">woo.satellite.tree.button</field>
-        <field name="model">woo_satellite.satellite</field>
-        <field name="inherit_id" ref="view_woo_satellite_tree"/>
     </record>
 
     <!-- Add form and tree for Products -->
@@ -77,7 +70,9 @@
                     <group>
                         <field name="woo_id"/>
                         <field name="woo_satellite_id"/>
-                        <field name="product_id"/>
+                        <field name="product_id" position="attributes">
+                            <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                        </field>
                     </group>
                 </sheet>
             </form>
@@ -91,7 +86,9 @@
             <tree string="WooCommerce Products">
                 <field name="woo_id"/>
                 <field name="woo_satellite_id"/>
-                <field name="product_id"/>
+                <field name="product_id" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                </field>
             </tree>
         </field>
     </record>
@@ -100,6 +97,15 @@
         <field name="name">WooCommerce Product</field>
         <field name="res_model">woo_satellite.product</field>
         <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Action to update product -->
+    <record id="action_woo_product_update" model="ir.actions.server">
+        <field name="name">Fetch Product</field>
+        <field name="model_id" ref="model_woo_satellite_product"/>
+        <field name="code">
+            action = model.update_product(cr, uid, context.get('active_ids', []), context=context)
+        </field>
     </record>
 
 
