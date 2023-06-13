@@ -1,6 +1,8 @@
+import io
 import base64
 import requests
 import logging
+from PIL import Image
 from odoo import models, fields
 from woocommerce import API
 
@@ -62,17 +64,24 @@ class WooSatellite(models.Model):
                     })
                     if product['images']:
                         response = requests.get(product['images'][0]['src'])
-                        if response.status_code != 200:
-                            continue
-                        response_content = response.content
-                        _logger.info("Type of response_content: %s", type(response_content)) #prints the type
-                        _logger.info("First 100 characters of response_content: %s", response_content[:100]) #prints the first 100 characters
-                        encoded_string = base64.b64encode(response_content).decode()
+                        if response.status_code == 200:
+                            # Convert image to JPEG
+                            img = Image.open(io.BytesIO(response.content))
+                            byte_arr = io.BytesIO()
+                            img.convert('RGB').save(byte_arr, format='JPEG')
+                            byte_arr = byte_arr.getvalue()
+
+                            # Now you can base64 encode the byte array
+                            encoded_string = base64.b64encode(byte_arr).decode()
+                            padded_string = encoded_string + '=' * ((4 - len(encoded_string) % 4) % 4)
+                            # Further processing...
+                        else:
+                            _logger.info(f"Skipping image due to HTTP status code {response.status_code}")
                         product_id = record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id
                         product_id.image_1920 = record.env['ir.attachment'].create({
                             'name': product['images'][0]['name'],
                             'type': 'binary',
-                            'datas': encoded_string,
+                            'datas': padded_string,
                             'res_model': 'product.product',
                             'res_id': product_id.id,
                         })
