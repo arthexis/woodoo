@@ -72,5 +72,41 @@
         </field>
     </record>
 
+    <!-- Add form and tree for Products -->
+    <record id="view_woo_product_form" model="ir.ui.view">
+        <field name="name">woo.product.form</field>
+        <field name="model">woo_satellite.product</field>
+        <field name="arch" type="xml">
+            <form string="WooCommerce Product">
+                <sheet>
+                    <group>
+                        <field name="woo_id"/>
+                        <field name="woo_name"/>
+                        <field name="woo_price"/>
+                        <field name="woo_satellite_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_woo_product_tree" model="ir.ui.view">
+        <field name="name">woo.product.tree</field>
+        <field name="model">woo_satellite.product</field>
+        <field name="arch" type="xml">
+            <tree string="WooCommerce Products">
+                <field name="woo_id"/>
+                <field name="woo_name"/>
+                <field name="woo_price"/>
+                <field name="woo_satellite_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_woo_product" model="ir.actions.act_window">
+        <field name="name">WooCommerce Product</field>
+        <field name="res_model">woo_satellite.product</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
 </odoo>
