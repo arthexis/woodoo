@@ -8,6 +8,7 @@ from woocommerce import API
 class WooSatellite(models.Model):
     _name = 'woo_satellite.satellite'
     _description = 'WooCommerce Satellite'
+    _rec_name = 'woo_url'
 
     woo_url = fields.Char(string='Store URL', required=True)
     woo_consumer_key = fields.Char(string='Consumer Key', required=True)
