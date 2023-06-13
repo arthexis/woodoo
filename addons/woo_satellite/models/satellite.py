@@ -89,6 +89,6 @@ class WooProduct(models.Model):
         for record in self:
             record.product_id.write({
                 'name': product['name'],
-                'list_price': product['price'],
-                'standard_price': product['regular_price'],
+                'list_price': float(product['price']) if product['price'] else 0.0,
+                'standard_price': float(product['regular_price']) if product['regular_price'] else 0.0,
             })
