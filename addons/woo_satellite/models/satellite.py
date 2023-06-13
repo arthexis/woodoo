@@ -1,6 +1,9 @@
 import base64
+import logging
 from odoo import models, fields
 from woocommerce import API
+
+_logger = logging.getLogger(__name__)
 
 
 # Woo Satellite holds the configuration for each WooCommerce store.
@@ -58,8 +61,8 @@ class WooSatellite(models.Model):
                     })
                     if product['images']:
                         response_content = wcapi.get(product['images'][0]['src']).content
-                        print("Type of response_content: ", type(response_content)) #prints the type
-                        print("First 100 characters of response_content: ", response_content[:100]) #prints the first 100 characters
+                        _logger.info("Type of response_content: %s", type(response_content)) #prints the type
+                        _logger.info("First 100 characters of response_content: %s", response_content[:100]) #prints the first 100 characters
                         encoded_string = base64.b64encode(response_content).decode()
                         product_id = record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id
                         product_id.image_1920 = record.env['ir.attachment'].create({
