@@ -64,16 +64,16 @@ class WooSatellite(models.Model):
                     })
                     if product['images']:
                         response = requests.get(product['images'][0]['src'])
+                        _logger.info(f"Image URL: {product['images'][0]['src']}")
                         if response.status_code == 200:
-                            # Open image
+                            # Convert image to JPEG
                             img = Image.open(io.BytesIO(response.content))
                             byte_arr = io.BytesIO()
                             if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
-                                # If image has an alpha channel, convert it to RGB and save as JPEG
-                                img.convert('RGB').save(byte_arr, format='JPEG')
-                            else:
-                                # Otherwise, save image in its original format
-                                img.save(byte_arr, format=img.format)
+                                new_img = Image.new("RGBA", img.size)
+                                new_img.paste(img)
+                                img = new_img
+                            img.convert('RGB').save(byte_arr, format='JPEG')
                             byte_arr = byte_arr.getvalue()
                             # Log the first 100 bytes of the image
                             _logger.info(f"First 100 bytes of image: {byte_arr[:100]}")
