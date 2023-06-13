@@ -9,10 +9,10 @@ class WooSatellite(models.Model):
     _name = 'woo_satellite.satellite'
     _description = 'WooCommerce Satellite'
 
-    woo_url = fields.Char(string='WooCommerce URL', required=True)
-    woo_consumer_key = fields.Char(string='WooCommerce Consumer Key', required=True)
-    woo_consumer_secret = fields.Char(string='WooCommerce Consumer Secret', required=True)
-    woo_test_ok = fields.Boolean(string='Connection Test OK?', default=False)
+    woo_url = fields.Char(string='Store URL', required=True)
+    woo_consumer_key = fields.Char(string='Consumer Key', required=True)
+    woo_consumer_secret = fields.Char(string='Consumer Secret', required=True)
+    woo_test_ok = fields.Boolean(string='Test OK?', default=False)
 
     # Add a button to test the connection to the WooCommerce store.
     def test_connection(self):

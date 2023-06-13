@@ -35,5 +35,29 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- Add a test button to the form view -->
+    <record id="view_woo_satellite_form_button" model="ir.ui.view">
+        <field name="name">woo.satellite.form.button</field>
+        <field name="model">woo_satellite.satellite</field>
+        <field name="inherit_id" ref="view_woo_satellite_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group" position="inside">
+                <button name="test_connection" string="Test Connection" type="object" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add a test button to the tree view -->
+    <record id="view_woo_satellite_tree_button" model="ir.ui.view">
+        <field name="name">woo.satellite.tree.button</field>
+        <field name="model">woo_satellite.satellite</field>
+        <field name="inherit_id" ref="view_woo_satellite_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <button name="test_connection" string="Test Connection" type="object" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+
 
 </odoo>
