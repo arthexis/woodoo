@@ -48,6 +48,18 @@
         </field>
     </record>
 
+    <!-- Add a test button to download products -->
+    <record id="view_woo_satellite_form_button_download" model="ir.ui.view">
+        <field name="name">woo.satellite.form.button.download</field>
+        <field name="model">woo_satellite.satellite</field>
+        <field name="inherit_id" ref="view_woo_satellite_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group" position="inside">
+                <button name="download_products" string="Download Products" type="object" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Add a test button to the tree view -->
     <record id="view_woo_satellite_tree_button" model="ir.ui.view">
         <field name="name">woo.satellite.tree.button</field>

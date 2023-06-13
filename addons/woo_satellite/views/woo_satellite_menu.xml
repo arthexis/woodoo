@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-        <menuitem id="menu_woo_satellite_sale_config" name="WooCommerce" sequence="10" 
-        action="action_woo_satellite" parent="sale.menu_sale_config"/>
+        <!-- Create separete submenus for Satellite and Products -->
+        <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10"/>
+
+        <menuitem id="menu_woo_satellite_satellite" name="Satellites" sequence="10"
+                action="action_woo_satellite" parent="menu_woo_satellite"/>
+        
+        <menuitem id="menu_woo_satellite_product" name="Products" sequence="20"
+                action="action_woo_product" parent="menu_woo_satellite"/>
 
 </odoo>
