@@ -1,6 +1,6 @@
 {
     'name': 'WooSatellite',
-    'version': '1.0.21',
+    'version': '1.0.22',
     'category': 'Tools',
     'summary': 'Simple WooCommerce integration for Odoo',
     'sequence': 10,
