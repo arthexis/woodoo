@@ -11,6 +11,7 @@
                         <field name="woo_url"/>
                         <field name="woo_consumer_key"/>
                         <field name="woo_consumer_secret"/>
+                        <field name="woo_test_ok" readonly="1"/>
                     </group>
                 </sheet>
             </form>
