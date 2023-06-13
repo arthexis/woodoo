@@ -2,7 +2,8 @@
 <odoo>
 
         <!-- Create separete submenus for Satellite and Products -->
-        <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10"/>
+        <menuitem id="menu_woo_satellite" name="WooCommerce" sequence="10"
+                parent="sale.menu_sale_config"/>
 
         <menuitem id="menu_woo_satellite_satellite" name="Satellites" sequence="10"
                 action="action_woo_satellite" parent="menu_woo_satellite"/>
