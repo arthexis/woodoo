@@ -64,8 +64,8 @@ class WooSatellite(models.Model):
                             # The following line is wrong:
                             # AttributeError: 'woo_satellite.satellite' object has no attribute 'product_id'
                             # 'res_id': record.product_id.id,
-                            # The following line is correct:
-                            'res_id': record.env['product.product'].search([('id', '=', record.product_id.id)]).id,
+                            # Instead check which WooProduct record has been created and use that ID:
+                            'res_id': record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id.id,
                         }).id
                 # Update the product in Odoo if it exists.
                 else:
