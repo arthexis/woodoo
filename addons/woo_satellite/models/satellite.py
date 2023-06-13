@@ -58,6 +58,8 @@ class WooSatellite(models.Model):
                     })
                     if product['images']:
                         response_content = wcapi.get(product['images'][0]['src']).content
+                        print("Type of response_content: ", type(response_content)) #prints the type
+                        print("First 100 characters of response_content: ", response_content[:100]) #prints the first 100 characters
                         encoded_string = base64.b64encode(response_content).decode()
                         product_id = record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id
                         product_id.image_1920 = record.env['ir.attachment'].create({
