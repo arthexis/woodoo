@@ -1,4 +1,5 @@
 import base64
+import requests
 import logging
 from odoo import models, fields
 from woocommerce import API
@@ -60,7 +61,10 @@ class WooSatellite(models.Model):
                         }).id,
                     })
                     if product['images']:
-                        response_content = wcapi.get(product['images'][0]['src']).content
+                        response = requests.get(product['images'][0]['src'])
+                        if response.status_code != 200:
+                            continue
+                        response_content = response.content
                         _logger.info("Type of response_content: %s", type(response_content)) #prints the type
                         _logger.info("First 100 characters of response_content: %s", response_content[:100]) #prints the first 100 characters
                         encoded_string = base64.b64encode(response_content).decode()
