@@ -13,7 +13,7 @@ class WooSatellite(models.Model):
     woo_url = fields.Char(string='Store URL', required=True)
     woo_consumer_key = fields.Char(string='Consumer Key', required=True)
     woo_consumer_secret = fields.Char(string='Consumer Secret', required=True)
-    woo_test_ok = fields.Boolean(string='Test OK?', default=False)
+    woo_test_ok = fields.Boolean(string='Connect OK?', default=False)
 
     # Function to get the WooCommerce API object for the current record.
     def get_wcapi(self):
@@ -55,11 +55,18 @@ class WooSatellite(models.Model):
                             'standard_price': product['regular_price'],
                         }).id,
                     })
+                    if product['images']:
+                        record.product_id.image_1920 = record.env['ir.attachment'].create({
+                            'name': product['images'][0]['name'],
+                            'type': 'binary',
+                            'datas': wcapi.get(product['images'][0]['src']).content,
+                            'res_model': 'product.product',
+                            'res_id': record.product_id.id,
+                        }).id
                 # Update the product in Odoo if it exists.
                 else:
                     record.env['woo_satellite.product'].search(
                         [('woo_id', '=', product['id'])]).woo_update_product(product)
-
 
 
 # Woo Product holds the information of each product in the WooCommerce store.
@@ -72,7 +79,7 @@ class WooProduct(models.Model):
 
     woo_id = fields.Integer(string='WooCommerce ID', required=True)
     woo_satellite_id = fields.Many2one('woo_satellite.satellite', string='Satellite', required=True)
-    product_id = fields.Many2one('product.product', string='Product', required=True)
+    product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
 
     # Function to update the product in Odoo from the WooCommerce data.
     def woo_update_product(self, product):

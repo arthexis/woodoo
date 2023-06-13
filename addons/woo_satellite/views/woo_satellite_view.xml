@@ -43,7 +43,7 @@
         <field name="inherit_id" ref="view_woo_satellite_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group" position="inside">
-                <button name="test_connection" string="Test Connect" type="object" class="oe_highlight"/>
+                <button name="test_connection" string="Connect" type="object" class="oe_highlight"/>
             </xpath>
         </field>
     </record>
