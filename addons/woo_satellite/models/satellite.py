@@ -51,9 +51,11 @@ class WooSatellite(models.Model):
             wcapi = record.get_wcapi()
             products = wcapi.get("products").json()
             for product in products:
+                if product['images']:
+                    image_url = product['images'][0]['src']
                 # Create the product in Odoo if it doesn't exist.
                 if not record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]):
-                    record.env['woo_satellite.product'].create({
+                    product_id = record.env['woo_satellite.product'].create({
                         'woo_id': product['id'],
                         'woo_satellite_id': record.id,
                         'product_id': record.env['product.product'].create({
@@ -61,33 +63,8 @@ class WooSatellite(models.Model):
                             'list_price': product['price'],
                             'standard_price': product['regular_price'],
                         }).id,
+                        'woo_image_url': image_url,
                     })
-                    if product['images']:
-                        response = requests.get(product['images'][0]['src'])
-                        _logger.info(f"Image URL: {product['images'][0]['src']}")
-                        if response.status_code == 200:
-                            # Convert image to JPEG
-                            img = Image.open(io.BytesIO(response.content))
-                            byte_arr = io.BytesIO()
-                            if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
-                                new_img = Image.new("RGBA", img.size)
-                                new_img.paste(img)
-                                img = new_img
-                            img.convert('RGB').save(byte_arr, format='JPEG')
-                            byte_arr = byte_arr.getvalue()
-                            # Log the first 100 bytes of the image
-                            _logger.info(f"First 100 bytes of image: {byte_arr[:100]}")
-                        else:
-                            _logger.info(f"Skipping image due to HTTP status code {response.status_code}")
-                        product_id = record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id
-                        product_id.image_1920 = byte_arr
-                        record.env['ir.attachment'].create({
-                            'name': product['images'][0]['name'],
-                            'type': 'binary',
-                            'datas': base64.b64encode(byte_arr),
-                            'res_model': 'product.product',
-                            'res_id': product_id.id,
-                        })
                 # Update the product in Odoo if it exists.
                 else:
                     record.env['woo_satellite.product'].search(
@@ -105,6 +82,7 @@ class WooProduct(models.Model):
     woo_id = fields.Integer(string='WooCommerce ID', required=True)
     woo_satellite_id = fields.Many2one('woo_satellite.satellite', string='Satellite', required=True)
     product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
+    woo_image_url = fields.Char(string='Image URL')
 
     # Function to update the product in Odoo from the WooCommerce data.
     def woo_update_product(self, product):
