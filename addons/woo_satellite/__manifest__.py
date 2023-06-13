@@ -1,6 +1,6 @@
 {
     'name': 'WooSatellite',
-    'version': '1.0.7',
+    'version': '1.0.8',
     'category': 'Tools',
     'summary': 'Simple WooCommerce integration for Odoo',
     'sequence': 10,
@@ -14,8 +14,8 @@
     },
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
-        'views/woo_site_view.xml',
-        'views/woo_site_menu.xml',
+        'views/woo_satellite_view.xml',
+        'views/woo_satellite_menu.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
