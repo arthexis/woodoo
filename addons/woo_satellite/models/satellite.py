@@ -67,11 +67,3 @@ class WooProduct(models.Model):
                 'list_price': product['price'],
                 'standard_price': product['regular_price'],
             })
-
-
-
-# Each WooStockRefresh record is a task to refresh the stock of a WooCommerce store.
-    
-class WooStockRefresh(models.Model):
-    pass
-
