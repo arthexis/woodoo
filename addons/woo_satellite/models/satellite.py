@@ -74,8 +74,8 @@ class WooSatellite(models.Model):
                                 img = new_img
                             img.convert('RGB').save(byte_arr, format='JPEG')
                             byte_arr = byte_arr.getvalue()
-                            # Log the byte array
-                            _logger.info(byte_arr)
+                            # Log the first 100 bytes of the image
+                            _logger.info(f"First 100 bytes of image: {byte_arr[:100]}")
 
                             # Now you can base64 encode the byte array
                             encoded_string = base64.b64encode(byte_arr).decode()
