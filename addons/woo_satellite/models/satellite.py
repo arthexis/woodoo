@@ -1,3 +1,4 @@
+import base64
 from odoo import models, fields
 from woocommerce import API
 
@@ -56,16 +57,17 @@ class WooSatellite(models.Model):
                         }).id,
                     })
                     if product['images']:
+                        response_content = wcapi.get(product['images'][0]['src']).content
+                        encoded_string = base64.b64encode(response_content).decode()
+                        padded_string = encoded_string + '=' * ((4 - len(encoded_string) % 4) % 4)
+                        product_id = record.env['woo_satellite.product'].search(
+                            [('woo_id', '=', product['id'])]).product_id.id
                         record.product_id.image_1920 = record.env['ir.attachment'].create({
                             'name': product['images'][0]['name'],
                             'type': 'binary',
-                            'datas': wcapi.get(product['images'][0]['src']).content,
+                            'datas': padded_string,
                             'res_model': 'product.product',
-                            # The following line is wrong:
-                            # AttributeError: 'woo_satellite.satellite' object has no attribute 'product_id'
-                            # 'res_id': record.product_id.id,
-                            # Instead check which WooProduct record has been created and use that ID:
-                            'res_id': record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id.id,
+                            'res_id': product_id,
                         }).id
                 # Update the product in Odoo if it exists.
                 else:
