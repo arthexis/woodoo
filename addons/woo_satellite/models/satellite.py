@@ -68,8 +68,14 @@ class WooSatellite(models.Model):
                             # Convert image to JPEG
                             img = Image.open(io.BytesIO(response.content))
                             byte_arr = io.BytesIO()
+                            if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                                new_img = Image.new("RGBA", img.size)
+                                new_img.paste(img)
+                                img = new_img
                             img.convert('RGB').save(byte_arr, format='JPEG')
                             byte_arr = byte_arr.getvalue()
+                            # Log the byte array
+                            _logger.info(byte_arr)
 
                             # Now you can base64 encode the byte array
                             encoded_string = base64.b64encode(byte_arr).decode()
