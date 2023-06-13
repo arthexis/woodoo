@@ -76,18 +76,16 @@ class WooSatellite(models.Model):
                             byte_arr = byte_arr.getvalue()
                             # Log the first 100 bytes of the image
                             _logger.info(f"First 100 bytes of image: {byte_arr[:100]}")
-
-                            # Now you can base64 encode the byte array
-                            encoded_string = base64.b64encode(byte_arr).decode()
-                            padded_string = encoded_string + '=' * ((4 - len(encoded_string) % 4) % 4)
-                            # Further processing...
+                            byte_arr.seek(0)  # Go back to the start of the BytesIO instance
+                            bytes = byte_arr.read()
+                            base64_encoded_image = base64.b64encode(bytes)
                         else:
                             _logger.info(f"Skipping image due to HTTP status code {response.status_code}")
                         product_id = record.env['woo_satellite.product'].search([('woo_id', '=', product['id'])]).product_id
                         product_id.image_1920 = record.env['ir.attachment'].create({
                             'name': product['images'][0]['name'],
                             'type': 'binary',
-                            'datas': padded_string,
+                            'datas': base64_encoded_image,
                             'res_model': 'product.product',
                             'res_id': product_id.id,
                         })
