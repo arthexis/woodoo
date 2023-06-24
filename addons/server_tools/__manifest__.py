@@ -1,6 +1,6 @@
 {
     'name': 'Server Tools',
-    'version': '1.0.8',
+    'version': '1.0.9',
     'category': 'Tools',
     'summary': 'Tools for managing Odoo servers',
     'sequence': 8,
@@ -16,7 +16,6 @@
         # XML, CSV, and YML files, etc. that you want to include
         'views/server_tools_views.xml',
         'views/server_tools_menu.xml',
-        'views/server_tools_dashboard.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
