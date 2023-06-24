@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_server_tools_action,access_server_tools_action,server_tools.action,model_base,1,1,1,1
-access_server_tools_runbook,access_server_tools_runbook,server_tools.runbook,model_base,1,1,1,1
-access_server_tools_runbook_step,access_server_tools_runbook_step,server_tools.runbook_step,model_base,1,1,1,1
-access_server_tools_dashboard,access_server_tools_dashboard,server_tools.dashboard,model_base,1,1,1,1
-access_server_tools_server,access_server_tools_server,server_tools.server,model_base,1,1,1,1
+access_server_tools_action,access_server_tools_action,model_server_tools_action,base.group_user,1,1,1,1
+access_server_tools_runbook,access_server_tools_runbook,model_server_tools_runbook,base.group_user,1,1,1,1
+access_server_tools_runbook_step,access_server_tools_runbook_step,model_server_tools_runbook_step,base.group_user,1,1,1,1
+access_server_tools_dashboard,access_server_tools_dashboard,model_server_tools_dashboard,base.group_user,1,1,1,1
+access_server_tools_server,access_server_tools_server,model_server_tools_server,base.group_user,1,1,1,1
