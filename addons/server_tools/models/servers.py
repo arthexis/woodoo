@@ -136,7 +136,7 @@ class Server(models.Model):
         required=True,
     )
     server_action_ids = fields.One2many(
-        comodel_name='ir.actions.server',
+        comodel_name='server_tools.action',
         inverse_name='server_id',
         string='Server Actions',
     )
