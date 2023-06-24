@@ -38,7 +38,7 @@ class Runbook(models.Model):
         required=True,
     )
     server_action_id = fields.Many2one(
-        comodel_name='ir.actions.server',
+        comodel_name='server_tools.action',
         string='Server Action',
         required=True,
     )
@@ -63,7 +63,7 @@ class RunbookStep(models.Model):
         required=True,
     )
     server_action_id = fields.Many2one(
-        comodel_name='ir.actions.server',
+        comodel_name='server_tools.action',
         string='Server Action',
         required=True,
     )
@@ -135,24 +135,4 @@ class Server(models.Model):
         string='Password',
         required=True,
     )
-    server_action_ids = fields.One2many(
-        comodel_name='server_tools.action',
-        inverse_name='server_id',
-        string='Server Actions',
-    )
-    server_tools_dashboard_ids = fields.Many2many(
-        comodel_name='server_tools.dashboard',
-        string='Dashboards',
-    )
 
-    def execute_server_action(self, server_action_id):
-        for record in self:
-            record.server_action_ids.browse(server_action_id).run()
-
-    def execute_runbook(self, runbook_id):
-        for record in self:
-            runbook = self.env['server_tools.runbook'].browse(runbook_id)
-            for runbook_step in runbook.runbook_step_ids:
-                runbook_step.execute()
-                if not runbook_step.condition_met:
-                    break
