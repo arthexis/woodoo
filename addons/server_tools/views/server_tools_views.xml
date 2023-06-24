@@ -80,8 +80,6 @@
                         <field name="host"/>
                         <field name="port"/>
                         <field name="user"/>
-                        <field name="password"/>
-                        <field name="server_tools_dashboard_ids"/>
                     </group>
                 </sheet>
             </form>
@@ -109,7 +107,6 @@
                 <field name="host"/>
                 <field name="port"/>
                 <field name="user"/>
-                <field name="server_tools_dashboard_ids"/>
             </tree>
         </field>
     </record>
@@ -134,7 +131,6 @@
                 <field name="host"/>
                 <field name="port"/>
                 <field name="user"/>
-                <field name="server_tools_dashboard_ids"/>
             </kanban>
         </field>
     </record>
@@ -159,7 +155,6 @@
                 <field name="host"/>
                 <field name="port"/>
                 <field name="user"/>
-                <field name="server_tools_dashboard_ids"/>
             </search>
         </field>
     </record>
