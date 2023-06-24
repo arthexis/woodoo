@@ -1,0 +1,455 @@
+<!-- 
+
+# __manifest__.py:
+#
+# {
+#     'name': 'Server Tools',
+#     'version': '1.0.1',
+#     'category': 'Tools',
+#     'summary': 'Tools for managing Odoo servers',
+#     'sequence': 8,
+#     'license': 'LGPL-3',
+#     'author': 'Rafa Guillén',
+#     'maintainer': 'Rafa Guillén',
+#     'website': 'https://www.gelectriic.com',
+#     'depends': ['base', ],
+#     'external_dependencies': {
+#         'python': ['psutil', 'paramiko', 'plumbum', ],
+#     },
+#     'data': [
+#         # XML, CSV, and YML files, etc. that you want to include
+#         'views/server_tools_views.xml',
+#         'views/server_tools_menu.xml',
+#         'views/server_tools_dashboard.xml',
+#         'security/ir.model.access.csv',
+#     ],
+#     'demo': [],
+#     'installable': True,
+#     'application': True,
+#     'auto_install': False,
+#     'description': """
+# Server Tools
+# =================
+# This module contains various tools for Odoo server administration.
+
+# - Design rich Server Actions to execute Python, SQL or Shell code.
+# - Monitor Odoo server resources and processes using a dashboard.
+# - Create runbooks to execute Server Actions and follow conditional logic.
+# - Manage multiple Odoo servers from a single Odoo instance.
+
+# """,
+# }
+
+# Path: models\server_actions.py
+
+from odoo import models, fields
+
+class ServerAction(models.Model):
+    _inherit = 'ir.actions.server'
+
+    server_action_type = fields.Selection(
+        selection=[
+            ('python', 'Python'),
+            ('sql', 'SQL'),
+            ('shell', 'Shell'),
+        ],
+        string='Server Action Type',
+        default='python',
+        required=True,
+    )
+    server_action_code = fields.Text(
+        string='Server Action Code',
+        required=True,
+    )
+    server_action_runbook_ids = fields.One2many(
+        comodel_name='server_tools.runbook',
+        inverse_name='server_action_id',
+        string='Runbooks',
+    )
+
+
+class Runbook(models.Model):
+    _name = 'server_tools.runbook'
+    _description = 'Runbook'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    server_action_id = fields.Many2one(
+        comodel_name='ir.actions.server',
+        string='Server Action',
+        required=True,
+    )
+    runbook_step_ids = fields.One2many(
+        comodel_name='server_tools.runbook_step',
+        inverse_name='runbook_id',
+        string='Steps',
+    )
+
+
+class RunbookStep(models.Model):
+    _name = 'server_tools.runbook_step'
+    _description = 'Runbook Step'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    runbook_id = fields.Many2one(
+        comodel_name='server_tools.runbook',
+        string='Runbook',
+        required=True,
+    )
+    server_action_id = fields.Many2one(
+        comodel_name='ir.actions.server',
+        string='Server Action',
+        required=True,
+    )
+    condition = fields.Char(
+        string='Condition',
+        required=False,
+    )
+    condition_met = fields.Boolean(
+        string='Condition Met',
+        compute='_compute_condition_met',
+        store=True,
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        required=True,
+    )
+
+    def _compute_condition_met(self):
+        for record in self:
+            record.condition_met = True
+            if record.condition:
+                try:
+                    record.condition_met = eval(record.condition)
+                except:
+                    record.condition_met = False
+
+    def execute(self):
+        for record in self:
+            if record.condition_met:
+                record.server_action_id.run()
+                break
+
+
+class ServerToolsDashboard(models.Model):
+    _name = 'server_tools.dashboard'
+    _description = 'Server Tools Dashboard'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    server_ids = fields.Many2many(
+        comodel_name='server_tools.server',
+        string='Servers',
+    )
+
+
+class Server(models.Model):
+    _name = 'server_tools.server'
+    _description = 'Server'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    host = fields.Char(
+        string='Host',
+        required=True,
+    )
+    port = fields.Integer(
+        string='Port',
+        required=True,
+    )
+    user = fields.Char(
+        string='User',
+        required=True,
+    )
+    password = fields.Char(
+        string='Password',
+        required=True,
+    )
+    server_action_ids = fields.One2many(
+        comodel_name='ir.actions.server',
+        inverse_name='server_id',
+        string='Server Actions',
+    )
+    server_tools_dashboard_ids = fields.Many2many(
+        comodel_name='server_tools.dashboard',
+        string='Dashboards',
+    )
+
+    def execute_server_action(self, server_action_id):
+        for record in self:
+            record.server_action_ids.browse(server_action_id).run()
+
+    def execute_runbook(self, runbook_id):
+        for record in self:
+            runbook = self.env['server_tools.runbook'].browse(runbook_id)
+            for runbook_step in runbook.runbook_step_ids:
+                runbook_step.execute()
+    
+
+# Path: views\server_tools_views.xml
+
+-->
+
+<odoo>
+
+    <record id="view_server_action_form" model="ir.ui.view">
+        <field name="name">server.action.form</field>
+        <field name="model">ir.actions.server</field>
+        <field name="arch" type="xml">
+            <form string="Server Action">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="server_id"/>
+                        <field name="server_action_type"/>
+                        <field name="server_action_code"/>
+                        <field name="server_action_runbook_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_runbook_form" model="ir.ui.view">
+        <field name="name">runbook.form</field>
+        <field name="model">server_tools.runbook</field>
+        <field name="arch" type="xml">
+            <form string="Runbook">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="server_action_id"/>
+                        <field name="runbook_step_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_runbook_step_form" model="ir.ui.view">
+        <field name="name">runbook.step.form</field>
+        <field name="model">server_tools.runbook_step</field>
+        <field name="arch" type="xml">
+            <form string="Runbook Step">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="runbook_id"/>
+                        <field name="server_action_id"/>
+                        <field name="condition"/>
+                        <field name="condition_met"/>
+                        <field name="sequence"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>    
+    </record>
+
+
+    <record id="view_server_tools_dashboard_form" model="ir.ui.view">
+        <field name="name">server.tools.dashboard.form</field>
+        <field name="model">server_tools.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Server Tools Dashboard">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="server_ids"/>
+                    </group>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_server_tools_server_form" model="ir.ui.view">
+        <field name="name">server.tools.server.form</field>
+        <field name="model">server_tools.server</field>
+        <field name="arch" type="xml">
+            <form string="Server Tools Server">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="host"/>
+                        <field name="port"/>
+                        <field name="user"/>
+                        <field name="password"/>
+                        <field name="server_action_ids"/>
+                        <field name="server_tools_dashboard_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_server_tools_dashboard_tree" model="ir.ui.view">
+        <field name="name">server.tools.dashboard.tree</field>
+        <field name="model">server_tools.dashboard</field>
+        <field name="arch" type="xml">
+            <tree string="Server Tools Dashboard">
+                <field name="name"/>
+                <field name="server_ids"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_server_tools_server_tree" model="ir.ui.view">
+        <field name="name">server.tools.server.tree</field>
+        <field name="model">server_tools.server</field>
+        <field name="arch" type="xml">
+            <tree string="Server Tools Server">
+                <field name="name"/>
+                <field name="host"/>
+                <field name="port"/>
+                <field name="user"/>
+                <field name="password"/>
+                <field name="server_action_ids"/>
+                <field name="server_tools_dashboard_ids"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_server_tools_dashboard_kanban" model="ir.ui.view">
+        <field name="name">server.tools.dashboard.kanban</field>
+        <field name="model">server_tools.dashboard</field>
+        <field name="arch" type="xml">
+            <kanban string="Server Tools Dashboard">
+                <field name="name"/>
+                <field name="server_ids"/>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_server_tools_server_kanban" model="ir.ui.view">
+        <field name="name">server.tools.server.kanban</field>
+        <field name="model">server_tools.server</field>
+        <field name="arch" type="xml">
+            <kanban string="Server Tools Server">
+                <field name="name"/>
+                <field name="host"/>
+                <field name="port"/>
+                <field name="user"/>
+                <field name="password"/>
+                <field name="server_action_ids"/>
+                <field name="server_tools_dashboard_ids"/>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_server_tools_dashboard_search" model="ir.ui.view">
+        <field name="name">server.tools.dashboard.search</field>
+        <field name="model">server_tools.dashboard</field>
+        <field name="arch" type="xml">
+            <search string="Server Tools Dashboard">
+                <field name="name"/>
+                <field name="server_ids"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_server_tools_server_search" model="ir.ui.view">
+        <field name="name">server.tools.server.search</field>
+        <field name="model">server_tools.server</field>
+        <field name="arch" type="xml">
+            <search string="Server Tools Server">
+                <field name="name"/>
+                <field name="host"/>
+                <field name="port"/>
+                <field name="user"/>
+                <field name="password"/>
+                <field name="server_action_ids"/>
+                <field name="server_tools_dashboard_ids"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="action_server_action_form" model="ir.actions.act_window">
+        <field name="name">Server Action</field>
+        <field name="res_model">ir.actions.server</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_runbook_form" model="ir.actions.act_window">
+        <field name="name">Runbook</field>
+        <field name="res_model">server_tools.runbook</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_runbook_step_form" model="ir.actions.act_window">
+        <field name="name">Runbook Step</field>
+        <field name="res_model">server_tools.runbook_step</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_dashboard_form" model="ir.actions.act_window">
+        <field name="name">Server Tools Dashboard</field>
+        <field name="res_model">server_tools.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_server_form" model="ir.actions.act_window">
+        <field name="name">Server Tools Server</field>
+        <field name="res_model">server_tools.server</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+
+    </record>
+
+    <record id="action_server_tools_dashboard_tree" model="ir.actions.act_window">
+        <field name="name">Server Tools Dashboard</field>
+        <field name="res_model">server_tools.dashboard</field>
+        <field name="view_mode">tree</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_server_tree" model="ir.actions.act_window">
+        <field name="name">Server Tools Server</field>
+        <field name="res_model">server_tools.server</field>
+        <field name="view_mode">tree</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Server Tools Dashboard</field>
+        <field name="res_model">server_tools.dashboard</field>
+        <field name="view_mode">kanban</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_server_kanban" model="ir.actions.act_window">
+        <field name="name">Server Tools Server</field>
+        <field name="res_model">server_tools.server</field>
+        <field name="view_mode">kanban</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_dashboard_search" model="ir.actions.act_window">
+        <field name="name">Server Tools Dashboard</field>
+        <field name="res_model">server_tools.dashboard</field>
+        <field name="view_mode">search</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_server_tools_server_search" model="ir.actions.act_window">
+        <field name="name">Server Tools Server</field>
+        <field name="res_model">server_tools.server</field>
+        <field name="view_mode">search</field>
+        <field name="target">current</field>
+    </record>
+
+</odoo>

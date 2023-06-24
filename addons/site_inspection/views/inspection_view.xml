@@ -1,0 +1,53 @@
+<odoo>
+    <record id="view_inspection_form" model="ir.ui.view">
+        <field name="name">inspection.record.form</field>
+        <field name="model">inspection.record</field>
+        <field name="arch" type="xml">
+            <form string="Inspection Record">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="engineer_id"/>
+                        <field name="customer_id"/>
+                        <field name="customer_address_id"/>
+                        <field name="date"/>
+                        <field name="location"/>
+                        <field name="customer_comments"/>
+                        <field name="photo"/>
+                        <field name="result"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="electrical_inspection_form" model="ir.ui.view">
+        <field name="name">electrical.inspection.form</field>
+        <field name="model">electrical.inspection.record</field>
+        <field name="arch" type="xml">
+            <form string="Electrical Inspection">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="engineer_id"/>
+                            <field name="date"/>
+                            <field name="time"/>
+                            <field name="location"/>
+                            <field name="customer_comments"/>
+                            <field name="photo"/>
+                            <field name="result"/>
+                        </group>
+                        <group>
+                            <field name="amperage"/>
+                            <field name="distance"/>
+                            <field name="turns"/>
+                            <field name="special_requirements"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

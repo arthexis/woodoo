@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_server_tools" name="Server Tools" parent="base.menu_tools"/>
+    <menuitem id="menu_server_tools_server" name="Server Tools Server" 
+        parent="menu_server_tools" action="action_server_tools_server_form"/>
+    <menuitem id="menu_server_tools_dashboard" name="Server Tools Dashboard" 
+        parent="menu_server_tools" action="action_server_tools_dashboard_form"/>
+
+</odoo>

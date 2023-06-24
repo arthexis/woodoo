@@ -1,10 +1,19 @@
-Odoo Addons for WooCommerce Integrations
-========================================
+Magical Odoo Addons
+===================
 
-This repository contains the source code for the various Odoo addons that are used to integrate Odoo with WooCommerce.
+This repository contains the source code for various Odoo addons.
 
-1. WooCommerce Site integrator.
-2. OCPP Charging Station integrator.
+Server Tools
+---------------------------
+
+This module contains various tools for Odoo server administration.
+
+You can create Server Actions to execute Python, SQL or Shell code.
+
+Addon Maker
+---------------------------
+
+This module allows you to create addons from the Odoo user interface.
 
 WooCommerce Satellite
 ---------------------------
@@ -20,3 +29,10 @@ OCPP Charging Station
 --------------------------------
 
 This module is used to integrate Odoo with an OCPP compliant charging station. It allows you to manage charging stations, connectors, charging sessions and charging cards.
+
+Site Inspection
+---------------------------
+
+Store on-site inspection data to generate reports and estimates.
+
+This module allows you to define inspection templates and generate reports and estimates from them.
