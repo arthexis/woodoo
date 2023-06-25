@@ -135,6 +135,7 @@ class Database(models.Model):
                             <field name="port"/>
                             <field name="user"/>
                             <field name="password"/>
+                            <field name="pem_key"/>
                         </group>
                         <notebook>
                             <page string="Applications">
