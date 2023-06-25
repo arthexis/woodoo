@@ -150,10 +150,10 @@ class Database(models.Model):
                         </notebook>
                     </sheet>
                     <!-- Run command field and button -->
-                    <footer>
+                    <sheet>
                         <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
                         <field name="command"/>
-                    </footer>
+                    </sheet>
                 </form>
             </field>
         </record>
