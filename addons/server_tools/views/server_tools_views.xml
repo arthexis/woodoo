@@ -137,6 +137,10 @@ class Database(models.Model):
                             <field name="password"/>
                             <field name="pem_key"/>
                         </group>
+                        <group>
+                            <field name="command"/>
+                            <button name="run_command" string="Run" type="object" class="oe_highlight"/>
+                        </group>
                         <notebook>
                             <page string="Applications">
                                 <field name="application_ids">
@@ -148,11 +152,6 @@ class Database(models.Model):
                                 </field>
                             </page>
                         </notebook>
-                    </sheet>
-                    <!-- Run command field and button -->
-                    <sheet>
-                        <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
-                        <field name="command"/>
                     </sheet>
                 </form>
             </field>
