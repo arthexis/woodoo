@@ -1,5 +1,5 @@
 from odoo import models, fields
-from base64 import b64decod
+from base64 import b64decode
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 
