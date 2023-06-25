@@ -4,8 +4,10 @@ from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 
+# Datacenter models
+
 class Server(models.Model):
-    _name = 'server_tools.server'
+    _name = 'datacenter.server'
     _description = 'Server'
 
     name = fields.Char(
@@ -30,7 +32,7 @@ class Server(models.Model):
         string='Private PEM File Name'
     )
     application_ids = fields.One2many(
-        string='Applications', comodel_name='server_tools.application',
+        string='Applications', comodel_name='datacenter.application',
         inverse_name='server_id',
     )
 
@@ -77,14 +79,14 @@ class Server(models.Model):
 
 
 class Application(models.Model):
-    _name = 'server_tools.application'
+    _name = 'datacenter.application'
     _description = 'Application'
 
     name = fields.Char(
         string='Name', required=True,
     )
     server_id = fields.Many2one(
-        string='Server', comodel_name='server_tools.server',
+        string='Server', comodel_name='datacenter.server',
     )
     user = fields.Char(
         string='User', required=True,
@@ -95,14 +97,14 @@ class Application(models.Model):
 
 
 class Database(models.Model):
-    _name = 'server_tools.database'
+    _name = 'datacenter.database'
     _description = 'Database'
 
     name = fields.Char(
         string='Name', required=True,
     )
     application_id = fields.Many2one(
-        string='Application', comodel_name='server_tools.application',
+        string='Application', comodel_name='datacenter.application',
     )
     ip_address = fields.Char(
         string='IP Address', required=True,

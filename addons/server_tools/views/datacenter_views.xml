@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!-- 
-    
-# Path: models\server_tools.py 
+    from odoo import models, fields
+from base64 import b64decode
+from io import StringIO
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
-from odoo import models, fields
-from paramiko import SSHClient, AutoAddPolicy
 
+# Datacenter models
 
 class Server(models.Model):
-    _name = 'server_tools.server'
+    _name = 'datacenter.server'
     _description = 'Server'
 
     name = fields.Char(
@@ -27,22 +27,39 @@ class Server(models.Model):
     password = fields.Char(
         string='Password', required=False,
     )
-    pem_key = fields.Text(
-        string='PEM Key', required=False,
+    # Store PEM key as file upload
+    private_pem_file = fields.Binary(
+        string='Private PEM File', attachment=True)
+    private_pem_file_name = fields.Char(
+        string='Private PEM File Name'
     )
     application_ids = fields.One2many(
-        string='Applications', comodel_name='server_tools.application',
+        string='Applications', comodel_name='datacenter.application',
         inverse_name='server_id',
+    )
+
+    # This field is used to store the last command executed on the server
+    command = fields.Char(
+        string='Command', required=False,
+    )
+    # Store command output as Text
+    output = fields.Text(
+        string='Output', required=False,
+    )
+    errors = fields.Text(
+        string='Errors', required=False,
     )
 
     # Get SSH connection
     def get_ssh(self):
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        if self.pem_key:
+        if self.private_pem_file:
+            private_pem_file_str = b64decode(self.private_pem_file).decode('utf-8')
+            private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
             ssh.connect(
                 hostname=self.host, port=self.port, username=self.user,
-                key_filename=self.pem_key,
+                pkey=private_key,
             )
         else:
             ssh.connect(
@@ -52,21 +69,26 @@ class Server(models.Model):
         return ssh
 
     # Run command
-    def run_command(self, command):
+    def run_command(self, command=None):
+        if not command:
+            command = self.command
         ssh = self.get_ssh()
         stdin, stdout, stderr = ssh.exec_command(command)
-        return stdout.read().decode()
+        # Store command output
+        self.output = stdout.read().decode()
+        self.errors = stderr.read().decode()
+        return self.output
 
 
 class Application(models.Model):
-    _name = 'server_tools.application'
+    _name = 'datacenter.application'
     _description = 'Application'
 
     name = fields.Char(
         string='Name', required=True,
     )
     server_id = fields.Many2one(
-        string='Server', comodel_name='server_tools.server',
+        string='Server', comodel_name='datacenter.server',
     )
     user = fields.Char(
         string='User', required=True,
@@ -77,14 +99,14 @@ class Application(models.Model):
 
 
 class Database(models.Model):
-    _name = 'server_tools.database'
+    _name = 'datacenter.database'
     _description = 'Database'
 
     name = fields.Char(
         string='Name', required=True,
     )
     application_id = fields.Many2one(
-        string='Application', comodel_name='server_tools.application',
+        string='Application', comodel_name='datacenter.application',
     )
     ip_address = fields.Char(
         string='IP Address', required=True,
@@ -96,8 +118,15 @@ class Database(models.Model):
         string='Password', required=True,
     )
 
+    # This field is used to store the last SQL query executed on the database
+    sql = fields.Text(
+        string='SQL', required=False,
+    )
+
     # Run SQL query
-    def run_sql(self, query):
+    def run_sql(self, query=None):
+        if not query:
+            query = self.sql
         ssh = self.application_id.server_id.get_ssh()
         command = 'psql -h %s -U %s -d %s -c "%s"' % (
             self.ip_address, self.user, self.name, query,
@@ -105,27 +134,16 @@ class Database(models.Model):
         stdin, stdout, stderr = ssh.exec_command(command)
         return stdout.read().decode()
 
-    
-# Path: views\server_tools_views.xml
-
-# Requirements:
-# - Single server screen:
-#   - List of applications
-#   - Button to add application
-#   - Button to remove application
-#   - One line per server property
-#   - Field and button to run command
-# - Application screen
-# - Database screen
-# - Menu items
-
 -->
 
 <odoo>
     <data>
-        <record id="server_tools_server_form_view" model="ir.ui.view">
-            <field name="name">server_tools.server.form.view</field>
-            <field name="model">server_tools.server</field>
+
+        <!-- Server -->
+        
+        <record id="datacenter_server_form_view" model="ir.ui.view">
+            <field name="name">datacenter.server.form.view</field>
+            <field name="model">datacenter.server</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -163,9 +181,9 @@ class Database(models.Model):
                 </form>
             </field>
         </record>
-        <record id="server_tools_application_form_view" model="ir.ui.view">
-            <field name="name">server_tools.application.form.view</field>
-            <field name="model">server_tools.application</field>
+        <record id="datacenter_application_form_view" model="ir.ui.view">
+            <field name="name">datacenter.application.form.view</field>
+            <field name="model">datacenter.application</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -179,9 +197,9 @@ class Database(models.Model):
                 </form>
             </field>
         </record>
-        <record id="server_tools_server_tree_view" model="ir.ui.view">
-            <field name="name">server_tools.server.tree.view</field>
-            <field name="model">server_tools.server</field>
+        <record id="datacenter_server_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.server.tree.view</field>
+            <field name="model">datacenter.server</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
@@ -191,9 +209,9 @@ class Database(models.Model):
                 </tree>
             </field>
         </record>
-        <record id="server_tools_application_tree_view" model="ir.ui.view">
-            <field name="name">server_tools.application.tree.view</field>
-            <field name="model">server_tools.application</field>
+        <record id="datacenter_application_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.application.tree.view</field>
+            <field name="model">datacenter.application</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
@@ -202,19 +220,68 @@ class Database(models.Model):
                 </tree>
             </field>
         </record>
-        <record id="server_tools_server_action" model="ir.actions.act_window">
+        <record id="datacenter_server_action" model="ir.actions.act_window">
             <field name="name">Servers</field>
-            <field name="res_model">server_tools.server</field>
+            <field name="res_model">datacenter.server</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <record id="server_tools_application_action" model="ir.actions.act_window">
+        <record id="datacenter_application_action" model="ir.actions.act_window">
             <field name="name">Applications</field>
-            <field name="res_model">server_tools.application</field>
+            <field name="res_model">datacenter.application</field>
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem id="server_tools_menu" name="Server Tools"/>
-        <menuitem id="server_tools_server_menu" name="Servers" parent="server_tools_menu" action="server_tools_server_action"/>
-        <menuitem id="server_tools_application_menu" name="Applications" parent="server_tools_menu" action="server_tools_application_action"/>
+        <!-- Database -->
+
+        <record id="datacenter_database_form_view" model="ir.ui.view">
+            <field name="name">datacenter.database.form.view</field>
+            <field name="model">datacenter.database</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="application_id"/>
+                            <field name="ip_address"/>
+                            <field name="user"/>
+                            <field name="password" widget="password"/>
+                        </group>
+                        <notebook>
+                            <page string="SQL">
+                                <group>
+                                    <field name="sql"/>
+                                    <button name="run_sql" string="Run SQL" type="object" class="oe_highlight"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="datacenter_database_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.database.tree.view</field>
+            <field name="model">datacenter.database</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="application_id"/>
+                    <field name="ip_address"/>
+                    <field name="user"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="datacenter_database_action" model="ir.actions.act_window">
+            <field name="name">Databases</field>
+            <field name="res_model">datacenter.database</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Menu -->
+
+        <menuitem id="datacenter_menu" name="Server Tools"/>
+        <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu" action="datacenter_server_action"/>
+        <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
     </data>
 </odoo>

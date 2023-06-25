@@ -1,8 +1,8 @@
 {
-    'name': 'Server Tools',
-    'version': '1.0.18',
+    'name': 'Datacenter',
+    'version': '1.0.20',
     'category': 'Tools',
-    'summary': 'Tools for managing Odoo servers',
+    'summary': 'Tools for managing the Enterprise Datacenter',
     'sequence': 8,
     'license': 'LGPL-3',
     'author': 'Rafa Guillén',
@@ -14,7 +14,7 @@
     },
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
-        'views/server_tools_views.xml',
+        'views/datacenter_views.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
@@ -22,14 +22,18 @@
     'application': True,
     'auto_install': False,
     'description': """
-Server Tools
+Datacenter
 =================
-This module contains various tools for Odoo server administration.
+Tools for enterprise datacenter administration.
 
-- Design rich Server Actions to execute Python, SQL or Shell code.
-- Monitor Odoo server resources and processes using a dashboard.
-- Create runbooks to execute Server Actions and follow conditional logic.
-- Manage multiple Odoo servers from a single Odoo instance.
+- Server
+- Application
+- Process
+- Backup
+- Restore
+- Update
+- Upgrade
+- Reboot
 
 """,
 }
