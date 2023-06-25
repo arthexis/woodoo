@@ -73,12 +73,6 @@ class Server(models.Model):
         # Store command output
         self.output = stdout.read().decode()
         self.errors = stderr.read().decode()
-        if self.errors:
-            self.env.user.notify_warning(
-                title='Command Errors',
-                message=self.errors,
-                sticky=True,
-            )
         return self.output
 
 
