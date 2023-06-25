@@ -154,8 +154,9 @@ class Database(models.Model):
                             <page string="Commands">
                                 <group>
                                     <field name="command"/>
-                                    <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
                                     <field name="output" readonly="1"/>
+                                    <field name="errors" readonly="1"/>
+                                    <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
                                 </group>
                             </page>
                         </notebook>
