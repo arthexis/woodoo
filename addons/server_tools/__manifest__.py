@@ -1,6 +1,6 @@
 {
     'name': 'Server Tools',
-    'version': '1.0.11',
+    'version': '1.0.12',
     'category': 'Tools',
     'summary': 'Tools for managing Odoo servers',
     'sequence': 8,
@@ -10,12 +10,11 @@
     'website': 'https://www.gelectriic.com',
     'depends': ['base', ],
     'external_dependencies': {
-        'python': ['psutil', 'paramiko', 'plumbum', ],
+        'python': ['psutil', 'paramiko', ],
     },
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
         'views/server_tools_views.xml',
-        'views/server_tools_menu.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
