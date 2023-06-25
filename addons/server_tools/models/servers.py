@@ -22,8 +22,10 @@ class Server(models.Model):
         string='Password', required=False,
     )
     # Store PEM key as file upload
-    pem_key = fields.Binary(
-        string='PEM Key', required=False,
+    pem_file = fields.Binary(
+        string='PEM File', attachment=True)
+    pem_file_name = fields.Char(
+        string='PEM File Name'
     )
     application_ids = fields.One2many(
         string='Applications', comodel_name='server_tools.application',
