@@ -129,16 +129,18 @@ class Database(models.Model):
             <field name="arch" type="xml">
                 <form>
                     <sheet>
-                        <field name="name"/>
                         <group>    
+                            <field name="name"/>
                             <field name="host"/>
                             <field name="port"/>
                         </group>
                         <notebook>
                             <page string="Credentials">
-                                <field name="user"/>
-                                <field name="password"/>
-                                <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
+                                <group>
+                                    <field name="user"/>
+                                    <field name="password"/>
+                                    <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
+                                </group>
                             </page>
                             <page string="Applications">
                                 <field name="application_ids">
