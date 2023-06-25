@@ -42,6 +42,9 @@ class Server(models.Model):
     output = fields.Text(
         string='Output', required=False,
     )
+    errors = fields.Text(
+        string='Errors', required=False,
+    )
 
     # Get SSH connection
     def get_ssh(self):
@@ -67,7 +70,16 @@ class Server(models.Model):
             command = self.command
         ssh = self.get_ssh()
         stdin, stdout, stderr = ssh.exec_command(command)
-        return stdout.read().decode()
+        # Store command output
+        self.output = stdout.read().decode()
+        self.errors = stderr.read().decode()
+        if self.errors:
+            self.env.user.notify_warning(
+                title='Command Errors',
+                message=self.errors,
+                sticky=True,
+            )
+        return self.output
 
 
 class Application(models.Model):
