@@ -34,6 +34,10 @@ class Server(models.Model):
     command = fields.Char(
         string='Command', required=False,
     )
+    # Store command output as Text
+    output = fields.Text(
+        string='Output', required=False,
+    )
 
     # Get SSH connection
     def get_ssh(self):

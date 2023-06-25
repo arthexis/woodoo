@@ -129,17 +129,13 @@ class Database(models.Model):
             <field name="arch" type="xml">
                 <form>
                     <sheet>
-                        <group>
-                            <field name="name"/>
+                        <field name="name"/>
+                        <group>    
                             <field name="host"/>
                             <field name="port"/>
                             <field name="user"/>
                             <field name="password"/>
                             <field name="pem_key"/>
-                        </group>
-                        <group>
-                            <field name="command"/>
-                            <button name="run_command" string="Run" type="object" class="oe_highlight"/>
                         </group>
                         <notebook>
                             <page string="Applications">
@@ -150,6 +146,13 @@ class Database(models.Model):
                                         <field name="password"/>
                                     </tree>
                                 </field>
+                            </page>
+                            <page string="Commands">
+                                <group>
+                                    <field name="command"/>
+                                    <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
+                                    <field name="output" readonly="1"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
