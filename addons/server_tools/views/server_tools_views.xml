@@ -1,12 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+    
+# Path: models\server_tools.py 
+
+from odoo import models, fields
+from paramiko import SSHClient, AutoAddPolicy
+
+
+class Server(models.Model):
+    _name = 'server_tools.server'
+    _description = 'Server'
+
+    name = fields.Char(
+        string='Name', required=True,
+    )
+    host = fields.Char(
+        string='Host', required=True,
+    )
+    port = fields.Integer(
+        string='Port', required=True,
+    )
+    user = fields.Char(
+        string='User', required=True,
+    )
+    password = fields.Char(
+        string='Password', required=True,
+    )
+    application_ids = fields.One2many(
+        string='Applications', comodel_name='server_tools.application',
+        inverse_name='server_id',
+    )
+
+    # Get SSH connection
+    def get_ssh(self):
+        ssh = SSHClient()
+        ssh.set_missing_host_key_policy(AutoAddPolicy())
+        ssh.connect(
+            hostname=self.host, port=self.port, username=self.user,
+            password=self.password,
+        )
+        return ssh
+
+    # Run command
+    def run_command(self, command):
+        ssh = self.get_ssh()
+        stdin, stdout, stderr = ssh.exec_command(command)
+        return stdout.read().decode()
+
+
+class Application(models.Model):
+    _name = 'server_tools.application'
+    _description = 'Application'
+
+    name = fields.Char(
+        string='Name', required=True,
+    )
+    server_id = fields.Many2one(
+        string='Server', comodel_name='server_tools.server',
+    )
+    user = fields.Char(
+        string='User', required=True,
+    )
+    password = fields.Char(
+        string='Password', required=True,
+    )
+
+# Path: views\server_tools_views.xml
+
+# Requirements:
+# - Single server screen:
+#   - List of applications
+#   - Button to add application
+#   - Button to remove application
+#   - Bigger server name field
+#   - Bigger server host field
+#   - One line per server property
+# - Application screen
+
+-->
+
 <odoo>
     <data>
-        <record id="action_server_tools_server" model="ir.actions.act_window">
+        <record id="server_tools_server_form_view" model="ir.ui.view">
+            <field name="name">server_tools.server.form.view</field>
+            <field name="model">server_tools.server</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="host"/>
+                            <field name="port"/>
+                            <field name="user"/>
+                            <field name="password"/>
+                        </group>
+                        <notebook>
+                            <page string="Applications">
+                                <field name="application_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="user"/>
+                                        <field name="password"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="server_tools_application_form_view" model="ir.ui.view">
+            <field name="name">server_tools.application.form.view</field>
+            <field name="model">server_tools.application</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="server_id"/>
+                            <field name="user"/>
+                            <field name="password"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="server_tools_server_tree_view" model="ir.ui.view">
+            <field name="name">server_tools.server.tree.view</field>
+            <field name="model">server_tools.server</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="host"/>
+                    <field name="port"/>
+                    <field name="user"/>
+                    <field name="password"/>
+                </tree>
+            </field>
+        </record>
+        <record id="server_tools_application_tree_view" model="ir.ui.view">
+            <field name="name">server_tools.application.tree.view</field>
+            <field name="model">server_tools.application</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="server_id"/>
+                    <field name="user"/>
+                    <field name="password"/>
+                </tree>
+            </field>
+        </record>
+        <record id="server_tools_server_action" model="ir.actions.act_window">
             <field name="name">Servers</field>
             <field name="res_model">server_tools.server</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem id="menu_server_tools" name="Server Tools" />
-        <menuitem id="menu_server_tools_server" name="Servers" parent="menu_server_tools" action="action_server_tools_server" />
+        <record id="server_tools_application_action" model="ir.actions.act_window">
+            <field name="name">Applications</field>
+            <field name="res_model">server_tools.application</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="server_tools_menu" name="Server Tools"/>
+        <menuitem id="server_tools_server_menu" name="Servers" parent="server_tools_menu" action="server_tools_server_action"/>
+        <menuitem id="server_tools_application_menu" name="Applications" parent="server_tools_menu" action="server_tools_application_action"/>
     </data>
 </odoo>

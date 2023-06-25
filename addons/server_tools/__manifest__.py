@@ -1,6 +1,6 @@
 {
     'name': 'Server Tools',
-    'version': '1.0.12',
+    'version': '1.0.13',
     'category': 'Tools',
     'summary': 'Tools for managing Odoo servers',
     'sequence': 8,
