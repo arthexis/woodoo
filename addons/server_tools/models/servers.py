@@ -45,7 +45,7 @@ class Server(models.Model):
     def get_ssh(self):
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        if self.pem_file:
+        if self.private_pem_file:
             private_pem_file_str = b64decode(self.private_pem_file).decode('utf-8')
             private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
             ssh.connect(
