@@ -19,13 +19,16 @@ class Server(models.Model):
         string='Host', required=True,
     )
     port = fields.Integer(
-        string='Port', required=True,
+        string='Port', required=True, default=22,
     )
     user = fields.Char(
-        string='User', required=True,
+        string='User', required=False,
     )
     password = fields.Char(
-        string='Password', required=True,
+        string='Password', required=False,
+    )
+    pem_key = fields.Text(
+        string='PEM Key', required=False,
     )
     application_ids = fields.One2many(
         string='Applications', comodel_name='server_tools.application',
@@ -36,10 +39,16 @@ class Server(models.Model):
     def get_ssh(self):
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        ssh.connect(
-            hostname=self.host, port=self.port, username=self.user,
-            password=self.password,
-        )
+        if self.pem_key:
+            ssh.connect(
+                hostname=self.host, port=self.port, username=self.user,
+                key_filename=self.pem_key,
+            )
+        else:
+            ssh.connect(
+                hostname=self.host, port=self.port, username=self.user,
+                password=self.password,
+            )
         return ssh
 
     # Run command
@@ -66,6 +75,37 @@ class Application(models.Model):
         string='Password', required=True,
     )
 
+
+class Database(models.Model):
+    _name = 'server_tools.database'
+    _description = 'Database'
+
+    name = fields.Char(
+        string='Name', required=True,
+    )
+    application_id = fields.Many2one(
+        string='Application', comodel_name='server_tools.application',
+    )
+    ip_address = fields.Char(
+        string='IP Address', required=True,
+    )
+    user = fields.Char(
+        string='User', required=True,
+    )
+    password = fields.Char(
+        string='Password', required=True,
+    )
+
+    # Run SQL query
+    def run_sql(self, query):
+        ssh = self.application_id.server_id.get_ssh()
+        command = 'psql -h %s -U %s -d %s -c "%s"' % (
+            self.ip_address, self.user, self.name, query,
+        )
+        stdin, stdout, stderr = ssh.exec_command(command)
+        return stdout.read().decode()
+
+    
 # Path: views\server_tools_views.xml
 
 # Requirements:
@@ -73,10 +113,11 @@ class Application(models.Model):
 #   - List of applications
 #   - Button to add application
 #   - Button to remove application
-#   - Bigger server name field
-#   - Bigger server host field
 #   - One line per server property
+#   - Field and button to run command
 # - Application screen
+# - Database screen
+# - Menu items
 
 -->
 
@@ -107,6 +148,11 @@ class Application(models.Model):
                             </page>
                         </notebook>
                     </sheet>
+                    <!-- Run command field and button -->
+                    <footer>
+                        <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
+                        <field name="command"/>
+                    </footer>
                 </form>
             </field>
         </record>
@@ -161,6 +207,7 @@ class Application(models.Model):
             <field name="res_model">server_tools.application</field>
             <field name="view_mode">tree,form</field>
         </record>
+
         <menuitem id="server_tools_menu" name="Server Tools"/>
         <menuitem id="server_tools_server_menu" name="Servers" parent="server_tools_menu" action="server_tools_server_action"/>
         <menuitem id="server_tools_application_menu" name="Applications" parent="server_tools_menu" action="server_tools_application_action"/>
