@@ -22,10 +22,10 @@ class Server(models.Model):
         string='Password', required=False,
     )
     # Store PEM key as file upload
-    pem_file = fields.Binary(
-        string='PEM File', attachment=True)
-    pem_file_name = fields.Char(
-        string='PEM File Name'
+    private_pem_file = fields.Binary(
+        string='Private PEM File', attachment=True)
+    private_pem_file_name = fields.Char(
+        string='Private PEM File Name'
     )
     application_ids = fields.One2many(
         string='Applications', comodel_name='server_tools.application',
@@ -46,13 +46,11 @@ class Server(models.Model):
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
         if self.pem_file:
-            pem_file = self.pem_file.decode()
-            pem_file_path = '/tmp/%s' % self.pem_file_name
-            with open(pem_file_path, 'w') as f:
-                f.write(pem_file)
+            private_pem_file_str = b64decode(self.private_pem_file).decode('utf-8')
+            private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
             ssh.connect(
                 hostname=self.host, port=self.port, username=self.user,
-                key_filename=pem_file_path,
+                pkey=private_key,
             )
         else:
             ssh.connect(
