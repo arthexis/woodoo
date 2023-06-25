@@ -45,10 +45,14 @@ class Server(models.Model):
     def get_ssh(self):
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        if self.pem_key:
+        if self.pem_file:
+            pem_file = self.pem_file.decode()
+            pem_file_path = '/tmp/%s' % self.pem_file_name
+            with open(pem_file_path, 'w') as f:
+                f.write(pem_file)
             ssh.connect(
                 hostname=self.host, port=self.port, username=self.user,
-                key_filename=self.pem_key.decode(),
+                key_filename=pem_file_path,
             )
         else:
             ssh.connect(
