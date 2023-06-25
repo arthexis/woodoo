@@ -133,11 +133,13 @@ class Database(models.Model):
                         <group>    
                             <field name="host"/>
                             <field name="port"/>
-                            <field name="user"/>
-                            <field name="password"/>
-                            <field name="pem_file" widget="binary" filename="pem_file_name"/>
                         </group>
                         <notebook>
+                            <page string="Credentials">
+                                <field name="user"/>
+                                <field name="password"/>
+                                <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
+                            </page>
                             <page string="Applications">
                                 <field name="application_ids">
                                     <tree>
