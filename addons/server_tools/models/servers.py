@@ -21,7 +21,8 @@ class Server(models.Model):
     password = fields.Char(
         string='Password', required=False,
     )
-    pem_key = fields.Text(
+    # Store PEM key as file upload
+    pem_key = fields.Binary(
         string='PEM Key', required=False,
     )
     application_ids = fields.One2many(
@@ -41,7 +42,7 @@ class Server(models.Model):
         if self.pem_key:
             ssh.connect(
                 hostname=self.host, port=self.port, username=self.user,
-                key_filename=self.pem_key,
+                key_filename=self.pem_key.decode(),
             )
         else:
             ssh.connect(
