@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_server_tools_server,access_server_tools_server,model_server_tools_server,base.group_user,1,1,1,1
-access_server_tools_database,access_server_tools_database,model_server_tools_database,base.group_user,1,1,1,1
-access_server_tools_application,access_server_tools_application,model_server_tools_application,base.group_user,1,1,1,1
+access_datacenter_server,access_datacenter_server,model_datacenter_server,base.group_user,1,1,1,1
+access_datacenter_database,access_datacenter_database,model_datacenter_database,base.group_user,1,1,1,1
+access_datacenter_application,access_datacenter_application,model_datacenter_application,base.group_user,1,1,1,1
