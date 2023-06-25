@@ -1,6 +1,6 @@
 from odoo import models, fields
-from base64 import b64decode
-from paramiko import SSHClient, AutoAddPolicy
+from base64 import b64decod
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 
 class Server(models.Model):
