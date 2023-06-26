@@ -2,3 +2,5 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_datacenter_server,access_datacenter_server,model_datacenter_server,base.group_user,1,1,1,1
 access_datacenter_database,access_datacenter_database,model_datacenter_database,base.group_user,1,1,1,1
 access_datacenter_application,access_datacenter_application,model_datacenter_application,base.group_user,1,1,1,1
+access_datacenter_command,access_datacenter_command,model_datacenter_command,base.group_user,1,1,1,1
+access_datacenter_command_execution,access_datacenter_command_execution,model_datacenter_command_execution,base.group_user,1,1,1,1
