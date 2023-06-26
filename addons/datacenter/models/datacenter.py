@@ -19,28 +19,36 @@ class Server(models.Model):
     port = fields.Integer(
         string='Port', required=True, default=22,
     )
+
+    # SSH credentials
     user = fields.Char(
         string='User', required=False,
     )
     password = fields.Char(
         string='Password', required=False,
     )
-    # Store PEM key as file upload
     private_pem_file = fields.Binary(
         string='Private PEM File', attachment=True)
     private_pem_file_name = fields.Char(
         string='Private PEM File Name'
     )
+
+    # Applications
     application_ids = fields.One2many(
         string='Applications', comodel_name='datacenter.application',
         inverse_name='server_id',
     )
 
-    # Server command ids
-    server_command_ids = fields.One2many(
-        string='Server Commands', comodel_name='datacenter.server_command',
-        inverse_name='object_id',
+    # Behaviors
+    server_model = fields.Selection(
+        string='Server Model', selection='_get_server_model_selection',
     )
+
+    # Get server model selection
+    def _get_server_model_selection(self):
+        return [
+            ('lightsail', 'Lightsail'),
+        ]
 
     # Get SSH connection
     def get_ssh(self):
@@ -62,13 +70,8 @@ class Server(models.Model):
 
     # Run command
     def run_command(self, command=None):
-        if not command:
-            command = self.command
         ssh = self.get_ssh()
         stdin, stdout, stderr = ssh.exec_command(command)
-        # Store command output
-        self.output = stdout.read().decode()
-        self.errors = stderr.read().decode()
         return self.output
 
 
@@ -92,11 +95,17 @@ class Application(models.Model):
         string='App Port', required=False, default=80,
     )
 
-    # Application commands ids
-    application_command_ids = fields.One2many(
-        string='Application Commands', comodel_name='datacenter.application_command',
-        inverse_name='object_id',
+    # Behaviors
+    app_model = fields.Selection(
+        string='App Model', selection='_get_app_model_selection',
     )
+
+    # Get application model selection
+    def _get_app_model_selection(self):
+        return [
+            ('odoo', 'Odoo'),
+            ('wordpress', 'Wordpress')
+        ]
 
 
 class Database(models.Model):
@@ -122,11 +131,16 @@ class Database(models.Model):
         string='Password', required=True,
     )
 
-    # Database command ids
-    database_command_ids = fields.One2many(
-        string='Database Commands', comodel_name='datacenter.database_command',
-        inverse_name='object_id',
+    # Database model
+    db_model = fields.Selection(
+        string='DB Model', selection='_get_db_model_selection',
     )
+
+    # Get database model selection
+    def _get_db_model_selection(self):
+        return [
+            ('postgresql', 'PostgreSQL'),
+        ]
 
     # Run SQL query
     def run_sql(self, query=None):
@@ -161,9 +175,6 @@ class Command(models.Model):
         string='Command Executions', comodel_name='datacenter.command_execution',
         inverse_name='command_id',
     )
-    object_id = fields.Reference(
-        string='Object', selection='_get_object_selection',
-    )
 
     def _get_object_selection(self):
         return [
@@ -173,6 +184,8 @@ class Command(models.Model):
         ]
 
     def execute(self, obj, **kwargs):
+        if not obj:
+            return 'Object not found'
         # Create command execution
         command_text = self.command_text if not kwargs else self.command_text % kwargs
         command_execution = self.env['datacenter.command_execution'].create({
@@ -218,9 +231,6 @@ class CommandExecution(models.Model):
     )
     output = fields.Text(
         string='Output', required=False,
-    )
-    errors = fields.Text(
-        string='Errors', required=False,
     )
 
     # Get object selection
