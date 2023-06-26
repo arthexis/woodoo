@@ -40,7 +40,7 @@ class Server(models.Model):
     server_command_ids = fields.One2many(
         string='Server Commands', comodel_name='datacenter.server_command',
         inverse_name='object_id',
-    ) 
+    )
 
     # Get SSH connection
     def get_ssh(self):
