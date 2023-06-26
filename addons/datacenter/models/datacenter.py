@@ -284,7 +284,7 @@ class DatabaseCommand(models.Model):
         return Database._get_db_model_selection(self)
 
 class ApplicationCommand(models.Model):
-    _name = 'datacenter.application_command'
+    _name = 'datacenter.app_command'
     _description = 'Application Command'
     _inherit = 'datacenter.command'
 
