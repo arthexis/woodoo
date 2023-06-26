@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 
-    from odoo import models, fields
+from odoo import models, fields
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
@@ -96,6 +96,9 @@ class Application(models.Model):
     password = fields.Char(
         string='Password', required=True,
     )
+    app_port = fields.Integer(
+        string='App Port', required=False, default=80,
+    )
 
 
 class Database(models.Model):
@@ -110,6 +113,9 @@ class Database(models.Model):
     )
     ip_address = fields.Char(
         string='IP Address', required=True,
+    )
+    db_port = fields.Integer(
+        string='DB Port', required=False, default=5432,
     )
     user = fields.Char(
         string='User', required=True,
@@ -148,7 +154,9 @@ class Database(models.Model):
                 <form>
                     <sheet>
                         <group>    
-                            <field name="name"/>
+                            <field name="name" position="attributes">
+                                <attribute name="class">woodoo-large-field</attribute>
+                            </field>
                             <field name="host"/>
                             <field name="port"/>
                         </group>
@@ -188,10 +196,13 @@ class Database(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name"/>
+                            <field name="name" position="attributes">
+                                <attribute name="class">woodoo-large-field</attribute>
+                            </field>
                             <field name="server_id"/>
                             <field name="user"/>
                             <field name="password" widget="password"/>
+                            <field name="app_port"/>
                         </group>
                     </sheet>
                 </form>
@@ -217,6 +228,7 @@ class Database(models.Model):
                     <field name="name"/>
                     <field name="server_id"/>
                     <field name="user"/>
+                    <field name="app_port"/>
                 </tree>
             </field>
         </record>
@@ -240,11 +252,14 @@ class Database(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name"/>
+                            <field name="name" position="attributes">
+                                <attribute name="class">woodoo-large-field</attribute>
+                            </field>
                             <field name="application_id"/>
                             <field name="ip_address"/>
                             <field name="user"/>
                             <field name="password" widget="password"/>
+                            <field name="db_port"/>
                         </group>
                         <notebook>
                             <page string="SQL">
@@ -268,6 +283,7 @@ class Database(models.Model):
                     <field name="application_id"/>
                     <field name="ip_address"/>
                     <field name="user"/>
+                    <field name="db_port"/>
                 </tree>
             </field>
         </record>
@@ -280,8 +296,10 @@ class Database(models.Model):
 
         <!-- Menu -->
 
-        <menuitem id="datacenter_menu" name="Server Tools"/>
+        <menuitem id="datacenter_menu" name="Datacenter"/>
         <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu" action="datacenter_server_action"/>
         <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
+        <menuitem id="datacenter_database_menu" name="Databases" parent="datacenter_menu" action="datacenter_database_action"/>
+        
     </data>
 </odoo>

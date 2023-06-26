@@ -94,6 +94,9 @@ class Application(models.Model):
     password = fields.Char(
         string='Password', required=True,
     )
+    app_port = fields.Integer(
+        string='App Port', required=False, default=80,
+    )
 
 
 class Database(models.Model):
@@ -108,6 +111,9 @@ class Database(models.Model):
     )
     ip_address = fields.Char(
         string='IP Address', required=True,
+    )
+    db_port = fields.Integer(
+        string='DB Port', required=False, default=5432,
     )
     user = fields.Char(
         string='User', required=True,

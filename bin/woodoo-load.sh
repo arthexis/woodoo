@@ -20,3 +20,5 @@ cp -r addons/* ../../"${SITE}"/addons/
 
 # Restart the service
 sudo systemctl restart "${SITE}"
+
+# TODO: Copy binary files

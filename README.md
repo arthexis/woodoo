@@ -3,12 +3,15 @@ Magical Odoo Addons
 
 This repository contains the source code for various Odoo addons.
 
-Server Tools
+Datacenter
 ---------------------------
 
-This module contains various tools for Odoo server administration.
+Tools for enterprise datacenter administration.
 
-You can create Server Actions to execute Python, SQL or Shell code.
+- Models for:
+  - Server
+  - Application
+  - Database
 
 Addon Maker
 ---------------------------
@@ -20,8 +23,8 @@ WooCommerce Satellite
 
 Each WooCommerce store is a satellite. This module allows you to connect multiple WooCommerce stores to a single Odoo instance.
 
-* When products are sold on WooCommerce, a Sales Order is created in Odoo.
-* When products are sold or updated in Odoo, the stock is updated in WooCommerce.
+- When products are sold on WooCommerce, a Sales Order is created in Odoo.
+- When products are sold or updated in Odoo, the stock is updated in WooCommerce.
 
 Changes in WooCommerce do not affect Odoo and will be overwritten during synchronization, Odoo is the source of truth for the stock.
 

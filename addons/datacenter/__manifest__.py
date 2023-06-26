@@ -16,6 +16,7 @@
         # XML, CSV, and YML files, etc. that you want to include
         'views/datacenter_views.xml',
         'security/ir.model.access.csv',
+        "assets.xml",
     ],
     'demo': [],
     'installable': True,
@@ -26,14 +27,10 @@ Datacenter
 =================
 Tools for enterprise datacenter administration.
 
-- Server
-- Application
-- Process
-- Backup
-- Restore
-- Update
-- Upgrade
-- Reboot
+- Models for:
+    - Server
+    - Application
+    - Database
 
 """,
 }
