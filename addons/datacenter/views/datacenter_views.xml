@@ -122,7 +122,7 @@
 
         <!-- Application -->
 
-        <record id="datacenter_application_form_view" model="ir.ui.view">
+        <record id="datacenter_app_form_view" model="ir.ui.view">
             <field name="name">datacenter.application.form.view</field>
             <field name="model">datacenter.application</field>
             <field name="arch" type="xml">
@@ -141,7 +141,7 @@
             </field>
         </record>
 
-        <record id="datacenter_application_tree_view" model="ir.ui.view">
+        <record id="datacenter_app_tree_view" model="ir.ui.view">
             <field name="name">datacenter.application.tree.view</field>
             <field name="model">datacenter.application</field>
             <field name="arch" type="xml">
@@ -154,12 +154,14 @@
                 </tree>
             </field>
         </record>
+
         <record id="datacenter_server_action" model="ir.actions.act_window">
             <field name="name">Servers</field>
             <field name="res_model">datacenter.server</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <record id="datacenter_application_action" model="ir.actions.act_window">
+
+        <record id="datacenter_app_action" model="ir.actions.act_window">
             <field name="name">Applications</field>
             <field name="res_model">datacenter.application</field>
             <field name="view_mode">tree,form</field>
@@ -241,7 +243,7 @@
 
         <!-- Database -->
 
-        <record id="datacenter_database_form_view" model="ir.ui.view">
+        <record id="datacenter_db_form_view" model="ir.ui.view">
             <field name="name">datacenter.database.form.view</field>
             <field name="model">datacenter.database</field>
             <field name="arch" type="xml">
@@ -267,7 +269,7 @@
             </field>
         </record>
 
-        <record id="datacenter_database_tree_view" model="ir.ui.view">
+        <record id="datacenter_db_tree_view" model="ir.ui.view">
             <field name="name">datacenter.database.tree.view</field>
             <field name="model">datacenter.database</field>
             <field name="arch" type="xml">
@@ -282,7 +284,7 @@
             </field>
         </record>
 
-        <record id="datacenter_database_action" model="ir.actions.act_window">
+        <record id="datacenter_db_action" model="ir.actions.act_window">
             <field name="name">Databases</field>
             <field name="res_model">datacenter.database</field>
             <field name="view_mode">tree,form</field>
@@ -387,9 +389,9 @@
 
         <!-- Application Command -->
 
-        <record id="datacenter_application_command_form_view" model="ir.ui.view">
-            <field name="name">datacenter.application_command.form.view</field>
-            <field name="model">datacenter.application_command</field>
+        <record id="datacenter_app_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.app_command.form.view</field>
+            <field name="model">datacenter.app_command</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -403,9 +405,9 @@
             </field>
         </record>
 
-        <record id="datacenter_application_command_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.application_command.tree.view</field>
-            <field name="model">datacenter.application_command</field>
+        <record id="datacenter_app_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.app_command.tree.view</field>
+            <field name="model">datacenter.app_command</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
@@ -417,9 +419,9 @@
 
         <!-- Database Command -->
 
-        <record id="datacenter_database_command_form_view" model="ir.ui.view">
-            <field name="name">datacenter.database_command.form.view</field>
-            <field name="model">datacenter.database_command</field>
+        <record id="datacenter_db_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.db_command.form.view</field>
+            <field name="model">datacenter.db_command</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -433,9 +435,9 @@
             </field>
         </record>
 
-        <record id="datacenter_database_command_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.database_command.tree.view</field>
-            <field name="model">datacenter.database_command</field>
+        <record id="datacenter_db_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.db_command.tree.view</field>
+            <field name="model">datacenter.db_command</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
@@ -453,15 +455,15 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <record id="datacenter_application_command_action" model="ir.actions.act_window">
+        <record id="datacenter_app_command_action" model="ir.actions.act_window">
             <field name="name">Application Commands</field>
-            <field name="res_model">datacenter.application_command</field>
+            <field name="res_model">datacenter.app_command</field>
             <field name="view_mode">tree,form</field>
         </record>
 
-        <record id="datacenter_database_command_action" model="ir.actions.act_window">
+        <record id="datacenter_db_command_action" model="ir.actions.act_window">
             <field name="name">Database Commands</field>
-            <field name="res_model">datacenter.database_command</field>
+            <field name="res_model">datacenter.db_command</field>
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -476,15 +478,15 @@
         <menuitem id="datacenter_server_catalog_menu" name="Server Catalog" parent="datacenter_server_menu" action="datacenter_server_action"/>
         <menuitem id="datacenter_server_command_menu" name="Server Commands" parent="datacenter_server_menu" action="datacenter_server_command_action"/>
         
-        <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu"/>
-        <menuitem id="datacenter_app_model_menu" name="App Models" parent="datacenter_application_menu" action="datacenter_app_model_action"/>
-        <menuitem id="datacenter_app_catalog_menu" name="App Catalog" parent="datacenter_application_menu" action="datacenter_application_action"/>
-        <menuitem id="datacenter_app_command_menu" name="App Commands" parent="datacenter_application_menu" action="datacenter_application_command_action"/>
+        <menuitem id="datacenter_app_menu" name="Applications" parent="datacenter_menu"/>
+        <menuitem id="datacenter_app_model_menu" name="App Models" parent="datacenter_app_menu" action="datacenter_app_model_action"/>
+        <menuitem id="datacenter_app_catalog_menu" name="App Catalog" parent="datacenter_app_menu" action="datacenter_app_action"/>
+        <menuitem id="datacenter_app_command_menu" name="App Commands" parent="datacenter_app_menu" action="datacenter_app_command_action"/>
         
-        <menuitem id="datacenter_database_menu" name="Databases" parent="datacenter_menu"/>
-        <menuitem id="datacenter_db_model_menu" name="DB Models" parent="datacenter_database_menu" action="datacenter_db_model_action"/>
-        <menuitem id="datacenter_db_catalog_menu" name="DB Catalog" parent="datacenter_database_menu" action="datacenter_database_action"/>
-        <menuitem id="datacenter_db_command_menu" name="DB Commands" parent="datacenter_database_menu" action="datacenter_database_command_action"/>
+        <menuitem id="datacenter_db_menu" name="Databases" parent="datacenter_menu"/>
+        <menuitem id="datacenter_db_model_menu" name="DB Models" parent="datacenter_db_menu" action="datacenter_db_model_action"/>
+        <menuitem id="datacenter_db_catalog_menu" name="DB Catalog" parent="datacenter_db_menu" action="datacenter_db_action"/>
+        <menuitem id="datacenter_db_command_menu" name="DB Commands" parent="datacenter_db_menu" action="datacenter_db_command_action"/>
 
 
     </data>
