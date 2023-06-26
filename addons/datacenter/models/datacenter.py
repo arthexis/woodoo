@@ -36,18 +36,6 @@ class Server(models.Model):
         inverse_name='server_id',
     )
 
-    # This field is used to store the last command executed on the server
-    command = fields.Char(
-        string='Command', required=False,
-    )
-    # Store command output as Text
-    output = fields.Text(
-        string='Output', required=False,
-    )
-    errors = fields.Text(
-        string='Errors', required=False,
-    )
-
     # Server command ids
     server_command_ids = fields.One2many(
         string='Server Commands', comodel_name='datacenter.server_command',
@@ -134,11 +122,6 @@ class Database(models.Model):
         string='Password', required=True,
     )
 
-    # This field is used to store the last SQL query executed on the database
-    sql = fields.Text(
-        string='SQL', required=False,
-    )
-
     # Database command ids
     database_command_ids = fields.One2many(
         string='Database Commands', comodel_name='datacenter.database_command',
@@ -158,10 +141,12 @@ class Database(models.Model):
 
 
 # Command execution models
+# Command is abstract, so it is not created as a table in the database
 
 class Command(models.Model):
     _name = 'datacenter.command'
     _description = 'Command'
+    _abstract = True
 
     name = fields.Char(
         string='Name', required=True,
@@ -176,7 +161,6 @@ class Command(models.Model):
         string='Command Executions', comodel_name='datacenter.command_execution',
         inverse_name='command_id',
     )
-
     object_id = fields.Reference(
         string='Object', selection='_get_object_selection',
     )
@@ -241,16 +225,15 @@ class CommandExecution(models.Model):
         ]
 
     # Execute command
-    def execute(self):
+    def execute(self, **kwargs):
+        if kwargs:
+            self.command_text = self.command_text % kwargs
         # Execute command on object. Choose the method depending on the object type
         if self.object_id._name == 'datacenter.server':
-            # run_command() method is defined in the Server model
             self.output = self.object_id.run_command(self.command_id.name)
         elif self.object_id._name == 'datacenter.application':
-            # run_command() method is defined in the Server model
             self.output = self.object_id.server_id.run_command(self.command_id.name)
         elif self.object_id._name == 'datacenter.database':
-            # run_sql() method is defined in the Database model
             self.output = self.object_id.run_sql(self.command_id.name)
         else:
             self.output = 'Object type not supported'
