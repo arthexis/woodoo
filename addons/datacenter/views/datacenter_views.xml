@@ -434,6 +434,20 @@ class CommandExecution(models.Model):
             <field name="view_mode">tree,form</field>
         </record>
 
+        <!-- Server model Tree View -->
+
+        <record id="datacenter_server_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.server_command.tree.view</field>
+            <field name="model">datacenter.server_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="command_text"/>
+                </tree>
+            </field>
+        </record>
+
         <!-- Example Model: Ubuntu Server -->
 
         <record id="datacenter_ubuntu_server_model" model="datacenter.server_model">
@@ -533,6 +547,20 @@ class CommandExecution(models.Model):
             <field name="name">App Models</field>
             <field name="res_model">datacenter.app_model</field>
             <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Application model Tree View -->
+
+        <record id="datacenter_app_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.app_command.tree.view</field>
+            <field name="model">datacenter.app_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="command_text"/>
+                </tree>
+            </field>
         </record>
 
         <!-- Example Model: Odoo App -->
@@ -640,6 +668,20 @@ class CommandExecution(models.Model):
             <field name="name">DB Models</field>
             <field name="res_model">datacenter.db_model</field>
             <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Database model Tree View -->
+
+        <record id="datacenter_db_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.db_command.tree.view</field>
+            <field name="model">datacenter.db_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="command_text"/>
+                </tree>
+            </field>
         </record>
 
         <!-- Example Model: PostgreSQL DB -->
