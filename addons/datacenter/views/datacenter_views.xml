@@ -275,14 +275,6 @@ class CommandExecution(models.Model):
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Console">
-                                <group>
-                                    <field name="command"/>
-                                    <field name="output" readonly="1"/>
-                                    <field name="errors" readonly="1"/>
-                                    <button name="run_command" string="Run Command" type="object" class="oe_highlight"/>
-                                </group>
-                            </page>
                             <page string="Server Commands">
                                 <field name="server_command_ids">
                                     <tree>
@@ -367,13 +359,6 @@ class CommandExecution(models.Model):
                                 <group>
                                     <field name="user"/>
                                     <field name="password" widget="password"/>
-                                </group>
-                            </page>
-                            <page string="Console">
-                                <group>
-                                    <field name="sql"/>
-                                    <field name="output" readonly="1"/>
-                                    <button name="run_sql" string="Run SQL" type="object" class="oe_highlight"/>
                                 </group>
                             </page>
                             <page string="Database Commands">
