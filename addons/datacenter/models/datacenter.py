@@ -165,6 +165,13 @@ class Command(models.Model):
         string='Object', selection='_get_object_selection',
     )
 
+    def _get_object_selection(self):
+        return [
+            (model.model, model.name) for model in self.env['ir.model'].search([
+                ('model', 'in', ['datacenter.server', 'datacenter.application', 'datacenter.database']),
+            ])
+        ]
+
     def execute(self, obj, **kwargs):
         # Create command execution
         command_text = self.command_text if not kwargs else self.command_text % kwargs
