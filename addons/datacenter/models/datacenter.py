@@ -202,7 +202,7 @@ class Database(models.Model):
     )
 
     # Database model (FK to DBModel)
-    db_model = fields.Many2one(
+    db_model_id = fields.Many2one(
         string='DB Model', comodel_name='datacenter.db_model',
     )
 

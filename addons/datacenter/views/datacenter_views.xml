@@ -348,7 +348,7 @@ class CommandExecution(models.Model):
                     <sheet>
                         <group>    
                             <field name="name" class="woodoo-large-field"/>
-                            <field name="server_model"/>
+                            <field name="server_model_id"/>
                             <field name="host"/>
                             <field name="port"/>
                         </group>
@@ -364,7 +364,7 @@ class CommandExecution(models.Model):
                                 <field name="application_ids">
                                     <tree>
                                         <field name="name"/>
-                                        <field name="app_model"/>
+                                        <field name="app_model_id"/>
                                         <field name="user"/>
                                     </tree>
                                 </field>
@@ -381,7 +381,7 @@ class CommandExecution(models.Model):
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="server_model"/>
+                    <field name="server_model_id"/>
                     <field name="host"/>
                     <field name="port"/>
                     <field name="user"/>
@@ -444,7 +444,7 @@ class CommandExecution(models.Model):
                     <sheet>
                         <group>
                             <field name="name" class="woodoo-large-field"/>
-                            <field name="app_model"/>
+                            <field name="app_model_id"/>
                             <field name="server_id"/>
                             <field name="user"/>
                             <field name="password" widget="password"/>
@@ -461,7 +461,7 @@ class CommandExecution(models.Model):
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="app_model"/>
+                    <field name="app_model_id"/>
                     <field name="server_id"/>
                     <field name="user"/>
                     <field name="app_port"/>
@@ -541,7 +541,7 @@ class CommandExecution(models.Model):
                     <sheet>
                         <group>
                             <field name="name" class="woodoo-large-field"/>
-                            <field name="db_model"/>
+                            <field name="db_model_id"/>
                             <field name="application_id"/>
                             <field name="ip_address"/>
                             <field name="db_port"/>
@@ -565,7 +565,7 @@ class CommandExecution(models.Model):
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="db_model"/>
+                    <field name="db_model_id"/>
                     <field name="application_id"/>
                     <field name="ip_address"/>
                     <field name="user"/>
