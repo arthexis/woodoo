@@ -280,9 +280,7 @@ class CommandExecution(models.Model):
                 <form>
                     <sheet>
                         <group>    
-                            <field name="name" position="attributes">
-                                <attribute name="class">woodoo-large-field</attribute>
-                            </field>
+                            <field name="name" class="woodoo-large-field"/>
                             <field name="host"/>
                             <field name="port"/>
                         </group>
@@ -322,9 +320,7 @@ class CommandExecution(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" position="attributes">
-                                <attribute name="class">woodoo-large-field</attribute>
-                            </field>
+                            <field name="name" class="woodoo-large-field"/>
                             <field name="server_id"/>
                             <field name="user"/>
                             <field name="password" widget="password"/>
@@ -378,9 +374,7 @@ class CommandExecution(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" position="attributes">
-                                <attribute name="class">woodoo-large-field</attribute>
-                            </field>
+                            <field name="name" class="woodoo-large-field"/>
                             <field name="application_id"/>
                             <field name="ip_address"/>
                             <field name="user"/>
@@ -431,9 +425,7 @@ class CommandExecution(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" position="attributes">
-                                <attribute name="class">woodoo-large-field</attribute>
-                            </field>
+                            <field name="name" class="woodoo-large-field"/>
                             <field name="description"/>
                         </group>
                         <notebook>
@@ -459,9 +451,7 @@ class CommandExecution(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" position="attributes">
-                                <attribute name="class">woodoo-large-field</attribute>
-                            </field>
+                            <field name="name" class="woodoo-large-field"/>
                             <field name="description"/>
                         </group>
                         <notebook>
@@ -487,9 +477,7 @@ class CommandExecution(models.Model):
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" position="attributes">
-                                <attribute name="class">woodoo-large-field</attribute>
-                            </field>
+                            <field name="name" class="woodoo-large-field"/>
                             <field name="description"/>
                         </group>
                         <notebook>
