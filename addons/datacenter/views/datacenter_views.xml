@@ -420,7 +420,7 @@ class CommandExecution(models.Model):
             <field name="view_mode">tree,form</field>
         </record>
 
-        <!-- Command execution -->
+        <!-- Commands -->
 
         <record id="datacenter_command_form_view" model="ir.ui.view">
             <field name="name">datacenter.command.form.view</field>
@@ -449,6 +449,24 @@ class CommandExecution(models.Model):
                 </form>
             </field>
         </record>
+
+        <record id="datacenter_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.command.tree.view</field>
+            <field name="model">datacenter.command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="datacenter_command_action" model="ir.actions.act_window">
+            <field name="name">Commands</field>
+            <field name="res_model">datacenter.command</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
 
         <!-- Menu -->
 
