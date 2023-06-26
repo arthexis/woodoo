@@ -1,6 +1,6 @@
 {
     'name': 'Datacenter',
-    'version': '1.1.5',
+    'version': '1.1.6',
     'category': 'Tools',
     'summary': 'Tools for managing the Enterprise Datacenter',
     'sequence': 8,
@@ -33,9 +33,10 @@ Datacenter
 Tools for enterprise datacenter administration.
 
 - Models for:
-    - Server
-    - Application
-    - Database
+    - Servers
+    - Applications
+    - Databases
+    - Commands
 
 """,
 }
