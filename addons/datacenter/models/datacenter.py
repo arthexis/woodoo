@@ -138,4 +138,129 @@ class Database(models.Model):
         stdin, stdout, stderr = ssh.exec_command(command)
         return stdout.read().decode()
 
+
+# Command execution models
+
+class Command(models.Model):
+    _name = 'datacenter.command'
+    _description = 'Command'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char(
+        string='Name', required=True,
+    )
+    description = fields.Text(
+        string='Description', required=False,
+    )
+    command_execution_ids = fields.One2many(
+        string='Command Executions', comodel_name='datacenter.command_execution',
+        inverse_name='command_id',
+    )
+
+    # Execute command on a single object
+    def execute_on_object(self, obj):
+        # Create command execution
+        command_execution = self.env['datacenter.command_execution'].create({
+            'command_id': self.id,
+            'object_id': obj.id,
+        })
+        # Execute command
+        command_execution.execute()
+        return command_execution
+
+    # Execute command on a list of objects
+    def execute_on_objects(self, objects):
+        # Create command executions
+        command_executions = self.env['datacenter.command_execution'].create([{
+            'command_id': self.id,
+            'object_id': obj.id,
+        } for obj in objects])
+        # Execute commands
+        for command_execution in command_executions:
+            command_execution.execute()
+        return command_executions
+
+
+class ServerCommand(models.Model):
+    _name = 'datacenter.server_command'
+    _description = 'Server Command'
+    _inherit = 'datacenter.command'
+
+    # Execute command on a single server with SSH
+    def execute_on_server(self, server):
+        return self.execute_on_object(server)
+
+    # Execute command on a list of servers
+    def execute_on_servers(self, servers):
+        return self.execute_on_objects(servers)
+
+
+class DatabaseCommand(models.Model):
+    _name = 'datacenter.database_command'
+    _description = 'Database Command'
+    _inherit = 'datacenter.command'
+
+    # Execute command on a single database
+    def execute_on_database(self, database):
+        return self.execute_on_object(database)
+
+    # Execute command on a list of databases
+    def execute_on_databases(self, databases):
+        return self.execute_on_objects(databases)
     
+
+class ApplicationCommand(models.Model):
+    _name = 'datacenter.application_command'
+    _description = 'Application Command'
+    _inherit = 'datacenter.command'
+
+    # Execute command on a single application
+    def execute_on_application(self, application):
+        return self.execute_on_object(application)
+
+    # Execute command on a list of applications
+    def execute_on_applications(self, applications):
+        return self.execute_on_objects(applications)
+
+
+class CommandExecution(models.Model):
+    _name = 'datacenter.command_execution'
+    _description = 'Command Execution'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    command_id = fields.Many2one(
+        string='Command', comodel_name='datacenter.command',
+    )
+    object_id = fields.Reference(
+        string='Object', selection='_get_object_selection',
+    )
+    output = fields.Text(
+        string='Output', required=False,
+    )
+    errors = fields.Text(
+        string='Errors', required=False,
+    )
+
+    # Get object selection
+    def _get_object_selection(self):
+        return [
+            (model.model, model.name) for model in self.env['ir.model'].search([
+                ('model', 'in', ['datacenter.server', 'datacenter.application', 'datacenter.database']),
+            ])
+        ]
+
+    # Execute command
+    def execute(self):
+        # Execute command on object. Choose the method depending on the object type
+        if self.object_id._name == 'datacenter.server':
+            # run_command() method is defined in the Server model
+            self.output = self.object_id.run_command(self.command_id.name)
+        elif self.object_id._name == 'datacenter.application':
+            # run_command() method is defined in the Server model
+            self.output = self.object_id.server_id.run_command(self.command_id.name)
+        elif self.object_id._name == 'datacenter.database':
+            # run_sql() method is defined in the Database model
+            self.output = self.object_id.run_sql(self.command_id.name)
+        else:
+            self.output = 'Object type not supported'
+        return self.output
