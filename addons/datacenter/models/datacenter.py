@@ -27,7 +27,7 @@ class ServerModel(models.Model):
 
     server_ids = fields.One2many(
         string='Servers', comodel_name='datacenter.server',
-        inverse_name='server_model',
+        inverse_name='server_model_id',
     )
     
 
@@ -108,7 +108,7 @@ class AppModel(models.Model):
     
     app_ids = fields.One2many(
         string='Apps', comodel_name='datacenter.application',
-        inverse_name='app_model',
+        inverse_name='app_model_id',
     )
 
     # App Source
@@ -168,7 +168,7 @@ class DBModel(models.Model):
     
     db_ids = fields.One2many(
         string='DBs', comodel_name='datacenter.database',
-        inverse_name='db_model',
+        inverse_name='db_model_id',
     )
 
 
