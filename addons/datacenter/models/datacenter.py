@@ -48,6 +48,12 @@ class Server(models.Model):
         string='Errors', required=False,
     )
 
+    # Server command ids
+    server_command_ids = fields.One2many(
+        string='Server Commands', comodel_name='datacenter.server_command',
+        inverse_name='object_id',
+    ) 
+
     # Get SSH connection
     def get_ssh(self):
         ssh = SSHClient()
@@ -98,6 +104,12 @@ class Application(models.Model):
         string='App Port', required=False, default=80,
     )
 
+    # Application commands ids
+    application_command_ids = fields.One2many(
+        string='Application Commands', comodel_name='datacenter.application_command',
+        inverse_name='object_id',
+    )
+
 
 class Database(models.Model):
     _name = 'datacenter.database'
@@ -125,6 +137,12 @@ class Database(models.Model):
     # This field is used to store the last SQL query executed on the database
     sql = fields.Text(
         string='SQL', required=False,
+    )
+
+    # Database command ids
+    database_command_ids = fields.One2many(
+        string='Database Commands', comodel_name='datacenter.database_command',
+        inverse_name='object_id',
     )
 
     # Run SQL query
