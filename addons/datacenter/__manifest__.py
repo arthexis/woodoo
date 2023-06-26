@@ -1,6 +1,6 @@
 {
     'name': 'Datacenter',
-    'version': '1.1.2',
+    'version': '1.1.3',
     'category': 'Tools',
     'summary': 'Tools for managing the Enterprise Datacenter',
     'sequence': 8,
@@ -16,8 +16,13 @@
         # XML, CSV, and YML files, etc. that you want to include
         'views/datacenter_views.xml',
         'security/ir.model.access.csv',
-        "assets.xml",
     ],
+    'assets': {
+        'web.assets_backend': [
+            'datacenter/static/css/datacenter.css',
+            #'datacenter/static/src/js/datacenter.js',
+        ],
+    },
     'demo': [],
     'installable': True,
     'application': True,
