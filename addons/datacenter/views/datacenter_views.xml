@@ -474,18 +474,18 @@
         <menuitem id="datacenter_menu" name="Datacenter"/>
         
         <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu"/>
-        <menuitem id="datacenter_server_model_menu" name="Server Models" parent="datacenter_server_menu" action="datacenter_server_model_action"/>
         <menuitem id="datacenter_server_catalog_menu" name="Server Catalog" parent="datacenter_server_menu" action="datacenter_server_action"/>
+        <menuitem id="datacenter_server_model_menu" name="Server Models" parent="datacenter_server_menu" action="datacenter_server_model_action"/>
         <menuitem id="datacenter_server_command_menu" name="Server Commands" parent="datacenter_server_menu" action="datacenter_server_command_action"/>
         
         <menuitem id="datacenter_app_menu" name="Applications" parent="datacenter_menu"/>
-        <menuitem id="datacenter_app_model_menu" name="App Models" parent="datacenter_app_menu" action="datacenter_app_model_action"/>
         <menuitem id="datacenter_app_catalog_menu" name="App Catalog" parent="datacenter_app_menu" action="datacenter_app_action"/>
+        <menuitem id="datacenter_app_model_menu" name="App Models" parent="datacenter_app_menu" action="datacenter_app_model_action"/>
         <menuitem id="datacenter_app_command_menu" name="App Commands" parent="datacenter_app_menu" action="datacenter_app_command_action"/>
         
         <menuitem id="datacenter_db_menu" name="Databases" parent="datacenter_menu"/>
-        <menuitem id="datacenter_db_model_menu" name="DB Models" parent="datacenter_db_menu" action="datacenter_db_model_action"/>
         <menuitem id="datacenter_db_catalog_menu" name="DB Catalog" parent="datacenter_db_menu" action="datacenter_db_action"/>
+        <menuitem id="datacenter_db_model_menu" name="DB Models" parent="datacenter_db_menu" action="datacenter_db_model_action"/>
         <menuitem id="datacenter_db_command_menu" name="DB Commands" parent="datacenter_db_menu" action="datacenter_db_command_action"/>
 
 
