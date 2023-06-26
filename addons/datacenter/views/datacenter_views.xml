@@ -275,14 +275,6 @@ class CommandExecution(models.Model):
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Server Commands">
-                                <field name="server_command_ids">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="description"/>
-                                    </tree>
-                                </field>
-                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -360,14 +352,6 @@ class CommandExecution(models.Model):
                                     <field name="user"/>
                                     <field name="password" widget="password"/>
                                 </group>
-                            </page>
-                            <page string="Database Commands">
-                                <field name="database_command_ids">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="description"/>
-                                    </tree>
-                                </field>
                             </page>
                         </notebook>
                     </sheet>

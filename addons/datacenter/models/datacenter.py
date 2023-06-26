@@ -47,7 +47,7 @@ class Server(models.Model):
     # Get server model selection
     def _get_server_model_selection(self):
         return [
-            ('lightsail', 'Lightsail'),
+            ('ubuntu', 'Ubuntu'),
         ]
 
     # Get SSH connection
@@ -176,6 +176,11 @@ class Command(models.Model):
         inverse_name='command_id',
     )
 
+    # Limit the model to the sames as Server
+    command_model = fields.Selection(
+        string='Command Model', selection='_get_command_model_selection',
+    )
+
     def _get_object_selection(self):
         return [
             (model.model, model.name) for model in self.env['ir.model'].search([
@@ -203,17 +208,24 @@ class ServerCommand(models.Model):
     _description = 'Server Command'
     _inherit = 'datacenter.command'
 
+    def _get_command_model_selection(self):
+        return Server._get_server_model_selection(self)
 
 class DatabaseCommand(models.Model):
     _name = 'datacenter.database_command'
     _description = 'Database Command'
     _inherit = 'datacenter.command'
 
+    def _get_command_model_selection(self):
+        return Database._get_db_model_selection(self)
 
 class ApplicationCommand(models.Model):
     _name = 'datacenter.application_command'
     _description = 'Application Command'
     _inherit = 'datacenter.command'
+
+    def _get_command_model_selection(self):
+        return Application._get_app_model_selection(self)
 
 
 class CommandExecution(models.Model):
@@ -242,9 +254,8 @@ class CommandExecution(models.Model):
         ]
 
     # Execute command
-    def execute(self, **kwargs):
-        if kwargs:
-            self.command_text = self.command_text % kwargs
+    def execute(self):
+        # No keyword arguments, they are already in the command text
         # Execute command on object. Choose the method depending on the object type
         if self.object_id._name == 'datacenter.server':
             self.output = self.object_id.run_command(self.command_id.name)
