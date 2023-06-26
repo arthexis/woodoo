@@ -426,6 +426,14 @@ class CommandExecution(models.Model):
             </field>
         </record>
 
+        <!-- Server model action -->
+
+        <record id="datacenter_server_model_action" model="ir.actions.act_window">
+            <field name="name">Server Models</field>
+            <field name="res_model">datacenter.server_model</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
         <!-- Example Model: Ubuntu Server -->
 
         <record id="datacenter_ubuntu_server_model" model="datacenter.server_model">
@@ -517,6 +525,14 @@ class CommandExecution(models.Model):
                     </sheet>
                 </form>
             </field>
+        </record>
+
+        <!-- Application model action -->
+
+        <record id="datacenter_app_model_action" model="ir.actions.act_window">
+            <field name="name">App Models</field>
+            <field name="res_model">datacenter.app_model</field>
+            <field name="view_mode">tree,form</field>
         </record>
 
         <!-- Example Model: Odoo App -->
@@ -616,6 +632,14 @@ class CommandExecution(models.Model):
                     </sheet>
                 </form>
             </field>
+        </record>
+
+        <!-- Database model action -->
+
+        <record id="datacenter_db_model_action" model="ir.actions.act_window">
+            <field name="name">DB Models</field>
+            <field name="res_model">datacenter.db_model</field>
+            <field name="view_mode">tree,form</field>
         </record>
 
         <!-- Example Model: PostgreSQL DB -->
