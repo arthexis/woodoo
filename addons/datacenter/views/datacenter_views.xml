@@ -381,19 +381,17 @@ class CommandExecution(models.Model):
 
         <!-- Menu -->
 
-        <menuitem id="datacenter.menu_root" name="Datacenter" sequence="1"/>
+        <menuitem id="datacenter_menu" name="Datacenter" sequence="1"/>
 
-        <menuitem id="datacenter_server_base_menu" name="Base" parent="datacenter.menu_root"/>
-        <menuitem id="datacenter_servers_menu" name="Base" parent="datacenter_server_base_menu"/>
-        <menuitem id="datacenter_server_command_menu" name="Commands" parent="datacenter_server_base_menu"/>
+        <menuitem id="datacenter_server_base_menu" name="Server" parent="datacenter_menu"/>
+        <menuitem id="datacenter_servers_menu" name="Servers" parent="datacenter_server_base_menu"/>
+        <menuitem id="datacenter_server_command_menu" name="Server Commands" parent="datacenter_server_base_menu"/>
 
-        <menuitem id="datacenter_application_base_menu" name="Base" parent="datacenter.menu_root"/>
-        <menuitem id="datacenter_applications_menu" name="Base" parent="datacenter_application_base_menu"/>
-        <menuitem id="datacenter_application_command_menu" name="Commands" parent="datacenter_application_base_menu"/>
+        <menuitem id="datacenter_application_base_menu" name="Application" parent="datacenter_menu"/>
+        <menuitem id="datacenter_applications_menu" name="Applications" parent="datacenter_application_base_menu"/>
+        <menuitem id="datacenter_application_command_menu" name="Application Commands" parent="datacenter_application_base_menu"/>
 
-        <menuitem id="datacenter_database_base_menu" name="Base" parent="datacenter.menu_root"/>
-        <menuitem id="datacenter_databases_menu" name="Base" parent="datacenter_database_base_menu"/>
-        <menuitem id="datacenter_database_command_menu" name="Commands" parent="datacenter_database_base_menu"/>
+        <menuitem id="datacenter_database_base_menu" name="Database" parent="datacenter_menu"/>
         
     </data>
 </odoo>
