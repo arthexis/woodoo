@@ -355,6 +355,116 @@
             <field name="description">PostgreSQL DB</field>
         </record>
 
+        <!-- Server Command -->
+
+        <record id="datacenter_server_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.server_command.form.view</field>
+            <field name="model">datacenter.server_command</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" class="woodoo-large-field"/>
+                            <field name="description"/>
+                            <field name="command_text"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="datacenter_server_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.server_command.tree.view</field>
+            <field name="model">datacenter.server_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="command_text"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Application Command -->
+
+        <record id="datacenter_application_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.application_command.form.view</field>
+            <field name="model">datacenter.application_command</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" class="woodoo-large-field"/>
+                            <field name="description"/>
+                            <field name="command_text"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="datacenter_application_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.application_command.tree.view</field>
+            <field name="model">datacenter.application_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="command_text"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Database Command -->
+
+        <record id="datacenter_database_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.database_command.form.view</field>
+            <field name="model">datacenter.database_command</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" class="woodoo-large-field"/>
+                            <field name="description"/>
+                            <field name="command_text"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="datacenter_database_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.database_command.tree.view</field>
+            <field name="model">datacenter.database_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="command_text"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Command actions -->
+
+        <record id="datacenter_server_command_action" model="ir.actions.act_window">
+            <field name="name">Server Commands</field>
+            <field name="res_model">datacenter.server_command</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="datacenter_application_command_action" model="ir.actions.act_window">
+            <field name="name">Application Commands</field>
+            <field name="res_model">datacenter.application_command</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="datacenter_database_command_action" model="ir.actions.act_window">
+            <field name="name">Database Commands</field>
+            <field name="res_model">datacenter.database_command</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
         <!-- Menu -->
         <!-- One menu for Server, Application and Database -->
         <!-- Each menu has 3 submenus: X Models, X Catalog  and X Commands -->
