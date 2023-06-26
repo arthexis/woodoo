@@ -144,7 +144,6 @@ class Database(models.Model):
 class Command(models.Model):
     _name = 'datacenter.command'
     _description = 'Command'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(
         string='Name', required=True,
@@ -226,7 +225,6 @@ class ApplicationCommand(models.Model):
 class CommandExecution(models.Model):
     _name = 'datacenter.command_execution'
     _description = 'Command Execution'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     command_id = fields.Many2one(
         string='Command', comodel_name='datacenter.command',
