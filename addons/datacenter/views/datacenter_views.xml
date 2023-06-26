@@ -380,23 +380,20 @@ class CommandExecution(models.Model):
         </record>
 
         <!-- Menu -->
-        <!-- Top level menu for Server, Application and Database, do nothing -->
-        <!-- Two Submenus: one for base object another for Commands -->
 
-        <menuitem id="datacenter_menu" name="Datacenter"/>
-        
-        <menuitem id="datacenter_server_base_menu" name="Base" parent="datacenter_menu"/>
+        <menuitem id="datacenter.menu_root" name="Datacenter" sequence="1"/>
+
+        <menuitem id="datacenter_server_base_menu" name="Base" parent="datacenter.menu_root"/>
         <menuitem id="datacenter_servers_menu" name="Base" parent="datacenter_server_base_menu"/>
         <menuitem id="datacenter_server_command_menu" name="Commands" parent="datacenter_server_base_menu"/>
 
-        <menuitem id="datacenter_application_base_menu" name="Base" parent="datacenter_menu"/>
+        <menuitem id="datacenter_application_base_menu" name="Base" parent="datacenter.menu_root"/>
         <menuitem id="datacenter_applications_menu" name="Base" parent="datacenter_application_base_menu"/>
         <menuitem id="datacenter_application_command_menu" name="Commands" parent="datacenter_application_base_menu"/>
 
-        <menuitem id="datacenter_database_base_menu" name="Base" parent="datacenter_menu"/>
+        <menuitem id="datacenter_database_base_menu" name="Base" parent="datacenter.menu_root"/>
         <menuitem id="datacenter_databases_menu" name="Base" parent="datacenter_database_base_menu"/>
         <menuitem id="datacenter_database_command_menu" name="Commands" parent="datacenter_database_base_menu"/>
-
         
     </data>
 </odoo>
