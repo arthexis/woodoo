@@ -420,11 +420,13 @@ class CommandExecution(models.Model):
             <field name="view_mode">tree,form</field>
         </record>
 
-        <!-- Commands -->
+        <!-- Commands 
+        * Don't include the Command model in the menu, it's an abstract model
+         -->
 
-        <record id="datacenter_command_form_view" model="ir.ui.view">
-            <field name="name">datacenter.command.form.view</field>
-            <field name="model">datacenter.command</field>
+        <record id="datacenter_server_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.server.command.form.view</field>
+            <field name="model">datacenter.server_command</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -438,7 +440,7 @@ class CommandExecution(models.Model):
                             <page string="Command Executions">
                                 <field name="command_execution_ids">
                                     <tree>
-                                        <field name="object_id"/>
+                                        <field name="object_id" invisible="1"/>
                                         <field name="output"/>
                                         <field name="errors"/>
                                     </tree>
@@ -450,9 +452,65 @@ class CommandExecution(models.Model):
             </field>
         </record>
 
-        <record id="datacenter_command_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.command.tree.view</field>
-            <field name="model">datacenter.command</field>
+        <record id="datacenter_database_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.database.command.form.view</field>
+            <field name="model">datacenter.database_command</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" position="attributes">
+                                <attribute name="class">woodoo-large-field</attribute>
+                            </field>
+                            <field name="description"/>
+                        </group>
+                        <notebook>
+                            <page string="Command Executions">
+                                <field name="command_execution_ids">
+                                    <tree>
+                                        <field name="object_id" invisible="1"/>
+                                        <field name="output"/>
+                                        <field name="errors"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="datacenter_application_command_form_view" model="ir.ui.view">
+            <field name="name">datacenter.application.command.form.view</field>
+            <field name="model">datacenter.application_command</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" position="attributes">
+                                <attribute name="class">woodoo-large-field</attribute>
+                            </field>
+                            <field name="description"/>
+                        </group>
+                        <notebook>
+                            <page string="Command Executions">
+                                <field name="command_execution_ids">
+                                    <tree>
+                                        <field name="object_id" invisible="1"/>
+                                        <field name="output"/>
+                                        <field name="errors"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="datacenter_server_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.server.command.tree.view</field>
+            <field name="model">datacenter.server_command</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
@@ -461,9 +519,43 @@ class CommandExecution(models.Model):
             </field>
         </record>
 
-        <record id="datacenter_command_action" model="ir.actions.act_window">
-            <field name="name">Commands</field>
-            <field name="res_model">datacenter.command</field>
+        <record id="datacenter_database_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.database.command.tree.view</field>
+            <field name="model">datacenter.database_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="datacenter_application_command_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.application.command.tree.view</field>
+            <field name="model">datacenter.application_command</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="datacenter_server_command_action" model="ir.actions.act_window">
+            <field name="name">Server Commands</field>
+            <field name="res_model">datacenter.server_command</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="datacenter_database_command_action" model="ir.actions.act_window">
+            <field name="name">Database Commands</field>
+            <field name="res_model">datacenter.database_command</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="datacenter_application_command_action" model="ir.actions.act_window">
+            <field name="name">Application Commands</field>
+            <field name="res_model">datacenter.application_command</field>
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -474,7 +566,12 @@ class CommandExecution(models.Model):
         <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu" action="datacenter_server_action"/>
         <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
         <menuitem id="datacenter_database_menu" name="Databases" parent="datacenter_menu" action="datacenter_database_action"/>
-        <menuitem id="datacenter_command_menu" name="Commands" parent="datacenter_menu" action="datacenter_command_action"/>
+        
+        <!-- Use submenus for commands -->
+        <menuitem id="datacenter_command_menu" name="Commands" parent="datacenter_menu"/>
+        <menuitem id="datacenter_server_command_menu" name="Server Commands" parent="datacenter_command_menu" action="datacenter_server_command_action"/>
+        <menuitem id="datacenter_database_command_menu" name="Database Commands" parent="datacenter_command_menu" action="datacenter_database_command_action"/>
+        <menuitem id="datacenter_application_command_menu" name="Application Commands" parent="datacenter_command_menu" action="datacenter_application_command_action"/>
         
     </data>
 </odoo>
