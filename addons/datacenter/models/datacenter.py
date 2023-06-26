@@ -276,7 +276,7 @@ class ServerCommand(models.Model):
         return Server._get_server_model_selection(self)
 
 class DatabaseCommand(models.Model):
-    _name = 'datacenter.database_command'
+    _name = 'datacenter.db_command'
     _description = 'Database Command'
     _inherit = 'datacenter.command'
 
