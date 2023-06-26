@@ -381,17 +381,11 @@ class CommandExecution(models.Model):
 
         <!-- Menu -->
 
-        <menuitem id="datacenter_menu" name="Datacenter" sequence="1"/>
+        <menuitem id="datacenter_menu" name="Datacenter"/>
+        <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu" action="datacenter_server_action"/>
+        <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
+        <menuitem id="datacenter_database_menu" name="Databases" parent="datacenter_menu" action="datacenter_database_action"/>
 
-        <menuitem id="datacenter_server_base_menu" name="Server" parent="datacenter_menu"/>
-        <menuitem id="datacenter_servers_menu" name="Servers" parent="datacenter_server_base_menu"/>
-        <menuitem id="datacenter_server_command_menu" name="Server Commands" parent="datacenter_server_base_menu"/>
 
-        <menuitem id="datacenter_application_base_menu" name="Application" parent="datacenter_menu"/>
-        <menuitem id="datacenter_applications_menu" name="Applications" parent="datacenter_application_base_menu"/>
-        <menuitem id="datacenter_application_command_menu" name="Application Commands" parent="datacenter_application_base_menu"/>
-
-        <menuitem id="datacenter_database_base_menu" name="Database" parent="datacenter_menu"/>
-        
     </data>
 </odoo>
