@@ -8,6 +8,35 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 # Datacenter models
 
+
+class CommandModel(models.Model):
+    _name = 'datacenter.command_model'
+    _description = 'Command Model'
+    _abstract = True
+
+    name = fields.Char(
+        string='Name', required=True,
+    )
+    description = fields.Text(
+        string='Description', required=False,
+    )
+    command_ids = fields.One2many(
+        string='Commands', comodel_name='datacenter.command',
+        inverse_name='command_model',
+    )
+
+
+class ServerModel(models.Model):
+    _name = 'datacenter.server_model'
+    _description = 'Server Model'
+    _inherit = 'datacenter.command_model'
+
+    server_ids = fields.One2many(
+        string='Servers', comodel_name='datacenter.server',
+        inverse_name='server_model',
+    )
+    
+
 class Server(models.Model):
     _name = 'datacenter.server'
     _description = 'Server'
@@ -21,28 +50,35 @@ class Server(models.Model):
     port = fields.Integer(
         string='Port', required=True, default=22,
     )
+
+    # SSH credentials
     user = fields.Char(
         string='User', required=False,
     )
     password = fields.Char(
         string='Password', required=False,
     )
-    # Store PEM key as file upload
     private_pem_file = fields.Binary(
-        string='Private PEM File', attachment=True)
-    private_pem_file_name = fields.Char(
-        string='Private PEM File Name'
+        string='Private PEM File', attachment=True, required=False,
     )
+    private_pem_file_name = fields.Char(
+        string='Private PEM File Name', required=False,
+    )
+    base_path = fields.Char(
+        string='Base Path', required=False,
+        default=lambda self: '/home/%s' % self.user,
+    )
+
+    # Applications
     application_ids = fields.One2many(
         string='Applications', comodel_name='datacenter.application',
         inverse_name='server_id',
     )
 
-    # Server command ids
-    server_command_ids = fields.One2many(
-        string='Server Commands', comodel_name='datacenter.server_command',
-        inverse_name='object_id',
-    ) 
+    # Behavior
+    server_model_id = fields.Many2one(
+        string='Server Model', comodel_name='datacenter.server_model',
+    )
 
     # Get SSH connection
     def get_ssh(self):
@@ -63,16 +99,38 @@ class Server(models.Model):
         return ssh
 
     # Run command
-    def run_command(self, command=None):
-        if not command:
-            command = self.command
+    def run_command(self, command):
         ssh = self.get_ssh()
+        if self.base_path:
+            command = 'cd %s && %s' % (self.base_path, command)
         stdin, stdout, stderr = ssh.exec_command(command)
-        # Store command output
-        self.output = stdout.read().decode()
-        self.errors = stderr.read().decode()
-        return self.output
+        return self._format_output(stdout.read().decode())
+    
 
+class AppModel(models.Model):
+    _name = 'datacenter.app_model'
+    _description = 'App Model'
+    _inherit = 'datacenter.command_model'
+    
+    app_ids = fields.One2many(
+        string='Apps', comodel_name='datacenter.application',
+        inverse_name='app_model',
+    )
+
+    # App Source
+    git_url = fields.Char(
+        string='Git URL', required=False,
+    )
+    git_branch = fields.Char(
+        string='Git Branch', required=False,
+    )
+
+    # Installation
+    requirements = fields.Char(
+        string='Requirements', required=False,
+        help='Comma separated list of requirements to install',
+    )
+    
 
 class Application(models.Model):
     _name = 'datacenter.application'
@@ -84,20 +142,39 @@ class Application(models.Model):
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.server',
     )
+    app_port = fields.Integer(
+        string='App Port', required=False, default=80,
+    )
+
+    # Credentials
     user = fields.Char(
         string='User', required=True,
     )
     password = fields.Char(
         string='Password', required=True,
     )
-    app_port = fields.Integer(
-        string='App Port', required=False, default=80,
+    
+    # Behavior (FK to AppModel)
+    app_model_id = fields.Many2one(
+        string='App Model', comodel_name='datacenter.app_model',
     )
 
-    # Application commands ids
-    application_command_ids = fields.One2many(
-        string='Application Commands', comodel_name='datacenter.application_command',
-        inverse_name='object_id',
+    # Configuration
+    service_name = fields.Char(
+        string='Service Name', required=False,
+        default=lambda self: self.name,
+    )
+
+
+
+class DBModel(models.Model):
+    _name = 'datacenter.db_model'
+    _description = 'DB Model'
+    _inherit = 'datacenter.command_model'
+    
+    db_ids = fields.One2many(
+        string='DBs', comodel_name='datacenter.database',
+        inverse_name='db_model',
     )
 
 
@@ -117,6 +194,8 @@ class Database(models.Model):
     db_port = fields.Integer(
         string='DB Port', required=False, default=5432,
     )
+
+    # Credentials
     user = fields.Char(
         string='User', required=True,
     )
@@ -124,10 +203,9 @@ class Database(models.Model):
         string='Password', required=True,
     )
 
-    # Database command ids
-    database_command_ids = fields.One2many(
-        string='Database Commands', comodel_name='datacenter.database_command',
-        inverse_name='object_id',
+    # Database model (FK to DBModel)
+    db_model = fields.Many2one(
+        string='DB Model', comodel_name='datacenter.db_model',
     )
 
     # Run SQL query
@@ -163,11 +241,22 @@ class Command(models.Model):
         string='Command Executions', comodel_name='datacenter.command_execution',
         inverse_name='command_id',
     )
-    object_id = fields.Reference(
-        string='Object', selection='_get_object_selection',
+
+    # Limit the model to the sames as Server
+    command_model = fields.Selection(
+        string='Command Model', selection='_get_command_model_selection',
     )
 
+    def _get_object_selection(self):
+        return [
+            (model.model, model.name) for model in self.env['ir.model'].search([
+                ('model', 'in', ['datacenter.server', 'datacenter.application', 'datacenter.database']),
+            ])
+        ]
+
     def execute(self, obj, **kwargs):
+        if not obj:
+            return 'Object not found'
         # Create command execution
         command_text = self.command_text if not kwargs else self.command_text % kwargs
         command_execution = self.env['datacenter.command_execution'].create({
@@ -185,22 +274,30 @@ class ServerCommand(models.Model):
     _description = 'Server Command'
     _inherit = 'datacenter.command'
 
+    def _get_command_model_selection(self):
+        return Server._get_server_model_selection(self)
 
 class DatabaseCommand(models.Model):
     _name = 'datacenter.database_command'
     _description = 'Database Command'
     _inherit = 'datacenter.command'
 
+    def _get_command_model_selection(self):
+        return Database._get_db_model_selection(self)
 
 class ApplicationCommand(models.Model):
     _name = 'datacenter.application_command'
     _description = 'Application Command'
     _inherit = 'datacenter.command'
 
+    def _get_command_model_selection(self):
+        return Application._get_app_model_selection(self)
+
 
 class CommandExecution(models.Model):
     _name = 'datacenter.command_execution'
     _description = 'Command Execution'
+    _transient = True
 
     command_id = fields.Many2one(
         string='Command', comodel_name='datacenter.command',
@@ -214,9 +311,6 @@ class CommandExecution(models.Model):
     output = fields.Text(
         string='Output', required=False,
     )
-    errors = fields.Text(
-        string='Errors', required=False,
-    )
 
     # Get object selection
     def _get_object_selection(self):
@@ -227,9 +321,8 @@ class CommandExecution(models.Model):
         ]
 
     # Execute command
-    def execute(self, **kwargs):
-        if kwargs:
-            self.command_text = self.command_text % kwargs
+    def execute(self):
+        # No keyword arguments, they are already in the command text
         # Execute command on object. Choose the method depending on the object type
         if self.object_id._name == 'datacenter.server':
             self.output = self.object_id.run_command(self.command_id.name)
@@ -240,7 +333,6 @@ class CommandExecution(models.Model):
         else:
             self.output = 'Object type not supported'
         return self.output
-
 -->
 
 <odoo>
@@ -256,6 +348,7 @@ class CommandExecution(models.Model):
                     <sheet>
                         <group>    
                             <field name="name" class="woodoo-large-field"/>
+                            <field name="server_model"/>
                             <field name="host"/>
                             <field name="port"/>
                         </group>
@@ -271,6 +364,7 @@ class CommandExecution(models.Model):
                                 <field name="application_ids">
                                     <tree>
                                         <field name="name"/>
+                                        <field name="app_model"/>
                                         <field name="user"/>
                                     </tree>
                                 </field>
@@ -280,6 +374,68 @@ class CommandExecution(models.Model):
                 </form>
             </field>
         </record>
+
+        <record id="datacenter_server_tree_view" model="ir.ui.view">
+            <field name="name">datacenter.server.tree.view</field>
+            <field name="model">datacenter.server</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="server_model"/>
+                    <field name="host"/>
+                    <field name="port"/>
+                    <field name="user"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Server Model -->
+
+        <record id="datacenter_server_model_form_view" model="ir.ui.view">
+            <field name="name">datacenter.server_model.form.view</field>
+            <field name="model">datacenter.server_model</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" class="woodoo-large-field"/>
+                            <field name="description"/>
+                        </group>
+                        <notebook>
+                            <page string="Commands">
+                                <field name="command_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="description"/>
+                                        <field name="command_text"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Servers">
+                                <field name="server_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="host"/>
+                                        <field name="port"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Example Model: Ubuntu Server -->
+
+        <record id="datacenter_ubuntu_server_model" model="datacenter.server_model">
+            <field name="name">Ubuntu Server</field>
+            <field name="description">Ubuntu Server</field>
+        </record>
+
+
+        <!-- Application -->
+
         <record id="datacenter_application_form_view" model="ir.ui.view">
             <field name="name">datacenter.application.form.view</field>
             <field name="model">datacenter.application</field>
@@ -288,6 +444,7 @@ class CommandExecution(models.Model):
                     <sheet>
                         <group>
                             <field name="name" class="woodoo-large-field"/>
+                            <field name="app_model"/>
                             <field name="server_id"/>
                             <field name="user"/>
                             <field name="password" widget="password"/>
@@ -297,24 +454,14 @@ class CommandExecution(models.Model):
                 </form>
             </field>
         </record>
-        <record id="datacenter_server_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.server.tree.view</field>
-            <field name="model">datacenter.server</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="host"/>
-                    <field name="port"/>
-                    <field name="user"/>
-                </tree>
-            </field>
-        </record>
+
         <record id="datacenter_application_tree_view" model="ir.ui.view">
             <field name="name">datacenter.application.tree.view</field>
             <field name="model">datacenter.application</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="app_model"/>
                     <field name="server_id"/>
                     <field name="user"/>
                     <field name="app_port"/>
@@ -332,6 +479,58 @@ class CommandExecution(models.Model):
             <field name="view_mode">tree,form</field>
         </record>
 
+        <!-- Application Model -->
+
+        <record id="datacenter_app_model_form_view" model="ir.ui.view">
+            <field name="name">datacenter.app_model.form.view</field>
+            <field name="model">datacenter.app_model</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" class="woodoo-large-field"/>
+                            <field name="description"/>
+                            <field name="git_url"/>
+                            <field name="git_branch"/>
+                            <field name="requirements"/>
+                        </group>
+                        <notebook>
+                            <page string="Commands">
+                                <field name="command_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="description"/>
+                                        <field name="command_text"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Applications">
+                                <field name="app_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="server_id"/>
+                                        <field name="user"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Example Model: Odoo App -->
+
+        <record id="datacenter_odoo_app_model" model="datacenter.app_model">
+            <field name="name">Odoo App</field>
+            <field name="description">Odoo App</field>
+            <field name="git_url">
+                https://github.com/arthexis/odoo
+            </field>
+            <field name="git_branch">16.0</field>
+            <field name="requirements">Wkhtmltopdf</field>
+        </record>
+
         <!-- Database -->
 
         <record id="datacenter_database_form_view" model="ir.ui.view">
@@ -342,6 +541,7 @@ class CommandExecution(models.Model):
                     <sheet>
                         <group>
                             <field name="name" class="woodoo-large-field"/>
+                            <field name="db_model"/>
                             <field name="application_id"/>
                             <field name="ip_address"/>
                             <field name="db_port"/>
@@ -365,6 +565,7 @@ class CommandExecution(models.Model):
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="db_model"/>
                     <field name="application_id"/>
                     <field name="ip_address"/>
                     <field name="user"/>
@@ -379,12 +580,71 @@ class CommandExecution(models.Model):
             <field name="view_mode">tree,form</field>
         </record>
 
+        <!-- Database Model -->
+
+        <record id="datacenter_db_model_form_view" model="ir.ui.view">
+            <field name="name">datacenter.db_model.form.view</field>
+            <field name="model">datacenter.db_model</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" class="woodoo-large-field"/>
+                            <field name="description"/>
+                        </group>
+                        <notebook>
+                            <page string="Commands">
+                                <field name="command_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="description"/>
+                                        <field name="command_text"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Databases">
+                                <field name="db_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="application_id"/>
+                                        <field name="ip_address"/>
+                                        <field name="user"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Example Model: PostgreSQL DB -->
+
+        <record id="datacenter_postgresql_db_model" model="datacenter.db_model">
+            <field name="name">PostgreSQL DB</field>
+            <field name="description">PostgreSQL DB</field>
+        </record>
+
         <!-- Menu -->
+        <!-- One menu for Server, Application and Database -->
+        <!-- Each menu has 3 submenus: X Models, X Catalog  and X Commands -->
 
         <menuitem id="datacenter_menu" name="Datacenter"/>
-        <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu" action="datacenter_server_action"/>
-        <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
-        <menuitem id="datacenter_database_menu" name="Databases" parent="datacenter_menu" action="datacenter_database_action"/>
+        
+        <menuitem id="datacenter_server_menu" name="Servers" parent="datacenter_menu"/>
+        <menuitem id="datacenter_server_model_menu" name="Server Models" parent="datacenter_server_menu" action="datacenter_server_model_action"/>
+        <menuitem id="datacenter_server_catalog_menu" name="Server Catalog" parent="datacenter_server_menu" action="datacenter_server_action"/>
+        <menuitem id="datacenter_server_command_menu" name="Server Commands" parent="datacenter_server_menu" action="datacenter_server_command_action"/>
+        
+        <menuitem id="datacenter_application_menu" name="Applications" parent="datacenter_menu"/>
+        <menuitem id="datacenter_app_model_menu" name="App Models" parent="datacenter_application_menu" action="datacenter_app_model_action"/>
+        <menuitem id="datacenter_app_catalog_menu" name="App Catalog" parent="datacenter_application_menu" action="datacenter_application_action"/>
+        <menuitem id="datacenter_app_command_menu" name="App Commands" parent="datacenter_application_menu" action="datacenter_application_command_action"/>
+        
+        <menuitem id="datacenter_database_menu" name="Databases" parent="datacenter_menu"/>
+        <menuitem id="datacenter_db_model_menu" name="DB Models" parent="datacenter_database_menu" action="datacenter_db_model_action"/>
+        <menuitem id="datacenter_db_catalog_menu" name="DB Catalog" parent="datacenter_database_menu" action="datacenter_database_action"/>
+        <menuitem id="datacenter_db_command_menu" name="DB Commands" parent="datacenter_database_menu" action="datacenter_database_command_action"/>
 
 
     </data>

@@ -6,6 +6,35 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 # Datacenter models
 
+
+class CommandModel(models.Model):
+    _name = 'datacenter.command_model'
+    _description = 'Command Model'
+    _abstract = True
+
+    name = fields.Char(
+        string='Name', required=True,
+    )
+    description = fields.Text(
+        string='Description', required=False,
+    )
+    command_ids = fields.One2many(
+        string='Commands', comodel_name='datacenter.command',
+        inverse_name='command_model',
+    )
+
+
+class ServerModel(models.Model):
+    _name = 'datacenter.server_model'
+    _description = 'Server Model'
+    _inherit = 'datacenter.command_model'
+
+    server_ids = fields.One2many(
+        string='Servers', comodel_name='datacenter.server',
+        inverse_name='server_model',
+    )
+    
+
 class Server(models.Model):
     _name = 'datacenter.server'
     _description = 'Server'
@@ -28,9 +57,14 @@ class Server(models.Model):
         string='Password', required=False,
     )
     private_pem_file = fields.Binary(
-        string='Private PEM File', attachment=True)
+        string='Private PEM File', attachment=True, required=False,
+    )
     private_pem_file_name = fields.Char(
-        string='Private PEM File Name'
+        string='Private PEM File Name', required=False,
+    )
+    base_path = fields.Char(
+        string='Base Path', required=False,
+        default=lambda self: '/home/%s' % self.user,
     )
 
     # Applications
@@ -39,16 +73,10 @@ class Server(models.Model):
         inverse_name='server_id',
     )
 
-    # Behaviors
-    server_model = fields.Selection(
-        string='Server Model', selection='_get_server_model_selection',
+    # Behavior
+    server_model_id = fields.Many2one(
+        string='Server Model', comodel_name='datacenter.server_model',
     )
-
-    # Get server model selection
-    def _get_server_model_selection(self):
-        return [
-            ('ubuntu', 'Ubuntu'),
-        ]
 
     # Get SSH connection
     def get_ssh(self):
@@ -69,11 +97,38 @@ class Server(models.Model):
         return ssh
 
     # Run command
-    def run_command(self, command=None):
+    def run_command(self, command):
         ssh = self.get_ssh()
+        if self.base_path:
+            command = 'cd %s && %s' % (self.base_path, command)
         stdin, stdout, stderr = ssh.exec_command(command)
-        return self.output
+        return self._format_output(stdout.read().decode())
+    
 
+class AppModel(models.Model):
+    _name = 'datacenter.app_model'
+    _description = 'App Model'
+    _inherit = 'datacenter.command_model'
+    
+    app_ids = fields.One2many(
+        string='Apps', comodel_name='datacenter.application',
+        inverse_name='app_model',
+    )
+
+    # App Source
+    git_url = fields.Char(
+        string='Git URL', required=False,
+    )
+    git_branch = fields.Char(
+        string='Git Branch', required=False,
+    )
+
+    # Installation
+    requirements = fields.Char(
+        string='Requirements', required=False,
+        help='Comma separated list of requirements to install',
+    )
+    
 
 class Application(models.Model):
     _name = 'datacenter.application'
@@ -85,27 +140,40 @@ class Application(models.Model):
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.server',
     )
+    app_port = fields.Integer(
+        string='App Port', required=False, default=80,
+    )
+
+    # Credentials
     user = fields.Char(
         string='User', required=True,
     )
     password = fields.Char(
         string='Password', required=True,
     )
-    app_port = fields.Integer(
-        string='App Port', required=False, default=80,
+    
+    # Behavior (FK to AppModel)
+    app_model_id = fields.Many2one(
+        string='App Model', comodel_name='datacenter.app_model',
     )
 
-    # Behaviors
-    app_model = fields.Selection(
-        string='App Model', selection='_get_app_model_selection',
+    # Configuration
+    service_name = fields.Char(
+        string='Service Name', required=False,
+        default=lambda self: self.name,
     )
 
-    # Get application model selection
-    def _get_app_model_selection(self):
-        return [
-            ('odoo', 'Odoo'),
-            ('wordpress', 'Wordpress')
-        ]
+
+
+class DBModel(models.Model):
+    _name = 'datacenter.db_model'
+    _description = 'DB Model'
+    _inherit = 'datacenter.command_model'
+    
+    db_ids = fields.One2many(
+        string='DBs', comodel_name='datacenter.database',
+        inverse_name='db_model',
+    )
 
 
 class Database(models.Model):
@@ -124,6 +192,8 @@ class Database(models.Model):
     db_port = fields.Integer(
         string='DB Port', required=False, default=5432,
     )
+
+    # Credentials
     user = fields.Char(
         string='User', required=True,
     )
@@ -131,16 +201,10 @@ class Database(models.Model):
         string='Password', required=True,
     )
 
-    # Database model
-    db_model = fields.Selection(
-        string='DB Model', selection='_get_db_model_selection',
+    # Database model (FK to DBModel)
+    db_model = fields.Many2one(
+        string='DB Model', comodel_name='datacenter.db_model',
     )
-
-    # Get database model selection
-    def _get_db_model_selection(self):
-        return [
-            ('postgresql', 'PostgreSQL'),
-        ]
 
     # Run SQL query
     def run_sql(self, query=None):
@@ -231,6 +295,7 @@ class ApplicationCommand(models.Model):
 class CommandExecution(models.Model):
     _name = 'datacenter.command_execution'
     _description = 'Command Execution'
+    _transient = True
 
     command_id = fields.Many2one(
         string='Command', comodel_name='datacenter.command',
