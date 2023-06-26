@@ -18,6 +18,10 @@ class CommandModel(models.Model):
     description = fields.Text(
         string='Description', required=False,
     )
+    command_ids = fields.One2many(
+        string='Commands', comodel_name='datacenter.command',
+        inverse_name='command_model',
+    )
 
 
 class ServerModel(models.Model):
