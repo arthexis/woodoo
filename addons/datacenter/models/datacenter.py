@@ -177,6 +177,10 @@ class Command(models.Model):
         inverse_name='command_id',
     )
 
+    object_id = fields.Reference(
+        string='Object', selection='_get_object_selection',
+    )
+
     def execute(self, obj, **kwargs):
         # Create command execution
         command_text = self.command_text if not kwargs else self.command_text % kwargs
