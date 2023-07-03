@@ -2,7 +2,6 @@ from odoo import models, fields
 
 
 # General Inspection Model
-# ---------------------------------------
 # This applies to all inspections, regardless of type
 
 class Inspection(models.Model):
@@ -50,7 +49,6 @@ class Inspection(models.Model):
 
 
 # Electrical Inspection Model
-# ---------------------------------------
 # This applies to inspections of electrical systems
 
 # First we setup an AWG table for the cable sizes
