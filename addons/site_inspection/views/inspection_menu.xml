@@ -82,9 +82,12 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="inspection_menu" name="Inspection" 
-        parent="base.menu_sales" action="inspection_menu_action"/>
-    <menuitem id="electrical_inspection_menu" name="Electrical Inspection" 
-        parent="inspection_menu" action="electrical_inspection_menu_action"/>
+    <!-- Top level menu, parent from the main Odoo menu -->
+
+    <menuitem id="inspection_menu" name="Inspection" sequence="12"/>
+    <menuitem id="inspection_menu_general" name="General Inspection"
+        parent="inspection_menu" action="inspection_menu_action" sequence="10"/>
+    <menuitem id="inspection_menu_electrical" name="Electrical Inspection" 
+        parent="inspection_menu" action="electrical_inspection_menu_action" sequence="20"/>
 
 </odoo>
