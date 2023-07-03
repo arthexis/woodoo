@@ -146,10 +146,10 @@ class Application(models.Model):
 
     # Credentials
     user = fields.Char(
-        string='User', required=True,
+        string='User', required=False,
     )
     password = fields.Char(
-        string='Password', required=True,
+        string='Password', required=False,
     )
     
     # Behavior (FK to AppModel)
@@ -272,7 +272,7 @@ class ServerCommand(models.Model):
     _description = 'Server Command'
     _inherit = 'datacenter.command'
 
-    def _get_command_model_selection(self):
+    def _get_server_model_selection(self):
         return Server._get_server_model_selection(self)
 
 class DatabaseCommand(models.Model):
@@ -280,7 +280,7 @@ class DatabaseCommand(models.Model):
     _description = 'Database Command'
     _inherit = 'datacenter.command'
 
-    def _get_command_model_selection(self):
+    def _get_db_model_selection(self):
         return Database._get_db_model_selection(self)
 
 class ApplicationCommand(models.Model):
@@ -288,7 +288,7 @@ class ApplicationCommand(models.Model):
     _description = 'Application Command'
     _inherit = 'datacenter.command'
 
-    def _get_command_model_selection(self):
+    def _get_app_model_selection(self):
         return Application._get_app_model_selection(self)
 
 

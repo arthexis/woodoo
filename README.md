@@ -13,11 +13,6 @@ Tools for enterprise datacenter administration.
   - Application
   - Database
 
-Addon Maker
----------------------------
-
-This module allows you to create addons from the Odoo user interface.
-
 WooCommerce Satellite
 ---------------------------
 
@@ -39,3 +34,19 @@ Site Inspection
 Store on-site inspection data to generate reports and estimates.
 
 This module allows you to define inspection templates and generate reports and estimates from them.
+
+Included inspection variants:
+
+- General Inspection
+- Electrical Inspection
+
+Game Profile
+---------------------------
+
+Store game profile data to generate reports and estimates.
+
+Profiles can be linked to a user and a game, as well as provide a list of achievements.
+
+Products and services can be linked to a profile to generate estimates.
+
+Games can use the Odoo API to retrieve profile data.
