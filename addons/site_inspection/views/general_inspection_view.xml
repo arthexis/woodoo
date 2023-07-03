@@ -1,0 +1,128 @@
+<!-- Path: addons\site_inspection\models\inspection.py 
+
+from odoo import models, fields
+
+
+# General Inspection Model
+# This applies to all inspections, regardless of type
+
+class Inspection(models.Model):
+    
+    _name = 'inspection.record'
+    _description = 'General Inspection'
+
+    name = fields.Char(string='Inspection ID', required=True)
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('invoiced', 'Invoiced'),
+        ('paid', 'Paid'),
+    ], string='Status', default='draft')
+
+    # Purpose should be a Selection field with these options:
+    # 1. Pre-Installation
+    # 2. Post-Installation
+    # 3. Maintenance
+    # 4. Warranty
+    # 5. Other
+    purpose = fields.Selection([
+        ('pre', 'Pre-Installation'),
+        ('post', 'Post-Installation'),
+        ('maintenance', 'Maintenance'),
+        ('warranty', 'Warranty'),
+        ('other', 'Other'),
+    ], string='Purpose', default='pre')
+
+    engineer_id = fields.Many2one('res.users', string='Engineer')
+    date = fields.Date(string='Inspection Date')
+    time = fields.Float(string='Inspection Time')
+    location = fields.Char(string='Location')
+
+    customer_id = fields.Many2one('res.partner', string='Customer')
+    customer_address_id = fields.Many2one('res.partner', string='Customer Address')
+    customer_comments = fields.Text(string='Customer Comments')
+    
+    
+    result = fields.Selection([
+        ('success', 'Success'),
+        ('partial', 'Partial Success'),
+        ('fail', 'Failure'),
+    ], string='Result', default='success')
+
+
+-->
+
+<!-- Path: addons\site_inspection\views\general_inspection_view.xml -->
+
+<odoo>
+
+    <!-- General Inspection Form -->
+
+    <record id="view_inspection_form" model="ir.ui.view">
+        <field name="name">inspection.record.form</field>
+        <field name="model">inspection.record</field>
+        <field name="arch" type="xml">
+            <form string="Inspection Record">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="engineer_id"/>
+                        <field name="customer_id"/>
+                        <field name="customer_address_id"/>
+                        <field name="date"/>
+                        <field name="time"/>
+                        <field name="location"/>
+                        <field name="customer_comments"/>
+                        <field name="result"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- General Inspection Tree -->
+
+    <record id="view_inspection_tree" model="ir.ui.view">
+        <field name="name">inspection.record.tree</field>
+        <field name="model">inspection.record</field>
+        <field name="arch" type="xml">
+            <tree string="Inspection Records">
+                <field name="name"/>
+                <field name="engineer_id"/>
+                <field name="customer_id"/>
+                <field name="date"/>
+                <field name="time"/>
+                <field name="location"/>
+                <field name="result"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- General Inspection Kanban -->
+
+    <record id="view_inspection_kanban" model="ir.ui.view">
+        <field name="name">inspection.record.kanban</field>
+        <field name="model">inspection.record</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="engineer_id"/>
+                <field name="customer_id"/>
+                <field name="date"/>
+                <field name="time"/>
+                <field name="location"/>
+                <field name="result"/>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- General Inspection Action -->
+
+    <record id="inspection_menu_action" model="ir.actions.act_window">
+        <field name="name">General Inspection</field>
+        <field name="res_model">inspection.record</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+   
+</odoo>

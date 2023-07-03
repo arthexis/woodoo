@@ -2,54 +2,6 @@
 
 from odoo import models, fields
 
-
-# General Inspection Model
-# This applies to all inspections, regardless of type
-
-class Inspection(models.Model):
-    
-    _name = 'inspection.record'
-    _description = 'General Inspection'
-
-    name = fields.Char(string='Inspection ID', required=True)
-
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('invoiced', 'Invoiced'),
-        ('paid', 'Paid'),
-    ], string='Status', default='draft')
-
-    # Purpose should be a Selection field with these options:
-    # 1. Pre-Installation
-    # 2. Post-Installation
-    # 3. Maintenance
-    # 4. Warranty
-    # 5. Other
-    purpose = fields.Selection([
-        ('pre', 'Pre-Installation'),
-        ('post', 'Post-Installation'),
-        ('maintenance', 'Maintenance'),
-        ('warranty', 'Warranty'),
-        ('other', 'Other'),
-    ], string='Purpose', default='pre')
-
-    engineer_id = fields.Many2one('res.users', string='Engineer')
-    date = fields.Date(string='Inspection Date')
-    time = fields.Float(string='Inspection Time')
-    location = fields.Char(string='Location')
-
-    customer_id = fields.Many2one('res.partner', string='Customer')
-    customer_address_id = fields.Many2one('res.partner', string='Customer Address')
-    customer_comments = fields.Text(string='Customer Comments')
-    
-    
-    result = fields.Selection([
-        ('success', 'Success'),
-        ('partial', 'Partial Success'),
-        ('fail', 'Failure'),
-    ], string='Result', default='success')
-
-
 # Electrical Inspection Model
 # This applies to inspections of electrical systems
 
@@ -159,18 +111,7 @@ class ElectricalInspection(models.Model):
     requires_wall_drilling = fields.Boolean(string='Requires Wall Drilling')
 
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
-
-    # Determine the cable size based on the amperage and distance.
-    # This has to be done in 2 steps. First determine the base cable size
-    # based on amperage and temperature rating. Then calculate the AC
-    # loss based on the distance, material and supply voltage.
-    # Turns do not affect the AC loss for our purposes.
-    # If the AC loss would cause the cable not to meet the 3% limit
-    # then increase the cable size by 1 and recalculate the AC loss.
-    # Repeat until the AC loss is less than 3% or the cable size is 4/0
-    # which is the largest size in the table.
-    # The 3% limit comes from NEC 2017 210.19(A)(1) FPN No. 4
-
+    
     def calculate_cable_size(self) -> None:
         base_cable_size = self.get_base_cable_size()
         ac_loss = self.get_ac_loss(base_cable_size)
@@ -240,30 +181,11 @@ class ElectricalInspection(models.Model):
 
 -->
 
-<!-- Path: addons\site_inspection\views\inspection_view.xml -->
+<!-- Path: addons\site_inspection\views\electrical_inspection_view.xml -->
 
 <odoo>
-    <record id="view_inspection_form" model="ir.ui.view">
-        <field name="name">inspection.record.form</field>
-        <field name="model">inspection.record</field>
-        <field name="arch" type="xml">
-            <form string="Inspection Record">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="engineer_id"/>
-                        <field name="customer_id"/>
-                        <field name="customer_address_id"/>
-                        <field name="date"/>
-                        <field name="time"/>
-                        <field name="location"/>
-                        <field name="customer_comments"/>
-                        <field name="result"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+
+    <!-- Electrical Inspection Form -->
 
     <record id="electrical_inspection_form" model="ir.ui.view">
         <field name="name">electrical.inspection.form</field>
@@ -301,6 +223,50 @@ class ElectricalInspection(models.Model):
                 </sheet>
             </form>
         </field>
+    </record>
+
+    <!-- Electrical Inspection Tree -->
+
+    <record id="electrical_inspection_tree" model="ir.ui.view">
+        <field name="name">electrical.inspection.tree</field>
+        <field name="model">electrical.inspection.record</field>
+        <field name="arch" type="xml">
+            <tree string="Electrical Inspections">
+                <field name="name"/>
+                <field name="engineer_id"/>
+                <field name="customer_id"/>
+                <field name="date"/>
+                <field name="time"/>
+                <field name="location"/>
+                <field name="result"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Electrical Inspection Kanban -->
+
+    <record id="electrical_inspection_kanban" model="ir.ui.view">
+        <field name="name">electrical.inspection.kanban</field>
+        <field name="model">electrical.inspection.record</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="engineer_id"/>
+                <field name="customer_id"/>
+                <field name="date"/>
+                <field name="time"/>
+                <field name="location"/>
+                <field name="result"/>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Electrical Inspection Action -->
+
+    <record id="electrical_inspection_menu_action" model="ir.actions.act_window">
+        <field name="name">Electrical Inspection</field>
+        <field name="res_model">electrical.inspection.record</field>
+        <field name="view_mode">kanban,tree,form</field>
     </record>
     
 </odoo>

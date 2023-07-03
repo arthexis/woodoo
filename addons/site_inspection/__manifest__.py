@@ -1,6 +1,6 @@
 {
     'name': 'Site Inspection',
-    'version': '1.0.6',
+    'version': '1.0.7',
     'category': 'Productivity',
     'summary': 'Store on-site inspection data to generate reports and estimates.',
     'sequence': 9,
@@ -14,7 +14,8 @@
     },
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
-        'views/inspection_view.xml',
+        'views/general_inspection_view.xml',
+        'views/electrical_inspection_view.xml',
         'views/inspection_menu.xml',
         'security/ir.model.access.csv', 
     ],

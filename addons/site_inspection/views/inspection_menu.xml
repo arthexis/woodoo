@@ -68,19 +68,6 @@
 <!-- Path: addons\site_inspection\views\inspection_menu.xml -->
 
 <odoo>
-    <record id="inspection_menu_action" model="ir.actions.act_window">
-        <field name="name">General Inspection</field>
-        <field name="res_model">inspection.record</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- Electrical Inspection -->
-
-    <record id="electrical_inspection_menu_action" model="ir.actions.act_window">
-        <field name="name">Electrical Inspection</field>
-        <field name="res_model">electrical.inspection.record</field>
-        <field name="view_mode">tree,form</field>
-    </record>
 
     <!-- Top level menu, parent from the main Odoo menu -->
 
@@ -89,10 +76,12 @@
     <menuitem id="inspection_menu_root" name="Inspections"
         parent="inspection_menu" action="inspection_menu_action" sequence="10"/>
 
-    <menuitem id="inspection_menu_general" name="General Inspection" 
-        parent="inspection_menu_root" action="inspection_menu_action" sequence="20"/>
+    <!-- Default to Electrical Inspection, then General Inspection -->
 
-    <menuitem id="inspection_menu_electrical" name="Electrical Inspection" 
-        parent="inspection_menu_root" action="electrical_inspection_menu_action" sequence="20"/>
+    <menuitem id="inspection_menu_action" name="Electrical Inspection"
+        parent="inspection_menu_root" action="electrical_inspection_menu_action" sequence="10"/>
+
+    <menuitem id="electrical_inspection_menu_action" name="Electrical Inspection"
+        parent="inspection_menu_root" action="electrical_inspection_menu_action" sequence="10"/>
 
 </odoo>

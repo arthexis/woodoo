@@ -17,12 +17,7 @@ class Inspection(models.Model):
         ('paid', 'Paid'),
     ], string='Status', default='draft')
 
-    # Purpose should be a Selection field with these options:
-    # 1. Pre-Installation
-    # 2. Post-Installation
-    # 3. Maintenance
-    # 4. Warranty
-    # 5. Other
+    # Purpose of the inspection
     purpose = fields.Selection([
         ('pre', 'Pre-Installation'),
         ('post', 'Post-Installation'),
@@ -160,13 +155,11 @@ class ElectricalInspection(models.Model):
 
     # Determine the cable size based on the amperage and distance.
     # This has to be done in 2 steps. First determine the base cable size
-    # based on amperage and temperature rating. Then calculate the AC
-    # loss based on the distance, material and supply voltage.
-    # Turns do not affect the AC loss for our purposes.
-    # If the AC loss would cause the cable not to meet the 3% limit
-    # then increase the cable size by 1 and recalculate the AC loss.
-    # Repeat until the AC loss is less than 3% or the cable size is 4/0
-    # which is the largest size in the table.
+    # based on amperage and temperature rating. Then, calculate the AC
+    # loss based on distance, cable material and supply voltage.
+    # If the AC loss is greater than 3% of the total power consumed,
+    # increase the cable size by 1 and recalculate the AC loss.
+    # Repeat until the AC loss is less than 3% or the cable size is 4/0.
     # The 3% limit comes from NEC 2017 210.19(A)(1) FPN No. 4
 
     def calculate_cable_size(self) -> None:
