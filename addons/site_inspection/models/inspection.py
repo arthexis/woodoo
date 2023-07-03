@@ -38,6 +38,7 @@ class Inspection(models.Model):
     location = fields.Char(string='Location')
 
     customer_id = fields.Many2one('res.partner', string='Customer')
+    customer_address_id = fields.Many2one('res.partner', string='Customer Address')
     customer_comments = fields.Text(string='Customer Comments')
     
     
