@@ -36,6 +36,8 @@ class Inspection(models.Model):
     date = fields.Date(string='Inspection Date')
     time = fields.Float(string='Inspection Time')
     location = fields.Char(string='Location')
+
+    customer_id = fields.Many2one('res.partner', string='Customer')
     customer_comments = fields.Text(string='Customer Comments')
     
     
