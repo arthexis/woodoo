@@ -252,15 +252,15 @@ class ElectricalInspection(models.Model):
             <kanban class="o_kanban_view">
                 <templates>
                     <t t-name="kanban-box">
-                        <div class="oe_kanban_global_click">
-                            <div class="oe_kanban_details">
-                                <div><strong><field name="name"/></strong></div>
-                                <div><field name="engineer_id"/></div>
-                                <div><field name="customer_id"/></div>
-                                <div><field name="date"/></div>
-                                <div><field name="time"/></div>
-                                <div><field name="location"/></div>
-                                <div><field name="result"/></div>
+                        <div t-attf-class="{{record.state.value == 'done' ? 'oe_kanban_global_click o_kanban_card_done' : 'oe_kanban_global_click'}}">
+                            <div class="o_kanban_record_top mb16">
+                                <field name="name"/>
+                                <field name="engineer_id"/>
+                                <field name="customer_id"/>
+                                <field name="date"/>
+                                <field name="time"/>
+                                <field name="location"/>
+                                <field name="result"/>
                             </div>
                         </div>
                     </t>
@@ -268,6 +268,7 @@ class ElectricalInspection(models.Model):
             </kanban>
         </field>
     </record>
+
 
     <!-- Electrical Inspection Action -->
 
