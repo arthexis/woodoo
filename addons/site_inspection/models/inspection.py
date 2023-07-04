@@ -28,8 +28,7 @@ class Inspection(models.Model):
         'res.users', string='Engineer', default=lambda self: self.env.user)
     date = fields.Date(string='Inspection Date', default=fields.Date.today)
     customer_id = fields.Many2one('res.partner', string='Customer')
-    location = fields.Char(string='Location')
-
+    location = fields.Char(string='Location', help='Describe the location')
     customer_comments = fields.Text(string='Customer Comments')
     
     result = fields.Selection([

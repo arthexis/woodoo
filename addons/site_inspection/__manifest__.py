@@ -17,6 +17,7 @@
         'views/general_inspection_view.xml',
         'views/electrical_inspection_view.xml',
         'views/inspection_menu.xml',
+        'security/groups.xml',
         'security/ir.model.access.csv', 
     ],
     'demo': [],

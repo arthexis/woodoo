@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_inspection_all,access_inspection_all,model_inspection_record,,1,1,1,1
+access_inspection_record_user,Inspection Record User,model_inspection_record,base.group_user,1,1,1,0
+access_inspection_record_manager,Inspection Record Manager,model_inspection_record,base.group_user,1,1,1,1
+access_electrical_inspection_record_user,Electrical Inspection Record User,model_electrical_inspection_record,base.group_user,1,1,1,0
+access_electrical_inspection_record_manager,Electrical Inspection Record Manager,model_electrical_inspection_record,base.group_user,1,1,1,1

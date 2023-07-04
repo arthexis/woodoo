@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+
+        <!-- Group: Inspection Record User -->
+        <record id="group_inspection_record_user" model="res.groups">
+            <field name="name">Inspection Record User</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="comment">Group for Inspection Record User</field>
+            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
+            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <!-- Group: Inspection Record Manager -->
+        <record id="group_inspection_record_manager" model="res.groups">
+            <field name="name">Inspection Record Manager</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="comment">Group for Inspection Record Manager</field>
+            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
+            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user'), ref('base.group_manager')])]"/>
+        </record>
+
+        <!-- Group: Electrical Inspection Record User -->
+        <record id="group_electrical_inspection_record_user" model="res.groups">
+            <field name="name">Electrical Inspection Record User</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="comment">Group for Electrical Inspection Record User</field>
+            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
+            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <!-- Group: Electrical Inspection Record Manager -->
+        <record id="group_electrical_inspection_record_manager" model="res.groups">
+            <field name="name">Electrical Inspection Record Manager</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="comment">Group for Electrical Inspection Record Manager</field>
+            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
+            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user'), ref('base.group_manager')])]"/>
+        </record>
+
+    </data>
+</odoo>
