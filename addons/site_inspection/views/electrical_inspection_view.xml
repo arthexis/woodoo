@@ -252,7 +252,7 @@ class ElectricalInspection(models.Model):
                     <group>
                         <field name="amperage"/>
                         <field name="distance"/>
-                        <field name="material"/>
+                        <field name="cable_material"/>
                         <field name="supply_voltage"/>
                         <field name="temperature_rating"/>
                         <field name="turns"/>
