@@ -3,7 +3,7 @@
 
         <!-- Group: Inspection Record User -->
         <record id="group_inspection_record_user" model="res.groups">
-            <field name="name">Inspection Record User</field>
+            <field name="name">Inspection User</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Inspection Record User</field>
             <field name="users" eval="[(4, ref('base.user_demo'))]"/>
@@ -12,7 +12,7 @@
 
         <!-- Group: Inspection Record Manager -->
         <record id="group_inspection_record_manager" model="res.groups">
-            <field name="name">Inspection Record Manager</field>
+            <field name="name">Inspection Manager</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Inspection Record Manager</field>
             <field name="users" eval="[(4, ref('base.user_demo'))]"/>
@@ -21,7 +21,7 @@
 
         <!-- Group: Electrical Inspection Record User -->
         <record id="group_electrical_inspection_record_user" model="res.groups">
-            <field name="name">Electrical Inspection Record User</field>
+            <field name="name">Electrical User</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Electrical Inspection Record User</field>
             <field name="users" eval="[(4, ref('base.user_demo'))]"/>
@@ -30,7 +30,7 @@
 
         <!-- Group: Electrical Inspection Record Manager -->
         <record id="group_electrical_inspection_record_manager" model="res.groups">
-            <field name="name">Electrical Inspection Record Manager</field>
+            <field name="name">Electrical Manager</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Electrical Inspection Record Manager</field>
             <field name="users" eval="[(4, ref('base.user_demo'))]"/>
