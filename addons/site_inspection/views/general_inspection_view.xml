@@ -82,7 +82,6 @@ class Inspection(models.Model):
                 <field name="customer_id"/>
                 <field name="location"/>
                 <field name="date"/>
-                <field name="customer_comments"/>
                 <field name="result"/>
             </tree>
         </field>
