@@ -6,8 +6,6 @@
             <field name="name">Inspection User</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Inspection Record User</field>
-            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
-            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
         </record>
 
         <!-- Group: Inspection Record Manager -->
@@ -15,8 +13,6 @@
             <field name="name">Inspection Manager</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Inspection Record Manager</field>
-            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
-            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user'), ref('base.group_manager')])]"/>
         </record>
 
         <!-- Group: Electrical Inspection Record User -->
@@ -24,8 +20,6 @@
             <field name="name">Electrical User</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Electrical Inspection Record User</field>
-            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
-            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
         </record>
 
         <!-- Group: Electrical Inspection Record Manager -->
@@ -33,8 +27,6 @@
             <field name="name">Electrical Manager</field>
             <field name="category_id" ref="base.module_category_hidden"/>
             <field name="comment">Group for Electrical Inspection Record Manager</field>
-            <field name="users" eval="[(4, ref('base.user_demo'))]"/>
-            <field name="implied_ids" eval="[(6, 0, [ref('base.group_user'), ref('base.group_manager')])]"/>
         </record>
 
     </data>
