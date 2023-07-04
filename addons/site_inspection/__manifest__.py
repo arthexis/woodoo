@@ -1,6 +1,6 @@
 {
     'name': 'Site Inspection',
-    'version': '1.0.7',
+    'version': '1.0.8',
     'category': 'Productivity',
     'summary': 'Store on-site inspection data to generate reports and estimates.',
     'sequence': 9,

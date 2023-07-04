@@ -9,8 +9,6 @@ class Inspection(models.Model):
     _name = 'inspection.record'
     _description = 'General Inspection'
 
-    name = fields.Char(string='Inspection ID', required=True)
-
     state = fields.Selection([
         ('draft', 'Draft'),
         ('invoiced', 'Invoiced'),
@@ -26,15 +24,15 @@ class Inspection(models.Model):
         ('other', 'Other'),
     ], string='Purpose', default='pre')
 
-    engineer_id = fields.Many2one('res.users', string='Engineer')
-    date = fields.Date(string='Inspection Date')
-    time = fields.Float(string='Inspection Time')
+    engineer_id = fields.Many2one(
+        'res.users', string='Engineer', default=lambda self: self.env.user)
+    date = fields.Date(string='Inspection Date', default=fields.Date.today)
+    customer_id = fields.Many2one('res.partner', string='Customer')
+    customer_address_id = fields.Many2one(
+        'res.partner', string='Customer Address', domain="[('parent_id', '=', customer_id)]")
     location = fields.Char(string='Location')
 
-    customer_id = fields.Many2one('res.partner', string='Customer')
-    customer_address_id = fields.Many2one('res.partner', string='Customer Address')
     customer_comments = fields.Text(string='Customer Comments')
-    
     
     result = fields.Selection([
         ('success', 'Success'),

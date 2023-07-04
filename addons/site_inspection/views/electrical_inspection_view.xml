@@ -2,6 +2,49 @@
 
 from odoo import models, fields
 
+from odoo import models, fields
+
+
+# General Inspection Model
+# This applies to all inspections, regardless of type
+
+class Inspection(models.Model):
+    
+    _name = 'inspection.record'
+    _description = 'General Inspection'
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('invoiced', 'Invoiced'),
+        ('paid', 'Paid'),
+    ], string='Status', default='draft')
+
+    # Purpose of the inspection
+    purpose = fields.Selection([
+        ('pre', 'Pre-Installation'),
+        ('post', 'Post-Installation'),
+        ('maintenance', 'Maintenance'),
+        ('warranty', 'Warranty'),
+        ('other', 'Other'),
+    ], string='Purpose', default='pre')
+
+    engineer_id = fields.Many2one(
+        'res.users', string='Engineer', default=lambda self: self.env.user)
+    date = fields.Date(string='Inspection Date', default=fields.Date.today)
+    customer_id = fields.Many2one('res.partner', string='Customer')
+    customer_address_id = fields.Many2one(
+        'res.partner', string='Customer Address', domain="[('parent_id', '=', customer_id)]")
+    location = fields.Char(string='Location')
+
+    customer_comments = fields.Text(string='Customer Comments')
+    
+    result = fields.Selection([
+        ('success', 'Success'),
+        ('partial', 'Partial Success'),
+        ('fail', 'Failure'),
+    ], string='Result', default='success')
+
+
 # Electrical Inspection Model
 # This applies to inspections of electrical systems
 
@@ -195,12 +238,11 @@ class ElectricalInspection(models.Model):
                 <sheet>
                     <group>
                         <group>
-                            <field name="name"/>
                             <field name="engineer_id"/>
+                            <field name="state"/>
                             <field name="customer_id"/>
                             <field name="customer_address_id"/>
                             <field name="date"/>
-                            <field name="time"/>
                             <field name="location"/>
                             <field name="customer_comments"/>
                             <field name="result"/>
@@ -232,50 +274,21 @@ class ElectricalInspection(models.Model):
         <field name="model">electrical.inspection.record</field>
         <field name="arch" type="xml">
             <tree string="Electrical Inspections">
-                <field name="name"/>
                 <field name="engineer_id"/>
                 <field name="customer_id"/>
                 <field name="date"/>
-                <field name="time"/>
                 <field name="location"/>
                 <field name="result"/>
             </tree>
         </field>
     </record>
 
-    <!-- Electrical Inspection Kanban -->
-
-    <record id="electrical_inspection_kanban" model="ir.ui.view">
-        <field name="name">electrical.inspection.kanban</field>
-        <field name="model">electrical.inspection.record</field>
-        <field name="arch" type="xml">
-            <kanban class="o_kanban_view">
-                <templates>
-                    <t t-name="kanban-box">
-                        <div t-attf-class="{{record.state.value == 'done' ? 'oe_kanban_global_click o_kanban_card_done' : 'oe_kanban_global_click'}}">
-                            <div class="o_kanban_record_top mb16">
-                                <field name="name"/>
-                                <field name="engineer_id"/>
-                                <field name="customer_id"/>
-                                <field name="date"/>
-                                <field name="time"/>
-                                <field name="location"/>
-                                <field name="result"/>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
-
-
     <!-- Electrical Inspection Action -->
 
     <record id="electrical_inspection_action" model="ir.actions.act_window">
         <field name="name">Electrical Inspection</field>
         <field name="res_model">electrical.inspection.record</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form</field>
     </record>
     
 </odoo>
