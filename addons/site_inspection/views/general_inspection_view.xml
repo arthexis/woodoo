@@ -116,13 +116,12 @@ class Inspection(models.Model):
         </field>
     </record>
 
-    <!-- General Inspection Action -->
+    <!-- General Inspection Menu Action (kanban default) -->
 
-    <record id="inspection_menu_action" model="ir.actions.act_window">
+    <record id="general_inspection_action" model="ir.actions.act_window">
         <field name="name">General Inspection</field>
         <field name="res_model">inspection.record</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>
-
    
 </odoo>

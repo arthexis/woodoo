@@ -111,7 +111,7 @@ class ElectricalInspection(models.Model):
     requires_wall_drilling = fields.Boolean(string='Requires Wall Drilling')
 
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
-    
+
     def calculate_cable_size(self) -> None:
         base_cable_size = self.get_base_cable_size()
         ac_loss = self.get_ac_loss(base_cable_size)
@@ -263,7 +263,7 @@ class ElectricalInspection(models.Model):
 
     <!-- Electrical Inspection Action -->
 
-    <record id="electrical_inspection_menu_action" model="ir.actions.act_window">
+    <record id="electrical_inspection_action" model="ir.actions.act_window">
         <field name="name">Electrical Inspection</field>
         <field name="res_model">electrical.inspection.record</field>
         <field name="view_mode">kanban,tree,form</field>
