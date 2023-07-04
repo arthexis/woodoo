@@ -1,5 +1,7 @@
 from odoo import models, fields
+import logging
 
+_logger = logging.getLogger(__name__)
 
 # General Inspection Model
 # This applies to all inspections, regardless of type
@@ -101,17 +103,17 @@ class ElectricalInspection(models.Model):
     )
 
     # Material of the cable, default is copper
-    material = fields.Selection([
+    cable_material = fields.Selection([
         ('C', 'Copper'),
         ('A', 'Aluminum'),
-    ], string='Material', default='copper')
+    ], string='Material', default='C')
 
     supply_voltage = fields.Selection([
         ('110', '110V'),
         ('220', '220V'),
         ('440', '440V'),
         ('480', '480V'),
-    ], string='Supply Voltage')
+    ], string='Supply Voltage', default='220')
 
     # Limit to 60, 75 and 90 with 60 as default
     temperature_rating = fields.Selection([
@@ -144,6 +146,7 @@ class ElectricalInspection(models.Model):
         ('10', '10"'),
         ('12', '12"'),
     ], string='Pipe Size')
+
     pipe_material = fields.Selection([
         ('PVC', 'PVC'),
         ('Steel', 'Steel'),
@@ -167,11 +170,17 @@ class ElectricalInspection(models.Model):
 
     def calculate_cable_size(self) -> None:
         base_cable_size = self.get_base_cable_size()
+        _logger.info(f'Base cable size: {base_cable_size}')
         ac_loss = self.get_ac_loss(base_cable_size)
+        _logger.info(f'AC loss: {ac_loss}')
         while ac_loss > 3 and base_cable_size != '4/0':
+            _logger.info('Increasing cable size')
             base_cable_size = self.increase_cable_size(base_cable_size)
+            _logger.info(f'New cable size: {base_cable_size}')
             ac_loss = self.get_ac_loss(base_cable_size)
+            _logger.info(f'New AC loss: {ac_loss}')
         self.cable_size = base_cable_size
+        _logger.info(f'Final cable size: {self.cable_size}')
 
     def get_base_cable_size(self) -> str:
         # Get the amperage and temperature rating
@@ -183,13 +192,15 @@ class ElectricalInspection(models.Model):
             if value[f'C{temperature_rating}'] == amperage:
                 return key
         # If no match is found then return None
+        _logger.error('No cable size defined for amperage and temperature rating')
         return None    
 
     def get_ac_loss(self, base_cable_size: str) -> float:
-        resistivity = RESISTIVITY[self.material]
+        resistivity = RESISTIVITY[self.cable_material]
         area = 1 / int(base_cable_size)
         resistance = resistivity * self.distance / area
         voltage_drop = self.amperage * resistance
+        _logger.info(f'Voltage drop: {voltage_drop}')
         power_loss = self.amperage * voltage_drop
         total_power = int(self.supply_voltage) * self.amperage
         ac_loss_percentage = 100 * power_loss / total_power
@@ -216,20 +227,24 @@ class ElectricalInspection(models.Model):
 
     def add_cable_to_order(self, order: models.Model, color=None) -> None:
         # Consider cable size, material and length
-        units = int(self.distance / 3) + 1
+        units = self.get_cable_units()
         cable = self.env['product.product'].search([
             ('name', '=', 'Cable'),
             ('type', '=', 'product'),
-            ('cable_size', '=', self.cable_size),
-            ('material', '=', self.material),
+            ('material', '=', self.cable_material),
             ('color', '=', color or 'black'),
         ], limit=1)
-        self.env['sale.order.line'].create({
-            'order_id': order.id,
-            'product_id': cable.id,
-            'product_uom_qty': units,
-            'product_uom': cable.uom_id.id,
-            'price_unit': cable.list_price,
-        })
+        if not cable:
+            _logger.error('Cable not found in product list')
+        else:
+            self.env['sale.order.line'].create({
+                'order_id': order.id,
+                'product_id': cable.id,
+                'product_uom_qty': units,
+                'product_uom': cable.uom_id.id,
+                'price_unit': cable.list_price,
+            })
 
+    def get_cable_units(self) -> int:
+        return int(self.distance / 3) + 1
 

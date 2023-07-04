@@ -237,30 +237,45 @@ class ElectricalInspection(models.Model):
             <form string="Electrical Inspection">
                 <sheet>
                     <group>
-                        <group>
-                            <field name="engineer_id"/>
-                            <field name="state"/>
-                            <field name="customer_id"/>
-                            <field name="purpose"/>
-                            <field name="location"/>
-                            <field name="date"/>
-                            <field name="customer_comments"/>
-                            <field name="result"/>
-                        </group>
-                        <group>
-                            <field name="amperage"/>
-                            <field name="distance"/>
-                            <field name="material"/>
-                            <field name="supply_voltage"/>
-                            <field name="temperature_rating"/>
-                            <field name="turns"/>
-                            <field name="cable_size"/>
-                            <field name="pipe_size"/>
-                            <field name="pipe_material"/>
-                            <field name="requires_burrowing"/>
-                            <field name="requires_wall_drilling"/>
-                            <field name="sales_order_id"/>
-                        </group>
+                        <field name="engineer_id"/>
+                        <field name="state"/>
+                        <!-- Show the each field of the address for this customer -->
+                        <field name="customer_id" context="{'show_address': 1}"/>
+                    </group>
+                    <group>
+                        <field name="purpose"/>
+                        <field name="location"/>
+                        <field name="date"/>
+                    </group>
+                </sheet>
+                <sheet string="Observations">
+                    <group>
+                        <field name="amperage"/>
+                        <field name="distance"/>
+                        <field name="material"/>
+                        <field name="supply_voltage"/>
+                        <field name="temperature_rating"/>
+                        <field name="turns"/>
+                    </group>
+                </sheet>
+                <sheet string="Calculations">
+                    <group>
+                        <field name="cable_size"/>
+                        <field name="pipe_size"/>
+                        <field name="pipe_material"/>
+                    </group>
+                </sheet>
+                <sheet string="Special Requirements">
+                    <group>
+                        <field name="requires_burrowing"/>
+                        <field name="requires_wall_drilling"/>
+                        <field name="customer_comments"/>
+                    </group>
+                </sheet>
+                <sheet string="Sales Estimate">
+                    <group>
+                        <field name="sales_order_id"/>
+                        <field name="result"/>
                     </group>
                 </sheet>
             </form>
