@@ -30,8 +30,6 @@ class Inspection(models.Model):
         'res.users', string='Engineer', default=lambda self: self.env.user)
     date = fields.Date(string='Inspection Date', default=fields.Date.today)
     customer_id = fields.Many2one('res.partner', string='Customer')
-    customer_address_id = fields.Many2one(
-        'res.partner', string='Customer Address', domain="[('parent_id', '=', customer_id)]")
     location = fields.Char(string='Location')
 
     customer_comments = fields.Text(string='Customer Comments')
@@ -59,8 +57,9 @@ class Inspection(models.Model):
                     <group>
                         <field name="engineer_id"/>
                         <field name="state"/>
-                        <field name="customer_id"/>
-                        <field name="customer_address_id"/>
+                        <!-- Show the each field of the address for this customer -->
+                        <field name="customer_id" context="{'show_address': 1}"/>
+                        <field name="purpose"/>
                         <field name="location"/>
                         <field name="date"/>
                         <field name="customer_comments"/>
@@ -81,7 +80,6 @@ class Inspection(models.Model):
                 <field name="engineer_id"/>
                 <field name="state"/>
                 <field name="customer_id"/>
-                <field name="customer_address_id"/>
                 <field name="location"/>
                 <field name="date"/>
                 <field name="customer_comments"/>

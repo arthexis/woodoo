@@ -242,8 +242,9 @@ class ElectricalInspection(models.Model):
                             <field name="state"/>
                             <field name="customer_id"/>
                             <field name="customer_address_id"/>
-                            <field name="date"/>
+                            <field name="purpose"/>
                             <field name="location"/>
+                            <field name="date"/>
                             <field name="customer_comments"/>
                             <field name="result"/>
                         </group>

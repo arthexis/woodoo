@@ -28,8 +28,6 @@ class Inspection(models.Model):
         'res.users', string='Engineer', default=lambda self: self.env.user)
     date = fields.Date(string='Inspection Date', default=fields.Date.today)
     customer_id = fields.Many2one('res.partner', string='Customer')
-    customer_address_id = fields.Many2one(
-        'res.partner', string='Customer Address', domain="[('parent_id', '=', customer_id)]")
     location = fields.Char(string='Location')
 
     customer_comments = fields.Text(string='Customer Comments')
@@ -39,6 +37,14 @@ class Inspection(models.Model):
         ('partial', 'Partial Success'),
         ('fail', 'Failure'),
     ], string='Result', default='success')
+
+    # Name for the inspection = customer name + short date
+    def name_get(self):
+        result = []
+        for record in self:
+            name = f'{record.customer_id.name} - {record.date}'
+            result.append((record.id, name))
+        return result
 
 
 # Electrical Inspection Model
