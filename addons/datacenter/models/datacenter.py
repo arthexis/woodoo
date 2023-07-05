@@ -6,7 +6,6 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 # Datacenter models
     
-
 class AppServer(models.Model):
     _name = 'datacenter.app.server'
     _description = 'App Server'

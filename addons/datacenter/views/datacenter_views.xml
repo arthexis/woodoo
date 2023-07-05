@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Path: addons\datacenter\views\datacenter_views.xml -->
+
 <odoo>
     <data>
 
