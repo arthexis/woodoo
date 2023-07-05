@@ -156,6 +156,11 @@ class AppServer(models.Model):
             self.state = 'failure'
             self.error_count += 1
         return self.stdout
+
+    def _interpolate_variables(self, command):
+        # Interpolate variables
+        # TODO: Add more variables
+        return command
     
 
 class Application(models.Model):
