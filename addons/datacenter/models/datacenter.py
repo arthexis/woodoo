@@ -82,18 +82,6 @@ class AppServer(models.Model):
         string='Resolved Command', required=False,
         track_visibility='always',
     )
-    run_as_script = fields.Boolean(
-        string='Run as Script', required=False,
-        help='If checked, the command will be run as a script',
-        default=False,
-        track_visibility='always',
-    )
-    script_path = fields.Char(
-        string='Script Path', required=False,
-        help='The path to the script to run (when run as a script)',
-        default=lambda self: '/home/%s' % self.user,
-        track_visibility='always',
-    )
 
     # Output
     stdout = fields.Text(
