@@ -1,5 +1,5 @@
 <odoo>
-    <data>
+
     <!-- Server Form View -->
     <record id="datacenter_app_server_form_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.form.view</field>
@@ -21,7 +21,7 @@
                             <group>
                                 <field name="user"/>
                                 <field name="password" widget="password"/>
-                                <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
+                                <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
                             </group>
                         </page>
                         <page string="Applications">
@@ -163,5 +163,4 @@
     <menuitem id="datacenter_menu_app_server" name="Servers" parent="datacenter_menu" action="datacenter_app_server_action"/>
     <menuitem id="datacenter_menu_app_database" name="Databases" parent="datacenter_menu" action="datacenter_app_database_action"/>
 
-    </data>
 </odoo>

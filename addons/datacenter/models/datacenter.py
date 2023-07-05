@@ -35,7 +35,7 @@ class AppServer(models.Model):
         string='Private PEM File', attachment=True, required=False,
         track_visibility='always',
     )
-    private_pem_file_name = fields.Char(
+    private_pem_filename = fields.Char(
         string='Private PEM File Name', required=False,
         track_visibility='always',
     )
