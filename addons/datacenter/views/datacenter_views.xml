@@ -125,7 +125,30 @@
             </field>
         </record>
 
-     
+        <!-- App Server Action -->
+
+        <record id="datacenter_app_server_action" model="ir.actions.act_window">
+            <field name="name">App Servers</field>
+            <field name="res_model">datacenter.app.server</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Application Action -->
+
+        <record id="datacenter_application_action" model="ir.actions.act_window">
+            <field name="name">Applications</field>
+            <field name="res_model">datacenter.application</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- App Database Action -->
+
+        <record id="datacenter_app_database_action" model="ir.actions.act_window">
+            <field name="name">App Databases</field>
+            <field name="res_model">datacenter.app.database</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
         <!-- Menu -->
         
         <menuitem id="datacenter_menu" name="Datacenter"/>
@@ -136,11 +159,10 @@
             parent="datacenter_menu_root" action="datacenter_app_server_action"/>
 
         <menuitem id="datacenter_menu_app" name="Applications"
-            parent="datacenter_menu_root" action="datacenter_app_action"/>
+            parent="datacenter_menu_root" action="datacenter_application_action"/>
 
         <menuitem id="datacenter_menu_app_database" name="App Databases"
             parent="datacenter_menu_root" action="datacenter_app_database_action"/>
-
 
     </data>
 </odoo>
