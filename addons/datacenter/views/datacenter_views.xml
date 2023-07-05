@@ -178,7 +178,7 @@
 
         <!-- Menu -->
         
-        <menuitem id="datacenter_menu" name="Datacenter"/>
+        <menuitem id="datacenter_menu" name="Datacenter" priority="1"/>
 
         <menuitem id="datacenter_menu_app" name="Applications"
             parent="datacenter_menu" action="datacenter_application_action"/>

@@ -131,7 +131,6 @@ class AppServer(models.Model):
     def run_command(self, command=None, cwd=None):
         if self.state == 'pending':
             return 'Server is busy'
-        ssh_client = self._get_ssh_client()
         if command:
             if cwd:
                 command = 'cd %s && %s' % (cwd, command)
@@ -148,7 +147,8 @@ class AppServer(models.Model):
         self.flush()
         try:
             command = '%s; echo "EXIT_CODE:$?"' % command
-            _, stdout, stderr = ssh.exec_command(command)
+            ssh_client = self._get_ssh_client()
+            _, stdout, stderr = ssh_client.exec_command(command)
             # Get exit code and output
             split_stdout = stdout.read().decode().split('EXIT_CODE:')
             self.exit_code = int(split_stdout[-1])
