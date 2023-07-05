@@ -92,10 +92,6 @@ class AppServer(models.Model):
         string='Stderr', required=False, readonly=True,
         track_visibility='always',
     )
-    exit_code = fields.Integer(
-        string='Exit Code', required=False, readonly=True,
-        track_visibility='always',
-    )
     error_count = fields.Integer(
         string='Error Count', required=False, default=0, readonly=True,
     )
@@ -146,13 +142,10 @@ class AppServer(models.Model):
         # Save changes before running command
         self.flush()
         try:
-            command = '%s; echo "EXIT_CODE:$?"' % command
             ssh_client = self._get_ssh_client()
             _, stdout, stderr = ssh_client.exec_command(command)
             # Get exit code and output
-            split_stdout = stdout.read().decode().split('EXIT_CODE:')
-            self.exit_code = int(split_stdout[-1])
-            self.stdout = split_stdout[0]
+            self.stdout = stdout.read().decode()
             self.stderr = stderr.read().decode()
             self.state = 'success'
             self.error_count = 0
@@ -161,8 +154,6 @@ class AppServer(models.Model):
             self.state = 'failure'
             self.error_count += 1
         return self.stdout
-
-
     
 
 class Application(models.Model):
