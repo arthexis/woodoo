@@ -75,6 +75,7 @@ class AppServer(models.Model):
 
     original_command = fields.Text(
         string='Original Command', required=False,
+        default='echo "Hello World"',
         track_visibility='always',
     )
     resolved_command = fields.Text(
