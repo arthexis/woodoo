@@ -156,13 +156,13 @@
         
         <menuitem id="datacenter_menu" name="Datacenter"/>
 
-        <menuitem id="datacenter_menu_app_server" name="App Servers" 
-            parent="datacenter_menu" action="datacenter_app_server_action"/>
-
         <menuitem id="datacenter_menu_app" name="Applications"
             parent="datacenter_menu" action="datacenter_application_action"/>
 
-        <menuitem id="datacenter_menu_app_database" name="App Databases"
+        <menuitem id="datacenter_menu_app_server" name="Servers" 
+            parent="datacenter_menu" action="datacenter_app_server_action"/>
+
+        <menuitem id="datacenter_menu_app_database" name="Databases"
             parent="datacenter_menu" action="datacenter_app_database_action"/>
 
 
