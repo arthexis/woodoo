@@ -2,8 +2,6 @@
 
 from odoo import models, fields
 
-from odoo import models, fields
-
 
 # General Inspection Model
 # This applies to all inspections, regardless of type
