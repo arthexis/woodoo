@@ -34,17 +34,15 @@
                             </field>
                         </page>
                         <page string="Commands">
+                            <field name="original_command"/>
                             <group>
-                                <field name="original_command"/>
-                                <group>
-                                    <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
-                                </group>
-                                <group>
-                                    <field name="resolved_command" readonly="1"/>
-                                    <field name="stdout" readonly="1"/>
-                                    <field name="stderr" readonly="1"/>
-                                    <field name="exit_code" readonly="1"/>
-                                </group>
+                                <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
+                            </group>
+                            <group>
+                                <field name="resolved_command" readonly="1"/>
+                                <field name="stdout" readonly="1"/>
+                                <field name="stderr" readonly="1"/>
+                                <field name="exit_code" readonly="1"/>
                             </group>
                         </page>
                     </notebook>
@@ -158,7 +156,7 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="datacenter_menu" name="Datacenter" priority="1"/>
+    <menuitem id="datacenter_menu" name="Datacenter" sequence="1"/>
     <menuitem id="datacenter_menu_app" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
     <menuitem id="datacenter_menu_app_server" name="Servers" parent="datacenter_menu" action="datacenter_app_server_action"/>
     <menuitem id="datacenter_menu_app_database" name="Databases" parent="datacenter_menu" action="datacenter_app_database_action"/>
