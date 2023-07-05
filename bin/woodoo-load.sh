@@ -18,12 +18,6 @@ git pull
 # Copy the addons
 cp -r addons/* ../../"${SITE}"/addons/
 
-# Stop if there were no changes 
-if [ -z "$(git status --porcelain)" ]; then
-    echo "No changes"
-    exit 0
-fi
-
 # Restart the service
 sudo systemctl restart "${SITE}"
 

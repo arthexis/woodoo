@@ -260,10 +260,12 @@ class AppDatabase(models.Model):
                         </group>
                         <notebook>
                             <page string="Credentials">
+                                <group>
                                     <field name="user"/>
                                     <field name="password" widget="password"/>
                                     <field name="private_pem_file" widget="binary" 
                                         filename="private_pem_file_name"/>
+                                </group>
                             </page>
                             <page string="Applications">
                                 <field name="application_ids">
@@ -275,13 +277,18 @@ class AppDatabase(models.Model):
                                 </field>
                             </page>
                             <page string="Commands">
+                                <group>
                                     <field name="original_command"/>
                                     <field name="resolved_command" readonly="1"/>
                                     <field name="run_as_script"/>
+                                    <field name="script_path"/>
+                                </group>
+                                <group>
                                     <field name="stdout" readonly="1"/>
                                     <field name="stderr" readonly="1"/>
                                     <field name="exit_code" readonly="1"/>
                                     <field name="error_count" readonly="1"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -303,20 +310,6 @@ class AppDatabase(models.Model):
                     <field name="state" readonly="1"/>
                     <field name="error_count" readonly="1"/>
                 </tree>
-            </field>
-        </record>
-
-        <!-- Server Action: Run the command on the Server model -->
-
-        <record id="datacenter_app_server_run_command_action" model="ir.actions.server">
-            <field name="name">Run Command</field>
-            <field name="model_id" ref="datacenter_app_server_model"/>
-            <field name="state">code</field>
-            <field name="code">
-                # Get the server
-                server = env['datacenter.app.server'].browse(context.get('active_id'))
-                # Run the command
-                server.run_command()
             </field>
         </record>
 
