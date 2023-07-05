@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Path: addons\datacenter\models\datacenter.py -->
-
-<!-- Path: addons\datacenter\views\datacenter_views.xml -->
-
 <odoo>
     <data>
-
         <!-- Server Form View -->
-        
         <record id="datacenter_app_server_form_view" model="ir.ui.view">
             <field name="name">datacenter.app.server.form.view</field>
             <field name="model">datacenter.app.server</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
-                        <group>    
+                        <group>
                             <field name="name" class="big-field"/>
                             <field name="host"/>
                             <field name="port"/>
@@ -29,8 +22,7 @@
                                 <group>
                                     <field name="user"/>
                                     <field name="password" widget="password"/>
-                                    <field name="private_pem_file" widget="binary" 
-                                        filename="private_pem_file_name"/>
+                                    <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
                                 </group>
                             </page>
                             <page string="Applications">
@@ -43,17 +35,18 @@
                                 </field>
                             </page>
                             <page string="Commands">
-                                <field name="original_command"/>
-                                <!-- Buttons -->
                                 <group>
-                                    <button name="run_command" string="Execute"
-                                        type="object" class="oe_highlight"/>
-                                </group>
-                                <group>
-                                    <field name="resolved_command" readonly="1"/>
-                                    <field name="stdout" readonly="1"/>
-                                    <field name="stderr" readonly="1"/>
-                                    <field name="exit_code" readonly="1"/>
+                                    <field name="original_command"/>
+                                    <!-- Buttons -->
+                                    <group>
+                                        <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
+                                    </group>
+                                    <group>
+                                        <field name="resolved_command" readonly="1"/>
+                                        <field name="stdout" readonly="1"/>
+                                        <field name="stderr" readonly="1"/>
+                                        <field name="exit_code" readonly="1"/>
+                                    </group>
                                 </group>
                             </page>
                         </notebook>
@@ -63,7 +56,6 @@
         </record>
 
         <!-- Server Tree View -->
-
         <record id="datacenter_app_server_tree_view" model="ir.ui.view">
             <field name="name">datacenter.app.server.tree.view</field>
             <field name="model">datacenter.app.server</field>
@@ -80,7 +72,6 @@
         </record>
 
         <!-- Application Form View -->
-
         <record id="datacenter_application_form_view" model="ir.ui.view">
             <field name="name">datacenter.application.form.view</field>
             <field name="model">datacenter.application</field>
@@ -100,7 +91,6 @@
         </record>
 
         <!-- Application Tree View -->
-
         <record id="datacenter_app_tree_view" model="ir.ui.view">
             <field name="name">datacenter.application.tree.view</field>
             <field name="model">datacenter.application</field>
@@ -115,7 +105,6 @@
         </record>
 
         <!-- App Database Form View -->
-
         <record id="datacenter_app_database_form_view" model="ir.ui.view">
             <field name="name">datacenter.app.database.form.view</field>
             <field name="model">datacenter.app.database</field>
@@ -135,7 +124,6 @@
         </record>
 
         <!-- App Database Tree View -->
-
         <record id="datacenter_app_database_tree_view" model="ir.ui.view">
             <field name="name">datacenter.app.database.tree.view</field>
             <field name="model">datacenter.app.database</field>
@@ -151,7 +139,6 @@
         </record>
 
         <!-- App Server Action -->
-
         <record id="datacenter_app_server_action" model="ir.actions.act_window">
             <field name="name">Servers</field>
             <field name="res_model">datacenter.app.server</field>
@@ -159,7 +146,6 @@
         </record>
 
         <!-- Application Action -->
-
         <record id="datacenter_application_action" model="ir.actions.act_window">
             <field name="name">Applications</field>
             <field name="res_model">datacenter.application</field>
@@ -167,7 +153,6 @@
         </record>
 
         <!-- App Database Action -->
-
         <record id="datacenter_app_database_action" model="ir.actions.act_window">
             <field name="name">Databases</field>
             <field name="res_model">datacenter.app.database</field>
@@ -175,17 +160,9 @@
         </record>
 
         <!-- Menu -->
-        
         <menuitem id="datacenter_menu" name="Datacenter" priority="1"/>
-
-        <menuitem id="datacenter_menu_app" name="Applications"
-            parent="datacenter_menu" action="datacenter_application_action"/>
-
-        <menuitem id="datacenter_menu_app_server" name="Servers" 
-            parent="datacenter_menu" action="datacenter_app_server_action"/>
-
-        <menuitem id="datacenter_menu_app_database" name="Databases"
-            parent="datacenter_menu" action="datacenter_app_database_action"/>
-
+        <menuitem id="datacenter_menu_app" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
+        <menuitem id="datacenter_menu_app_server" name="Servers" parent="datacenter_menu" action="datacenter_app_server_action"/>
+        <menuitem id="datacenter_menu_app_database" name="Databases" parent="datacenter_menu" action="datacenter_app_database_action"/>
     </data>
 </odoo>
