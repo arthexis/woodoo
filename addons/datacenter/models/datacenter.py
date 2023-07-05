@@ -73,8 +73,8 @@ class AppServer(models.Model):
         track_visibility='always',
     )
 
-    command = fields.Text(
-        string='Command', required=False,
+    original_command = fields.Text(
+        string='Original Command', required=False,
         track_visibility='always',
     )
     resolved_command = fields.Text(
@@ -141,9 +141,9 @@ class AppServer(models.Model):
                 command = 'cd %s && %s' % (cwd, command)
             elif self.base_path:
                 command = 'cd %s && %s' % (self.base_path, command)
-            self.command = command
+            self.original_command = command
         else:
-            command = self.command
+            command = self.original_command
         self.state = 'pending'
         self.resolved_command = self._interpolate_variables(command)
         self.stdout = None
@@ -152,7 +152,7 @@ class AppServer(models.Model):
         self.flush()
         try:
             command = '%s; echo "EXIT_CODE:$?"' % command
-            stdout, stderr = ssh_client.exec_command(command)
+            _, stdout, stderr = ssh.exec_command(command)
             # Get exit code and output
             split_stdout = stdout.read().decode().split('EXIT_CODE:')
             self.exit_code = int(split_stdout[-1])
@@ -198,21 +198,6 @@ class Application(models.Model):
         string='Service Name', required=False,
         default=lambda self: self.name,
     )
-
-    def run_command(self, command, cwd=None):
-        # Iterpolate any variables in the command
-        command = command % self._interpolate_variables()
-        return self.server_id.run_command(command, cwd)
-
-    def _interpolate_variables(self):
-        return {
-            'app_name': self.name,
-            'app_port': self.app_port,
-            'service_name': self.service_name,
-        }
-
-    def run_sql(self, query):
-        return self.database_ids[0].run_sql(query)
 
 
 class AppDatabase(models.Model):
