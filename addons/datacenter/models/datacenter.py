@@ -15,74 +15,156 @@ class AppServer(models.Model):
     )
     host = fields.Char(
         string='Host', required=True,
+        track_visibility='always',
     )
     port = fields.Integer(
         string='Port', required=True, default=22,
+        track_visibility='always'
     )
 
     # SSH credentials
     user = fields.Char(
         string='User', required=False,
+        track_visibility='always',
     )
     password = fields.Char(
         string='Password', required=False,
+        track_visibility='always',
     )
     private_pem_file = fields.Binary(
         string='Private PEM File', attachment=True, required=False,
+        track_visibility='always',
     )
     private_pem_file_name = fields.Char(
         string='Private PEM File Name', required=False,
+        track_visibility='always',
     )
+
+    # SSH settings
     base_path = fields.Char(
         string='Base Path', required=False,
         default=lambda self: '/home/%s' % self.user,
+        track_visibility='always',
     )
 
     # Applications
     application_ids = fields.One2many(
         string='Applications', comodel_name='datacenter.application',
         inverse_name='server_id',
+        track_visibility='always',
     )
 
-    # State
+    # State:
+    # Treat each server as a state machine
+    # This means each server can only be processing one command at a time
+    # and prevents having the server in an unknown state.
+    # If the server is in the 'pending' state, it means it is waiting for
+    # a command to be run and new commands should not be accepted.
+
     state = fields.Selection(
         string='State', required=True,
         selection=[
             ('unknown', 'Unknown'),
-            ('unreachable', 'Unreachable'),
-            ('reachable', 'Reachable'),
-            ('connected', 'Connected'),
+            ('failure', 'Failure'),
+            ('success', 'Success'),
+            ('pending', 'Pending'),
         ],
         default='unknown',
+        track_visibility='always',
+    )
+
+    command = fields.Text(
+        string='Command', required=False,
+        track_visibility='always',
+    )
+    resolved_command = fields.Text(
+        string='Resolved Command', required=False,
+        track_visibility='always',
+    )
+    run_as_script = fields.Boolean(
+        string='Run as Script', required=False,
+        help='If checked, the command will be run as a script',
+        default=False,
+        track_visibility='always',
+    )
+    script_path = fields.Char(
+        string='Script Path', required=False,
+        help='The path to the script to run (when run as a script)',
+        default=lambda self: '/home/%s' % self.user,
+        track_visibility='always',
+    )
+
+    # Output
+    stdout = fields.Text(
+        string='Stdout', required=False, readonly=True,
+        track_visibility='always',
+    )
+    stderr = fields.Text(
+        string='Stderr', required=False, readonly=True,
+        track_visibility='always',
+    )
+    exit_code = fields.Integer(
+        string='Exit Code', required=False, readonly=True,
+        track_visibility='always',
+    )
+    error_count = fields.Integer(
+        string='Error Count', required=False, default=0, readonly=True,
     )
 
     # Get SSH connection
-    def get_ssh_client(self):
+    def _get_ssh_client(self):
         ssh_client = SSHClient()
         ssh_client.set_missing_host_key_policy(AutoAddPolicy())
         if self.private_pem_file:
             private_pem_file_str = b64decode(self.private_pem_file).decode('utf-8')
             private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
             ssh_client.connect(
-                hostname=self.host, port=self.port, username=self.user,
-                pkey=private_key,
+                hostname=self.host, port=self.port, 
+                username=self.user, pkey=private_key,
             )
         else:
             ssh_client.connect(
-                hostname=self.host, port=self.port, username=self.user,
-                password=self.password,
+                hostname=self.host, port=self.port, 
+                username=self.user, password=self.password,
             )
         return ssh_client
 
     # Run command
-    def run_command(self, command, cwd=None):
-        ssh_client = self.get_ssh_client()
-        if cwd:
-            command = 'cd %s && %s' % (cwd, command)
-        elif self.base_path:
-            command = 'cd %s && %s' % (self.base_path, command)
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        return self._format_output(stdout.read().decode())
+    # Set the state to 'pending' and run the command
+    # Catch any errors, return the output and set the state to 
+    # 'failure' or 'success' depending on the result
+
+    def run_command(self, command=None, cwd=None):
+        ssh_client = self._get_ssh_client()
+        if command:
+            if cwd:
+                command = 'cd %s && %s' % (cwd, command)
+            elif self.base_path:
+                command = 'cd %s && %s' % (self.base_path, command)
+            self.command = command
+        else:
+            command = self.command
+        self.state = 'pending'
+        self.resolved_command = self._interpolate_variables(command)
+        self.stdout = None
+        self.stderr = None
+        # Save changes before running command
+        self.flush()
+        try:
+            command = '%s; echo "EXIT_CODE:$?"' % command
+            stdout, stderr = ssh_client.exec_command(command)
+            # Get exit code and output
+            split_stdout = stdout.read().decode().split('EXIT_CODE:')
+            self.exit_code = int(split_stdout[-1])
+            self.stdout = split_stdout[0]
+            self.stderr = stderr.read().decode()
+            self.state = 'success'
+            self.error_count = 0
+        except Exception as e:
+            self.stderr = str(e)
+            self.state = 'failure'
+            self.error_count += 1
+        return self.stdout
     
 
 class Application(models.Model):

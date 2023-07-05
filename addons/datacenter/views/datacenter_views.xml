@@ -14,7 +14,7 @@
                 <form>
                     <sheet>
                         <group>    
-                            <field name="name" class="woodoo-large-field"/>
+                            <field name="name" class="big-field"/>
                             <field name="host"/>
                             <field name="port"/>
                         </group>
@@ -66,7 +66,7 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" class="woodoo-large-field"/>
+                            <field name="name" class="big-field"/>
                             <field name="server_id"/>
                             <field name="user"/>
                             <field name="password" widget="password"/>
@@ -101,7 +101,7 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="name" class="woodoo-large-field"/>
+                            <field name="name" class="big-field"/>
                             <field name="application_id"/>
                             <field name="ip_address"/>
                             <field name="db_port"/>
@@ -164,25 +164,6 @@
 
         <menuitem id="datacenter_menu_app_database" name="Databases"
             parent="datacenter_menu" action="datacenter_app_database_action"/>
-
-
-        <!-- Server action: Run command -->
-
-        <record id="datacenter_app_server_action_run_command" model="ir.actions.server">
-            <field name="name">Run Command</field>
-            <field name="model_id" ref="model_datacenter_app_server"/>
-            <field name="state">code</field>
-            <field name="code">
-                action = {
-                    'type': 'ir.actions.act_window',
-                    'name': 'Run Command',
-                    'res_model': 'datacenter.app.server.run.command',
-                    'view_mode': 'form',
-                    'view_type': 'form',
-                    'target': 'new',
-                }
-            </field>
-        </record>
 
     </data>
 </odoo>
