@@ -1,168 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Server Form View -->
-        <record id="datacenter_app_server_form_view" model="ir.ui.view">
-            <field name="name">datacenter.app.server.form.view</field>
-            <field name="model">datacenter.app.server</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <field name="name" class="big-field"/>
-                            <field name="host"/>
-                            <field name="port"/>
-                        </group>
-                        <group>
-                            <field name="state" readonly="1"/>
-                            <field name="error_count" readonly="1"/>
-                        </group>
-                        <notebook>
-                            <page string="Credentials">
-                                <group>
+
+    <!-- Server Form View -->
+    <record id="datacenter_app_server_form_view" model="ir.ui.view">
+        <field name="name">datacenter.app.server.form.view</field>
+        <field name="model">datacenter.app.server</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" class="big-field"/>
+                        <field name="host"/>
+                        <field name="port"/>
+                    </group>
+                    <group>
+                        <field name="state" readonly="1"/>
+                        <field name="error_count" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Credentials">
+                            <group>
+                                <field name="user"/>
+                                <field name="password" widget="password"/>
+                                <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
+                            </group>
+                        </page>
+                        <page string="Applications">
+                            <field name="application_ids">
+                                <tree>
+                                    <field name="name"/>
                                     <field name="user"/>
-                                    <field name="password" widget="password"/>
-                                    <field name="private_pem_file" widget="binary" filename="private_pem_file_name"/>
-                                </group>
-                            </page>
-                            <page string="Applications">
-                                <field name="application_ids">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="user"/>
-                                        <field name="app_port"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Commands">
+                                    <field name="app_port"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Commands">
+                            <group>
+                                <field name="original_command"/>
+                                <!-- Buttons -->
                                 <group>
-                                    <field name="original_command"/>
-                                    <!-- Buttons -->
-                                    <group>
-                                        <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
-                                    </group>
-                                    <group>
-                                        <field name="resolved_command" readonly="1"/>
-                                        <field name="stdout" readonly="1"/>
-                                        <field name="stderr" readonly="1"/>
-                                        <field name="exit_code" readonly="1"/>
-                                    </group>
+                                    <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
                                 </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
+                                <group>
+                                    <field name="resolved_command" readonly="1"/>
+                                    <field name="stdout" readonly="1"/>
+                                    <field name="stderr" readonly="1"/>
+                                    <field name="exit_code" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-        <!-- Server Tree View -->
-        <record id="datacenter_app_server_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.app.server.tree.view</field>
-            <field name="model">datacenter.app.server</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="host"/>
-                    <field name="port"/>
-                    <field name="user"/>
-                    <field name="state" readonly="1"/>
-                    <field name="error_count" readonly="1"/>
-                </tree>
-            </field>
-        </record>
+    <!-- Server Tree View -->
+    <record id="datacenter_app_server_tree_view" model="ir.ui.view">
+        <field name="name">datacenter.app.server.tree.view</field>
+        <field name="model">datacenter.app.server</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="host"/>
+                <field name="port"/>
+                <field name="user"/>
+                <field name="state" readonly="1"/>
+                <field name="error_count" readonly="1"/>
+            </tree>
+        </field>
+    </record>
 
-        <!-- Application Form View -->
-        <record id="datacenter_application_form_view" model="ir.ui.view">
-            <field name="name">datacenter.application.form.view</field>
-            <field name="model">datacenter.application</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <field name="name" class="big-field"/>
-                            <field name="server_id"/>
-                            <field name="user"/>
-                            <field name="password" widget="password"/>
-                            <field name="app_port"/>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
+    <!-- Application Form View -->
+    <record id="datacenter_application_form_view" model="ir.ui.view">
+        <field name="name">datacenter.application.form.view</field>
+        <field name="model">datacenter.application</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" class="big-field"/>
+                        <field name="server_id"/>
+                        <field name="user"/>
+                        <field name="password" widget="password"/>
+                        <field name="app_port"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-        <!-- Application Tree View -->
-        <record id="datacenter_app_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.application.tree.view</field>
-            <field name="model">datacenter.application</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="server_id"/>
-                    <field name="user"/>
-                    <field name="app_port"/>
-                </tree>
-            </field>
-        </record>
+    <!-- Application Tree View -->
+    <record id="datacenter_app_tree_view" model="ir.ui.view">
+        <field name="name">datacenter.application.tree.view</field>
+        <field name="model">datacenter.application</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="server_id"/>
+                <field name="user"/>
+                <field name="app_port"/>
+            </tree>
+        </field>
+    </record>
 
-        <!-- App Database Form View -->
-        <record id="datacenter_app_database_form_view" model="ir.ui.view">
-            <field name="name">datacenter.app.database.form.view</field>
-            <field name="model">datacenter.app.database</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <field name="name" class="big-field"/>
-                            <field name="application_id"/>
-                            <field name="ip_address"/>
-                            <field name="db_port"/>
-                            <field name="db_user"/>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
+    <!-- App Database Form View -->
+    <record id="datacenter_app_database_form_view" model="ir.ui.view">
+        <field name="name">datacenter.app.database.form.view</field>
+        <field name="model">datacenter.app.database</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" class="big-field"/>
+                        <field name="application_id"/>
+                        <field name="ip_address"/>
+                        <field name="db_port"/>
+                        <field name="db_user"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-        <!-- App Database Tree View -->
-        <record id="datacenter_app_database_tree_view" model="ir.ui.view">
-            <field name="name">datacenter.app.database.tree.view</field>
-            <field name="model">datacenter.app.database</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="application_id"/>
-                    <field name="ip_address"/>
-                    <field name="db_port"/>
-                    <field name="db_user"/>
-                </tree>
-            </field>
-        </record>
+    <!-- App Database Tree View -->
+    <record id="datacenter_app_database_tree_view" model="ir.ui.view">
+        <field name="name">datacenter.app.database.tree.view</field>
+        <field name="model">datacenter.app.database</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="application_id"/>
+                <field name="ip_address"/>
+                <field name="db_port"/>
+                <field name="db_user"/>
+            </tree>
+        </field>
+    </record>
 
-        <!-- App Server Action -->
-        <record id="datacenter_app_server_action" model="ir.actions.act_window">
-            <field name="name">Servers</field>
-            <field name="res_model">datacenter.app.server</field>
-            <field name="view_mode">tree,form</field>
-        </record>
+    <!-- App Server Action -->
+    <record id="datacenter_app_server_action" model="ir.actions.act_window">
+        <field name="name">Servers</field>
+        <field name="res_model">datacenter.app.server</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
-        <!-- Application Action -->
-        <record id="datacenter_application_action" model="ir.actions.act_window">
-            <field name="name">Applications</field>
-            <field name="res_model">datacenter.application</field>
-            <field name="view_mode">tree,form</field>
-        </record>
+    <!-- Application Action -->
+    <record id="datacenter_application_action" model="ir.actions.act_window">
+        <field name="name">Applications</field>
+        <field name="res_model">datacenter.application</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
-        <!-- App Database Action -->
-        <record id="datacenter_app_database_action" model="ir.actions.act_window">
-            <field name="name">Databases</field>
-            <field name="res_model">datacenter.app.database</field>
-            <field name="view_mode">tree,form</field>
-        </record>
+    <!-- App Database Action -->
+    <record id="datacenter_app_database_action" model="ir.actions.act_window">
+        <field name="name">Databases</field>
+        <field name="res_model">datacenter.app.database</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
-        <!-- Menu -->
-        <menuitem id="datacenter_menu" name="Datacenter" priority="1"/>
-        <menuitem id="datacenter_menu_app" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
-        <menuitem id="datacenter_menu_app_server" name="Servers" parent="datacenter_menu" action="datacenter_app_server_action"/>
-        <menuitem id="datacenter_menu_app_database" name="Databases" parent="datacenter_menu" action="datacenter_app_database_action"/>
-    </data>
+    <!-- Menu -->
+    <menuitem id="datacenter_menu" name="Datacenter" priority="1"/>
+    <menuitem id="datacenter_menu_app" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
+    <menuitem id="datacenter_menu_app_server" name="Servers" parent="datacenter_menu" action="datacenter_app_server_action"/>
+    <menuitem id="datacenter_menu_app_database" name="Databases" parent="datacenter_menu" action="datacenter_app_database_action"/>
+
+
 </odoo>
