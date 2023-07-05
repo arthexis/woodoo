@@ -118,6 +118,11 @@ class AppServer(models.Model):
             )
         return ssh_client
 
+    def _interpolate_variables(self, command):
+        # Interpolate variables
+        # TODO: Add more variables
+        return command
+
     # Run command
     # Set the state to 'pending' and run the command
     # Catch any errors, return the output and set the state to 
@@ -157,10 +162,7 @@ class AppServer(models.Model):
             self.error_count += 1
         return self.stdout
 
-    def _interpolate_variables(self, command):
-        # Interpolate variables
-        # TODO: Add more variables
-        return command
+
     
 
 class Application(models.Model):
