@@ -43,7 +43,6 @@
                                 <field name="resolved_command" readonly="1"/>
                                 <field name="stdout" readonly="1"/>
                                 <field name="stderr" readonly="1"/>
-                                <field name="exit_code" readonly="1"/>
                             </group>
                         </page>
                     </notebook>
