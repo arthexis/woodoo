@@ -15,7 +15,7 @@ cd ~/repos/woodoo || exit
 # Pull the latest changes
 git pull
 
-# Show the last commit message
+# Show the last commit 
 git log -1 --pretty=%B
 
 # Copy the addons
