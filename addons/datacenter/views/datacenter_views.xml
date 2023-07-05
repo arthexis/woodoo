@@ -48,7 +48,7 @@
                                 <field name="original_command"/>
                                 <!-- Buttons -->
                                 <group>
-                                    <button name="run_command" string="Run Command"
+                                    <button name="run_command" string="Execute"
                                         type="object" class="oe_highlight"/>
                                 </group>
                                 <group>

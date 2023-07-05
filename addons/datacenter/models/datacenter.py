@@ -124,6 +124,8 @@ class AppServer(models.Model):
     # 'failure' or 'success' depending on the result
 
     def run_command(self, command=None, cwd=None):
+        if self.state == 'pending':
+            return 'Server is busy'
         ssh_client = self._get_ssh_client()
         if command:
             if cwd:
