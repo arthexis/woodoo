@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, exceptions
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -161,20 +161,25 @@ class ElectricalInspection(models.Model):
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
     def checks(self) -> None:
-        self._validate_observations()
+        try:
+            self.status = 'validating'
+            self._validate_observations()
+        except AssertionError as error:
+            _logger.error(error)
+            raise exceptions.UserError(error)
 
     def calculate(self) -> None:
         self._calculate_cable_size()
 
     def quote(self) -> None:
         self._draft_sales_order()
-
+    
     # Validate observations:
     # Check that all the values needed for the calculations have been entered
     # and have valid values. If not, raise an error.
     def _validate_observations(self) -> None:
-        assert self.amperage < 1, 'Amperage is less than 1'
-        assert self.distance < 3, 'Distance is less than 3 meters'
+        assert self.amperage > 1, 'Amperage is 1 or less'
+        assert self.distance > 2, 'Distance is less than 3 meters'
         assert self.cable_material, 'Cable material not defined'
         assert self.supply_voltage, 'Supply voltage not defined'
         assert self.temperature_rating, 'Temperature rating not defined'
