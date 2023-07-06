@@ -173,22 +173,14 @@ class ElectricalInspection(models.Model):
     # Check that all the values needed for the calculations have been entered
     # and have valid values. If not, raise an error.
     def _validate_observations(self) -> None:
-        if self.amperage < 1:
-            _logger.error('Amperage is less than 1')
-        if self.distance < 3:
-            _logger.error('Distance is less than 3 meters')
-        if not self.cable_material:
-            _logger.error('Cable material not defined')
-        if not self.supply_voltage:
-            _logger.error('Supply voltage not defined')
-        if not self.temperature_rating:
-            _logger.error('Temperature rating not defined')
-        if self.turns < 1:
-            _logger.error('Number of turns not counted')
-        if not self.pipe_size:
-            _logger.error('Pipe size not defined')
-        if not self.pipe_material:
-            _logger.error('Pipe material not defined')
+        assert self.amperage < 1, 'Amperage is less than 1'
+        assert self.distance < 3, 'Distance is less than 3 meters'
+        assert self.cable_material, 'Cable material not defined'
+        assert self.supply_voltage, 'Supply voltage not defined'
+        assert self.temperature_rating, 'Temperature rating not defined'
+        assert self.turns > 0, 'Number of turns not counted'
+        assert self.pipe_size, 'Pipe size not defined'
+        assert self.pipe_material, 'Pipe material not defined'
         _logger.info('Observations validated')
 
     # Determine the cable size based on the amperage and distance.
