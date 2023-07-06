@@ -7,9 +7,8 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
-                        <field name="name" class="big-field"/>
-                    </group>
+                    <label for="name" string="Server name:"/>
+                    <field name="name" class="big-field"/>
                     <div>
                         <group>
                             <field name="host"/>
@@ -26,7 +25,7 @@
                         <page string="Credentials">
                             <group>
                                 <field name="user"/>
-                                <field name="password" widget="password"/>
+                                <field name="password" password="1"/>
                                 <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
                             </group>
                         </page>
@@ -102,9 +101,9 @@
                     <group>
                         <field name="name" class="big-field"/>
                         <field name="server_id"/>
-                        <field name="user"/>
-                        <field name="password" widget="password"/>
                         <field name="app_port"/>
+                        <field name="user"/>
+                        <field name="password" password="1"/>
                     </group>
                 </sheet>
             </form>
@@ -119,8 +118,8 @@
             <tree>
                 <field name="name"/>
                 <field name="server_id"/>
-                <field name="user"/>
                 <field name="app_port"/>
+                <field name="user"/>
             </tree>
         </field>
     </record>

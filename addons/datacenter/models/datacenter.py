@@ -99,10 +99,9 @@ class AppServer(models.Model):
             )
         return ssh_client
 
-
     # Run command
-    def run_command(self, command=None, cwd=None):
-        if self.state == 'pending':
+    def run_command(self, command=None, cwd=None, force=False):
+        if self.state == 'pending' and not force:
             return 'Server is busy'
         if command:
             if cwd:
