@@ -3,4 +3,5 @@
     /* Only lower border */
     border: 2px 2px 0 2px solid #ccc;
     font-weight: bold;  
+    max-height: 50px;
 }

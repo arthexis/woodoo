@@ -40,11 +40,10 @@
                             </field>
                         </page>
                         <page string="Commands">
-                            <label for="original_command" string="Last/next command to execute:"/>
-                            <field name="original_command" class="big-field" />
+                            <label for="command" string="Last/next command to execute:"/>
+                            <field name="command" class="big-field" />
                             <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
                             <group>
-                                <field name="resolved_command" readonly="1"/>
                                 <field name="stdout" readonly="1"/>
                                 <field name="stderr" readonly="1"/>
                             </group>

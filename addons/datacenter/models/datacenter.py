@@ -10,12 +10,9 @@ class AppServer(models.Model):
     _name = 'datacenter.app.server'
     _description = 'App Server'
 
-    name = fields.Char(
-        string='Name', required=True,
-    )
+    name = fields.Char(string='Name', required=True)
     host = fields.Char(
-        string='Host', required=True,
-        track_visibility='always',
+        string='Host', required=True, track_visibility='always',
     )
     port = fields.Integer(
         string='Port', required=True, default=22,
@@ -24,12 +21,10 @@ class AppServer(models.Model):
 
     # SSH credentials
     user = fields.Char(
-        string='User', required=False,
-        track_visibility='always',
+        string='User', required=False, track_visibility='always',
     )
     password = fields.Char(
-        string='Password', required=False,
-        track_visibility='always',
+        string='Password', required=False, track_visibility='always',
     )
     private_pem_file = fields.Binary(
         string='Private PEM File', attachment=True, required=False,
@@ -54,13 +49,7 @@ class AppServer(models.Model):
         track_visibility='always',
     )
 
-    # State:
-    # Treat each server as a state machine
-    # This means each server can only be processing one command at a time
-    # and prevents having the server in an unknown state.
-    # If the server is in the 'pending' state, it means it is waiting for
-    # a command to be run and new commands should not be accepted.
-
+    # State machine
     state = fields.Selection(
         string='State', required=True,
         selection=[
@@ -73,13 +62,9 @@ class AppServer(models.Model):
         track_visibility='always',
     )
 
-    original_command = fields.Text(
+    command = fields.Text(
         string='Original Command', required=False,
         default='echo "Hello World"',
-        track_visibility='always',
-    )
-    resolved_command = fields.Text(
-        string='Resolved Command', required=False,
         track_visibility='always',
     )
 
@@ -96,7 +81,7 @@ class AppServer(models.Model):
         string='Error Count', required=False, default=0, readonly=True,
     )
 
-    # Get SSH connection
+    # SSH connection
     def _get_ssh_client(self):
         ssh_client = SSHClient()
         ssh_client.set_missing_host_key_policy(AutoAddPolicy())
@@ -114,16 +99,8 @@ class AppServer(models.Model):
             )
         return ssh_client
 
-    def _interpolate_variables(self, command):
-        # Interpolate variables
-        # TODO: Add more variables
-        return command
 
     # Run command
-    # Set the state to 'pending' and run the command
-    # Catch any errors, return the output and set the state to 
-    # 'failure' or 'success' depending on the result
-
     def run_command(self, command=None, cwd=None):
         if self.state == 'pending':
             return 'Server is busy'
@@ -132,11 +109,10 @@ class AppServer(models.Model):
                 command = 'cd %s && %s' % (cwd, command)
             elif self.base_path:
                 command = 'cd %s && %s' % (self.base_path, command)
-            self.original_command = command
+            self.command = command
         else:
-            command = self.original_command
+            command = self.command
         self.state = 'pending'
-        self.resolved_command = self._interpolate_variables(command)
         self.stdout = None
         self.stderr = None
         # Save changes before running command
@@ -153,6 +129,7 @@ class AppServer(models.Model):
             self.stderr = str(e)
             self.state = 'failure'
             self.error_count += 1
+        self.flush()
         return self.stdout
     
 
@@ -160,9 +137,7 @@ class Application(models.Model):
     _name = 'datacenter.application'
     _description = 'Application'
 
-    name = fields.Char(
-        string='Name', required=True,
-    )
+    name = fields.Char(string='Name', required=True)
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.app.server',
     )
@@ -175,12 +150,8 @@ class Application(models.Model):
     )
 
     # Credentials
-    user = fields.Char(
-        string='User', required=False,
-    )
-    password = fields.Char(
-        string='Password', required=False,
-    )
+    user = fields.Char(string='User', required=False)
+    password = fields.Char(string='Password', required=False)
 
     # Configuration
     service_name = fields.Char(
@@ -193,18 +164,12 @@ class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
     _description = 'Database'
 
-    name = fields.Char(
-        string='Name', required=True,
-    )
+    name = fields.Char(string='Name', required=True)
     application_id = fields.Many2one(
         string='Application', comodel_name='datacenter.application',
     )
-    ip_address = fields.Char(
-        string='IP Address', required=True,
-    )
-    db_port = fields.Integer(
-        string='DB Port', required=False, default=5432,
-    )
+    ip_address = fields.Char(string='IP Address', required=True)
+    db_port = fields.Integer(string='DB Port', required=False, default=5432)
 
     # Credentials
     db_user = fields.Char(
