@@ -25,7 +25,7 @@ class Inspection(models.Model):
         ('success', 'Completed Successfully'),
         ('partial', 'Partially Completed'),
         ('failure', 'Failed'),
-    ], string='Result', default='pending')
+    ], string='Status', default='pending')
 
     engineer_id = fields.Many2one(
         'res.users', string='Engineer', default=lambda self: self.env.user)
