@@ -96,9 +96,10 @@ class ElectricalInspection(models.Model):
     # Special requirements for the cable should be determined
     # such as burrowing, wall drilling, etc.
 
-    amperage = fields.Float(string='Amperage')
-    distance = fields.Float(
+    amperage = fields.Integer(string='Amperage', default=32)
+    distance = fields.Integer(
         string='Distance', 
+        unit='meters',
         help='Make sure to consider all turns in the cable'
     )
 
@@ -159,7 +160,7 @@ class ElectricalInspection(models.Model):
 
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
-    def validate(self) -> None:
+    def checks(self) -> None:
         self._validate_observations()
 
     def calculate(self) -> None:
@@ -172,18 +173,18 @@ class ElectricalInspection(models.Model):
     # Check that all the values needed for the calculations have been entered
     # and have valid values. If not, raise an error.
     def _validate_observations(self) -> None:
-        if not self.amperage:
-            _logger.error('Amperage not defined')
-        if not self.distance:
-            _logger.error('Distance not defined')
+        if self.amperage < 1:
+            _logger.error('Amperage is less than 1')
+        if self.distance < 3:
+            _logger.error('Distance is less than 3 meters')
         if not self.cable_material:
             _logger.error('Cable material not defined')
         if not self.supply_voltage:
             _logger.error('Supply voltage not defined')
         if not self.temperature_rating:
             _logger.error('Temperature rating not defined')
-        if not self.turns:
-            _logger.error('Number of turns not defined')
+        if self.turns < 1:
+            _logger.error('Number of turns not counted')
         if not self.pipe_size:
             _logger.error('Pipe size not defined')
         if not self.pipe_material:
@@ -220,7 +221,7 @@ class ElectricalInspection(models.Model):
         # Loop through the AWG table and find the cable size
         # that matches the amperage and temperature rating
         for key, value in AWG_TABLE.items():
-            if value[f'C{temperature_rating}'] == amperage:
+            if value[f'C{temperature_rating}'] >= amperage:
                 return key
         # If no match is found then return None
         _logger.error('No cable size defined for amperage and temp. rating')

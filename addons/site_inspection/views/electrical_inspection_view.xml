@@ -20,7 +20,7 @@
                 <sheet >
                     <group string="Observations">
 
-                        <button name="validate" string="Validate" type="object" class="oe_highlight"/>
+                        <button name="checks" string="Checks" type="object" class="oe_highlight"/>
                         <separator/>
 
                         <field name="amperage"/>
