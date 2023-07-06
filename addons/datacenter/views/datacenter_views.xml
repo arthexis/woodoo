@@ -6,19 +6,16 @@
         <field name="model">datacenter.app.server</field>
         <field name="arch" type="xml">
             <form>
-                <sheet>
-                    <field name="name" class="big-field"/>
                     <group>
-                        <div class="oe_inline">
-                            <field name="host"/>
-                            <field name="port"/>
-                        </div>
+                        <field name="name" class="big-field"/>
                     </group>
-                    <group>
-                        <div class="oe_inline">
-                            <field name="state" readonly="1"/>
-                            <field name="error_count" readonly="1"/>
-                        </div>
+                    <group col="2">
+                        <field name="host"/>
+                        <field name="port"/>
+                    </group>
+                    <group col="2">
+                        <field name="state" readonly="1"/>
+                        <field name="error_count" readonly="1"/>
                     </group>
                     <notebook>
                         <page string="Credentials">
@@ -50,7 +47,6 @@
                             </group>
                         </page>
                     </notebook>
-                </sheet>
             </form>
         </field>
     </record>
