@@ -22,11 +22,11 @@ class Inspection(models.Model):
 
     status = fields.Selection([
         ('pending', 'Pending'), 
-        ('validating', 'Validating Inspection'), 
-        ('calculating', 'Calculating Results'),
-        ('draft', 'Draft Sales Order'),
-        ('success', 'Completed Successfully'),
-        ('failure', 'Completed with Issues'),
+        ('validated', 'Validated'),
+        ('calculated', 'Calculated'),
+        ('failure', 'Failed'),
+        ('drafted', 'Quote Drafted'),
+        ('archived', 'Archived'),
         ('cancelled', 'Cancelled'),
     ], string='Status', default='pending')
 
@@ -162,18 +162,26 @@ class ElectricalInspection(models.Model):
 
     def checks(self) -> None:
         try:
-            self.status = 'validating'
             self._validate_observations()
+            self.status = 'validated'
         except AssertionError as error:
             _logger.error(error)
             raise exceptions.UserError(error)
 
     def calculate(self) -> None:
-        self._calculate_cable_size()
+        self._calculate_cable_size_recursive()
+        if not self.cable_size:
+            _logger.error('Cable size not calculated')
+            raise exceptions.UserError('Cable size not calculated')
+        self.status = 'calculated'
 
     def quote(self) -> None:
         self._draft_sales_order()
-    
+        if not self.sales_order_id:
+            _logger.error('Sales order not created')
+            raise exceptions.UserError('Sales order not created')
+        self.status = 'drafted'
+
     # Validate observations:
     # Check that all the values needed for the calculations have been entered
     # and have valid values. If not, raise an error.
@@ -197,7 +205,7 @@ class ElectricalInspection(models.Model):
     # Repeat until the AC loss is less than 3% or the cable size is 4/0.
     # The 3% limit comes from NEC 2017 210.19(A)(1) FPN No. 4
 
-    def _calculate_cable_size(self) -> None:
+    def _calculate_cable_size_recursive(self) -> None:
         base_cable_size = self._get_base_cable_size()
         _logger.info(f'Base cable size: {base_cable_size}')
         ac_loss = self._get_ac_loss(base_cable_size)
@@ -232,6 +240,8 @@ class ElectricalInspection(models.Model):
         _logger.info(f'Voltage drop: {voltage_drop}')
         power_loss = self.amperage * voltage_drop
         total_power = int(self.supply_voltage) * self.amperage
+        if total_power == 0:
+            raise exceptions.UserError('Total power cannot be 0')
         ac_loss_percentage = 100 * power_loss / total_power
         return ac_loss_percentage
 
