@@ -11,16 +11,16 @@
                         <field name="name" class="big-field"/>
                     </group>
                     <div>
-                    <group>
-                        <field name="host"/>
-                        <field name="port"/>
-                    </group>
+                        <group>
+                            <field name="host"/>
+                            <field name="port"/>
+                        </group>
                     </div>
                     <div>
-                    <group>
-                        <field name="state" readonly="1"/>
-                        <field name="error_count" readonly="1"/>
-                    </group>
+                        <group>
+                            <field name="state" readonly="1"/>
+                            <field name="error_count" readonly="1"/>
+                        </group>
                     </div>
                     <notebook>
                         <page string="Credentials">
