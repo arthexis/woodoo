@@ -21,8 +21,8 @@
                 </sheet>
                 <sheet string="Observations">
                     <group>
-                        <field name="customer_comments"/>
-                        <field name="engineer_comments"/>
+                        <field name="engineer_notes"/>
+                        <field name="customer_notes"/>
                     </group>
                 </sheet>
             </form>
