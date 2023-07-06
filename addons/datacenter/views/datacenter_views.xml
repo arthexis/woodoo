@@ -7,14 +7,18 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <field name="name" class="big-field"/>
                     <group>
-                        <field name="name" class="big-field"/>
-                        <field name="host"/>
-                        <field name="port"/>
+                        <div class="oe_inline">
+                            <field name="host"/>
+                            <field name="port"/>
+                        </div>
                     </group>
                     <group>
-                        <field name="state" readonly="1"/>
-                        <field name="error_count" readonly="1"/>
+                        <div class="oe_inline">
+                            <field name="state" readonly="1"/>
+                            <field name="error_count" readonly="1"/>
+                        </div>
                     </group>
                     <notebook>
                         <page string="Credentials">
