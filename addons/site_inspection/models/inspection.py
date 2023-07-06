@@ -157,7 +157,7 @@ class ElectricalInspection(models.Model):
     req_burrowing = fields.Boolean(string='Requires Burrowing')
     req_wall_drilling = fields.Boolean(string='Requires Wall Drilling')
 
-    sales_order_id = fields.Many2one('sale.order', string='Quotation')
+    sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
     def validate(self) -> None:
         self._validate_observations()
@@ -165,7 +165,7 @@ class ElectricalInspection(models.Model):
     def calculate(self) -> None:
         self._calculate_cable_size()
 
-    def get_quote(self) -> None:
+    def quote(self) -> None:
         self._draft_sales_order()
 
     # Validate observations:

@@ -47,7 +47,7 @@
                 <sheet >
                     <group string="Estimate">
 
-                        <button name="get_quote" string="Get Quote" type="object" class="oe_highlight"/>
+                        <button name="quote" string="Quote" type="object" class="oe_highlight"/>
                         <separator/>
 
                         <field name="engineer_notes"/>
