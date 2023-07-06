@@ -29,7 +29,7 @@
                 </sheet>
                 <sheet string="Calculations">
                     <group>
-                    
+
                         <!-- Button to call calculate on the model -->                        
                         <button name="calculate" string="Calculate" type="object" class="oe_highlight"/>
 
@@ -61,8 +61,8 @@
                 <field name="engineer_id"/>
                 <field name="customer_id"/>
                 <field name="date"/>
-                <field name="location"/>
-                <field name="result"/>
+                <field name="status"/>
+                <field name="sales_order_id"/>
             </tree>
         </field>
     </record>
