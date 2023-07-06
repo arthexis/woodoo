@@ -37,8 +37,8 @@
                         <field name="cable_size"/>
                         <field name="pipe_size"/>
                         <field name="pipe_material"/>
-                        <field name="requires_burrowing"/>
-                        <field name="requires_wall_drilling"/>
+                        <field name="req_burrowing"/>
+                        <field name="req_wall_drilling"/>
                     </group>
                 </sheet>
                 <sheet string="Estimate">

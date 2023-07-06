@@ -33,8 +33,8 @@ class Inspection(models.Model):
     customer_id = fields.Many2one('res.partner', string='Customer')
     location = fields.Char(string='Location', help='Describe the location')
 
-    customer_notes = fields.Text(string='Customer Comments')
-    engineer_notes = fields.Text(string='Engineer Comments')
+    customer_notes = fields.Text(string='Customer Notes')
+    engineer_notes = fields.Text(string='Engineer Notes')
 
     # Name for the inspection = customer name + short date
     def name_get(self):
@@ -103,7 +103,7 @@ class ElectricalInspection(models.Model):
     cable_material = fields.Selection([
         ('C', 'Copper'),
         ('A', 'Aluminum'),
-    ], string='Material', default='C')
+    ], string='Cable Material', default='C')
 
     supply_voltage = fields.Selection([
         ('110', '110V'),
@@ -117,7 +117,7 @@ class ElectricalInspection(models.Model):
         ('60', '60C'),
         ('75', '75C'),
         ('90', '90C'),
-    ], string='Temperature Rating', default='60')
+    ], string='Temp. Rating', default='60')
 
     turns = fields.Integer(string='Turns')
     cable_size = fields.Selection([
@@ -151,10 +151,10 @@ class ElectricalInspection(models.Model):
     ], string='Pipe Material')
 
     # Special requirements for the cable
-    requires_burrowing = fields.Boolean(string='Requires Burrowing')
-    requires_wall_drilling = fields.Boolean(string='Requires Wall Drilling')
+    req_burrowing = fields.Boolean(string='Requires Burrowing')
+    req_wall_drilling = fields.Boolean(string='Requires Wall Drilling')
 
-    sales_order_id = fields.Many2one('sale.order', string='Sales Order')
+    sales_order_id = fields.Many2one('sale.order', string='Quotation')
 
     def calculate(self) -> None:
         self._calculate_cable_size()
@@ -192,7 +192,7 @@ class ElectricalInspection(models.Model):
             if value[f'C{temperature_rating}'] == amperage:
                 return key
         # If no match is found then return None
-        _logger.error('No cable size defined for amperage and temperature rating')
+        _logger.error('No cable size defined for amperage and temp. rating')
         return None    
 
     def _get_ac_loss(self, base_cable_size: str) -> float:
