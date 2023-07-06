@@ -100,14 +100,17 @@ class AppServer(models.Model):
         return ssh_client
 
     # Run command
-    def run_command(self, command=None, cwd=None, force=False):
+    def run_command(self, command=None, cwd=None, force=False, app_id=None):
         if self.state == 'pending' and not force:
             return 'Server is busy'
         if command:
+            base_path = self.base_path if not app_id else self.application_ids.filtered(
+                lambda x: x.id == app_id
+            ).base_path
             if cwd:
                 command = 'cd %s && %s' % (cwd, command)
-            elif self.base_path:
-                command = 'cd %s && %s' % (self.base_path, command)
+            elif base_path:
+                command = 'cd %s && %s' % (base_path, command)
             self.command = command
         else:
             command = self.command
@@ -156,6 +159,11 @@ class Application(models.Model):
     service_name = fields.Char(
         string='Service Name', required=False,
         default=lambda self: self.name,
+    )
+    base_path = fields.Char(
+        string='Base Path', required=False,
+        default=lambda self: '/home/%s' % self.user,
+        track_visibility='always',
     )
 
 
