@@ -1,47 +1,3 @@
-<!-- Path: addons\site_inspection\models\inspection.py 
-
-from odoo import models, fields
-
-
-# General Inspection Model
-# This applies to all inspections, regardless of type
-
-class Inspection(models.Model):
-    
-    _name = 'inspection.record'
-    _description = 'General Inspection'
-
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('invoiced', 'Invoiced'),
-        ('paid', 'Paid'),
-    ], string='Status', default='draft')
-
-    # Purpose of the inspection
-    purpose = fields.Selection([
-        ('pre', 'Pre-Installation'),
-        ('post', 'Post-Installation'),
-        ('maintenance', 'Maintenance'),
-        ('warranty', 'Warranty'),
-        ('other', 'Other'),
-    ], string='Purpose', default='pre')
-
-    engineer_id = fields.Many2one(
-        'res.users', string='Engineer', default=lambda self: self.env.user)
-    date = fields.Date(string='Inspection Date', default=fields.Date.today)
-    customer_id = fields.Many2one('res.partner', string='Customer')
-    location = fields.Char(string='Location')
-
-    customer_comments = fields.Text(string='Customer Comments')
-    
-    result = fields.Selection([
-        ('success', 'Success'),
-        ('partial', 'Partial Success'),
-        ('fail', 'Failure'),
-    ], string='Result', default='success')
-
--->
-
 <!-- Path: addons\site_inspection\views\general_inspection_view.xml -->
 
 <odoo>
@@ -53,23 +9,20 @@ class Inspection(models.Model):
         <field name="model">inspection.record</field>
         <field name="arch" type="xml">
             <form string="Inspection Record">
-                <sheet>
+                <sheet string="Planning">
                     <group>
                         <field name="engineer_id"/>
-                        <field name="state"/>
-                        <!-- Show the each field of the address for this customer -->
                         <field name="customer_id" context="{'show_address': 1}"/>
-                    </group>
-                    <group>
                         <field name="purpose"/>
-                        <field name="location"/>
                         <field name="date"/>
+                        <field name="location"/>
+                        <field name="status"/>
                     </group>
                 </sheet>
                 <sheet string="Observations">
                     <group>
                         <field name="customer_comments"/>
-                        <field name="result"/>
+                        <field name="engineer_comments"/>
                     </group>
                 </sheet>
             </form>
@@ -84,11 +37,9 @@ class Inspection(models.Model):
         <field name="arch" type="xml">
             <tree string="Inspection Records">
                 <field name="engineer_id"/>
-                <field name="state"/>
                 <field name="customer_id"/>
-                <field name="location"/>
                 <field name="date"/>
-                <field name="result"/>
+                <field name="status"/>
             </tree>
         </field>
     </record>
