@@ -7,8 +7,8 @@
         <field name="model">electrical.inspection.record</field>
         <field name="arch" type="xml">
             <form string="Electrical Inspection">
-                <sheet string="Planning">
-                    <group>
+                <sheet>
+                    <group string="Planning">
                         <field name="engineer_id"/>
                         <field name="customer_id" context="{'show_address': 1}"/>
                         <field name="purpose"/>
@@ -17,8 +17,12 @@
                         <field name="status"/>
                     </group>
                 </sheet>
-                <sheet string="Observations">
-                    <group>
+                <sheet >
+                    <group string="Observations">
+
+                        <button name="validate" string="Validate" type="object" class="oe_highlight"/>
+                        <separator/>
+
                         <field name="amperage"/>
                         <field name="distance"/>
                         <field name="cable_material"/>
@@ -27,10 +31,9 @@
                         <field name="turns"/>
                     </group>
                 </sheet>
-                <sheet string="Calculations">
-                    <group>
-
-                        <!-- Button to call calculate on the model -->                        
+                <sheet >
+                    <group string="Calculations">
+                   
                         <button name="calculate" string="Calculate" type="object" class="oe_highlight"/>
                         <separator/>
 
@@ -41,8 +44,12 @@
                         <field name="req_wall_drilling"/>
                     </group>
                 </sheet>
-                <sheet string="Estimate">
-                    <group>
+                <sheet >
+                    <group string="Estimate">
+
+                        <button name="get_quote" string="Get Quote" type="object" class="oe_highlight"/>
+                        <separator/>
+
                         <field name="engineer_notes"/>
                         <field name="customer_notes"/>
                         <field name="sales_order_id"/>

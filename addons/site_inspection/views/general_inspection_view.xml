@@ -9,8 +9,8 @@
         <field name="model">inspection.record</field>
         <field name="arch" type="xml">
             <form string="Inspection Record">
-                <sheet string="Planning">
-                    <group>
+                <sheet >
+                    <group string="Planning">
                         <field name="engineer_id"/>
                         <field name="customer_id" context="{'show_address': 1}"/>
                         <field name="purpose"/>
@@ -19,8 +19,8 @@
                         <field name="status"/>
                     </group>
                 </sheet>
-                <sheet string="Observations">
-                    <group>
+                <sheet >
+                    <group string="Observations">
                         <field name="engineer_notes"/>
                         <field name="customer_notes"/>
                     </group>

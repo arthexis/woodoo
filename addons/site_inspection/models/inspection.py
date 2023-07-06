@@ -22,9 +22,12 @@ class Inspection(models.Model):
 
     status = fields.Selection([
         ('pending', 'Pending'), 
+        ('validating', 'Validating Inspection'), 
+        ('calculating', 'Calculating Results'),
+        ('draft', 'Draft Sales Order'),
         ('success', 'Completed Successfully'),
-        ('partial', 'Partially Completed'),
-        ('failure', 'Failed'),
+        ('failure', 'Completed with Issues'),
+        ('cancelled', 'Cancelled'),
     ], string='Status', default='pending')
 
     engineer_id = fields.Many2one(
@@ -156,8 +159,36 @@ class ElectricalInspection(models.Model):
 
     sales_order_id = fields.Many2one('sale.order', string='Quotation')
 
+    def validate(self) -> None:
+        self._validate_observations()
+
     def calculate(self) -> None:
         self._calculate_cable_size()
+
+    def get_quote(self) -> None:
+        self._draft_sales_order()
+
+    # Validate observations:
+    # Check that all the values needed for the calculations have been entered
+    # and have valid values. If not, raise an error.
+    def _validate_observations(self) -> None:
+        if not self.amperage:
+            _logger.error('Amperage not defined')
+        if not self.distance:
+            _logger.error('Distance not defined')
+        if not self.cable_material:
+            _logger.error('Cable material not defined')
+        if not self.supply_voltage:
+            _logger.error('Supply voltage not defined')
+        if not self.temperature_rating:
+            _logger.error('Temperature rating not defined')
+        if not self.turns:
+            _logger.error('Number of turns not defined')
+        if not self.pipe_size:
+            _logger.error('Pipe size not defined')
+        if not self.pipe_material:
+            _logger.error('Pipe material not defined')
+        _logger.info('Observations validated')
 
     # Determine the cable size based on the amperage and distance.
     # This has to be done in 2 steps. First determine the base cable size
