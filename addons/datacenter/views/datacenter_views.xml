@@ -10,14 +10,18 @@
                     <group>
                         <field name="name" class="big-field"/>
                     </group>
-                    <group col="2">
+                    <div>
+                    <group>
                         <field name="host"/>
                         <field name="port"/>
                     </group>
-                    <group col="2">
+                    </div>
+                    <div>
+                    <group>
                         <field name="state" readonly="1"/>
                         <field name="error_count" readonly="1"/>
                     </group>
+                    </div>
                     <notebook>
                         <page string="Credentials">
                             <group>
@@ -36,12 +40,9 @@
                             </field>
                         </page>
                         <page string="Commands">
-                            <group>
-                                <field name="original_command" class="big-field"/>
-                            </group>
-                            <div class="oe_button_box">
-                                <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
-                            </div>
+                            <label for="original_command" string="Last/next command to execute:"/>
+                            <field name="original_command" class="big-field" />
+                            <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
                             <group>
                                 <field name="resolved_command" readonly="1"/>
                                 <field name="stdout" readonly="1"/>
