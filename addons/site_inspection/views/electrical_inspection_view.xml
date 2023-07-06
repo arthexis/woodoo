@@ -32,6 +32,7 @@
 
                         <!-- Button to call calculate on the model -->                        
                         <button name="calculate" string="Calculate" type="object" class="oe_highlight"/>
+                        <separator/>
 
                         <field name="cable_size"/>
                         <field name="pipe_size"/>
