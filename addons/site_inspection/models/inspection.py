@@ -11,12 +11,6 @@ class Inspection(models.Model):
     _name = 'inspection.record'
     _description = 'General Inspection'
 
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('invoiced', 'Invoiced'),
-        ('paid', 'Paid'),
-    ], string='Status', default='draft')
-
     # Purpose of the inspection
     purpose = fields.Selection([
         ('pre', 'Pre-Installation'),
@@ -26,18 +20,21 @@ class Inspection(models.Model):
         ('other', 'Other'),
     ], string='Purpose', default='pre')
 
+    status = fields.Selection([
+        ('pending', 'Pending'), 
+        ('success', 'Completed Successfully'),
+        ('partial', 'Partially Completed'),
+        ('failure', 'Failed'),
+    ], string='Result', default='pending')
+
     engineer_id = fields.Many2one(
         'res.users', string='Engineer', default=lambda self: self.env.user)
     date = fields.Date(string='Inspection Date', default=fields.Date.today)
     customer_id = fields.Many2one('res.partner', string='Customer')
     location = fields.Char(string='Location', help='Describe the location')
-    customer_comments = fields.Text(string='Customer Comments')
-    
-    result = fields.Selection([
-        ('success', 'Success'),
-        ('partial', 'Partial Success'),
-        ('fail', 'Failure'),
-    ], string='Result', default='success')
+
+    customer_notes = fields.Text(string='Customer Comments')
+    engineer_notes = fields.Text(string='Engineer Comments')
 
     # Name for the inspection = customer name + short date
     def name_get(self):
@@ -159,6 +156,9 @@ class ElectricalInspection(models.Model):
 
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
+    def calculate(self) -> None:
+        self._calculate_cable_size()
+
     # Determine the cable size based on the amperage and distance.
     # This has to be done in 2 steps. First determine the base cable size
     # based on amperage and temperature rating. Then, calculate the AC
@@ -168,21 +168,21 @@ class ElectricalInspection(models.Model):
     # Repeat until the AC loss is less than 3% or the cable size is 4/0.
     # The 3% limit comes from NEC 2017 210.19(A)(1) FPN No. 4
 
-    def calculate_cable_size(self) -> None:
-        base_cable_size = self.get_base_cable_size()
+    def _calculate_cable_size(self) -> None:
+        base_cable_size = self._get_base_cable_size()
         _logger.info(f'Base cable size: {base_cable_size}')
-        ac_loss = self.get_ac_loss(base_cable_size)
+        ac_loss = self._get_ac_loss(base_cable_size)
         _logger.info(f'AC loss: {ac_loss}')
         while ac_loss > 3 and base_cable_size != '4/0':
             _logger.info('Increasing cable size')
-            base_cable_size = self.increase_cable_size(base_cable_size)
+            base_cable_size = self._increase_cable_size(base_cable_size)
             _logger.info(f'New cable size: {base_cable_size}')
-            ac_loss = self.get_ac_loss(base_cable_size)
+            ac_loss = self._get_ac_loss(base_cable_size)
             _logger.info(f'New AC loss: {ac_loss}')
         self.cable_size = base_cable_size
         _logger.info(f'Final cable size: {self.cable_size}')
 
-    def get_base_cable_size(self) -> str:
+    def _get_base_cable_size(self) -> str:
         # Get the amperage and temperature rating
         amperage = self.amperage
         temperature_rating = self.temperature_rating
@@ -195,7 +195,7 @@ class ElectricalInspection(models.Model):
         _logger.error('No cable size defined for amperage and temperature rating')
         return None    
 
-    def get_ac_loss(self, base_cable_size: str) -> float:
+    def _get_ac_loss(self, base_cable_size: str) -> float:
         resistivity = RESISTIVITY[self.cable_material]
         area = 1 / int(base_cable_size)
         resistance = resistivity * self.distance / area
@@ -206,14 +206,14 @@ class ElectricalInspection(models.Model):
         ac_loss_percentage = 100 * power_loss / total_power
         return ac_loss_percentage
 
-    def increase_cable_size(self, base_cable_size: str) -> str:
+    def _increase_cable_size(self, base_cable_size: str) -> str:
         index = list(AWG_TABLE.keys()).index(base_cable_size)
         next_cable_size = list(AWG_TABLE.keys())[index + 1]
         return next_cable_size
 
     
     # Tools for generating sales orders and invoices
-    def draft_sales_order(self) -> None:
+    def _draft_sales_order(self) -> None:
         order = self.env['sale.order'].create({
             'partner_id': self.customer_id.id,
             'partner_invoice_id': self.customer_id.id,
@@ -222,12 +222,12 @@ class ElectricalInspection(models.Model):
             'state': 'draft',
         })
         self.sales_order_id = order.id
-        self.add_cable_to_order(order)
+        self._add_cable_to_order(order)
 
 
-    def add_cable_to_order(self, order: models.Model, color=None) -> None:
+    def _add_cable_to_order(self, order: models.Model, color=None) -> None:
         # Consider cable size, material and length
-        units = self.get_cable_units()
+        units = self._get_cable_units()
         cable = self.env['product.product'].search([
             ('name', '=', 'Cable'),
             ('type', '=', 'product'),
@@ -245,6 +245,6 @@ class ElectricalInspection(models.Model):
                 'price_unit': cable.list_price,
             })
 
-    def get_cable_units(self) -> int:
+    def _get_cable_units(self) -> int:
         return int(self.distance / 3) + 1
 
