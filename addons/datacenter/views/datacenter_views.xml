@@ -6,6 +6,7 @@
         <field name="model">datacenter.app.server</field>
         <field name="arch" type="xml">
             <form>
+                <sheet>
                     <group>
                         <field name="name" class="big-field"/>
                     </group>
@@ -23,7 +24,6 @@
                                 <field name="user"/>
                                 <field name="password" widget="password"/>
                                 <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
-                                <field name="base_path"/>
                             </group>
                         </page>
                         <page string="Applications">
@@ -36,17 +36,25 @@
                             </field>
                         </page>
                         <page string="Commands">
-                            <field name="original_command"/>
                             <group>
-                                <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
+                                <field name="original_command" class="big-field"/>
                             </group>
+                            <div class="oe_button_box">
+                                <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
+                            </div>
                             <group>
                                 <field name="resolved_command" readonly="1"/>
                                 <field name="stdout" readonly="1"/>
                                 <field name="stderr" readonly="1"/>
                             </group>
                         </page>
+                        <page string="Settings">
+                            <group>
+                                <field name="base_path"/>
+                            </group>
+                        </page>
                     </notebook>
+                </sheet>
             </form>
         </field>
     </record>
@@ -64,6 +72,22 @@
                 <field name="state" readonly="1"/>
                 <field name="error_count" readonly="1"/>
             </tree>
+        </field>
+    </record>
+
+    <!-- Server search view, group by state -->
+
+    <record id="datacenter_app_server_search_view" model="ir.ui.view">
+        <field name="name">datacenter.app.server.search.view</field>
+        <field name="model">datacenter.app.server</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="host"/>
+                <field name="port"/>
+                <field name="user"/>
+                <field name="state"/>
+            </search>
         </field>
     </record>
 
