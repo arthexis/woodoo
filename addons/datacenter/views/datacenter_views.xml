@@ -43,6 +43,7 @@
                             <label for="command" string="Last/next command to execute:"/>
                             <field name="command" class="big-field" />
                             <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
+                            <separator/>
                             <group>
                                 <field name="stdout" readonly="1"/>
                                 <field name="stderr" readonly="1"/>
