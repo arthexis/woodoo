@@ -106,11 +106,13 @@
                     </group>
                 </sheet>
                 <sheet>
-                    <group string="Lifecycle">
+                    <group string="Operations">
                         <field name="start_command"/>
                         <field name="stop_command"/>
                         <field name="restart_command"/>
                         <field name="status_command"/>
+                    </group>
+                    <group string="Lifecycle">
                         <field name="install_command"/>
                         <field name="update_command"/>
                         <field name="uninstall_command"/>
