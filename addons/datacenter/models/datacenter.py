@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, exceptions
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
@@ -35,7 +35,7 @@ class AppServer(models.Model):
     # SSH settings
     base_path = fields.Char(
         string='Base Path', required=False,
-        default=lambda self: '/home/%s' % self.user,
+        default=lambda self: '/home/%s' % self.os_user,
         track_visibility='always',
     )
 
@@ -82,18 +82,14 @@ class AppServer(models.Model):
     def _get_ssh_client(self):
         ssh_client = SSHClient()
         ssh_client.set_missing_host_key_policy(AutoAddPolicy())
-        if self.private_pem_file:
-            private_pem_file_str = b64decode(self.private_pem_file).decode('utf-8')
-            private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
-            ssh_client.connect(
-                hostname=self.host, port=self.port, 
-                username=self.user, pkey=private_key,
-            )
-        else:
-            ssh_client.connect(
-                hostname=self.host, port=self.port, 
-                username=self.user, password=self.password,
-            )
+        private_pem_file_str = b64decode(self.private_pem_file).decode('utf-8')
+        if not private_pem_file_str:
+            raise exceptions.ValidationError('Private PEM file is empty')
+        private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
+        ssh_client.connect(
+            hostname=self.host, port=self.port, 
+            username=self.os_user, pkey=private_key,
+        )
         return ssh_client
 
     # Run command
@@ -165,7 +161,7 @@ class Application(models.Model):
     )
     base_path = fields.Char(
         string='Base Path', required=False,
-        default=lambda self: '/home/%s' % self.user,
+        default=lambda self: '/home/%s' % self.os_user,
         track_visibility='always',
     )
 
@@ -261,7 +257,7 @@ class AppDatabase(models.Model):
 
     # Credentials
     db_user = fields.Char(
-        string='User', required=True,
+        string='DB User', required=True,
         help='The DB user must have access without a password',
     )
 
