@@ -100,7 +100,7 @@
                         <field name="server_id"/>
                         <field name="app_port"/>
                         <field name="admin_user"/>
-                        <field name="admin_password" password="1"/>
+                        <field name="admin_secret" password="1"/>
                     </group>
                     <group string="Status">
                         <field name="expected_status" readonly="1"/>
@@ -108,12 +108,22 @@
                 </sheet>
                 <sheet>
                     <group string="Operations">
+                        <button name="start" string="Start" type="object" class="oe_highlight"/>
+                        <button name="stop" string="Stop" type="object" class="oe_highlight"/>
+                        <button name="restart" string="Restart" type="object" class="oe_highlight"/>
+                        <button name="status" string="Status" type="object" class="oe_highlight"/>
+                        <separator/>
                         <field name="start_command"/>
                         <field name="stop_command"/>
                         <field name="restart_command"/>
                         <field name="status_command"/>
+                        <field name="status_pattern"/>
                     </group>
                     <group string="Lifecycle">
+                        <button name="install" string="Install" type="object" class="oe_highlight"/>
+                        <button name="update" string="Update" type="object" class="oe_highlight"/>
+                        <button name="uninstall" string="Uninstall" type="object" class="oe_highlight"/>
+                        <separator/>
                         <field name="install_command"/>
                         <field name="update_command"/>
                         <field name="uninstall_command"/>

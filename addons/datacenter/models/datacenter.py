@@ -141,16 +141,17 @@ class Application(models.Model):
         string='Databases', comodel_name='datacenter.app.database',
         inverse_name='application_id', track_visibility='always',
     )
-    app_port = fields.Integer(
-        string='App Port', required=False, default=80, track_visibility='always'
+    
+    # App Access
+    base_url = fields.Char(
+        string='Login URL', required=True, track_visibility='always',
+        default=lambda self: 'http://%s' % name,
     )
-
-    # Credentials
     admin_user = fields.Char(
         string='Admin User', required=False, track_visibility='always', default='admin',
     )
-    admin_password = fields.Char(
-        string='Admin Password', required=False, track_visibility='always'
+    admin_secret = fields.Char(
+        string='Admin Secret', required=False, track_visibility='always'
     )
 
     # Configuration
@@ -163,6 +164,9 @@ class Application(models.Model):
         string='Base Path', required=False,
         default=lambda self: '/home/%s' % self.service_name,
         track_visibility='always',
+    )
+    app_port = fields.Integer(
+        string='App Port', required=False, default=80, track_visibility='always'
     )
 
     # State machine commands (7-step lifecycle)
