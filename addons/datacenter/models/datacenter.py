@@ -154,13 +154,19 @@ class Application(models.Model):
         track_visibility='always',
     )
     app_port = fields.Integer(
-        string='App Port', required=False, default=80, track_visibility='always'
+        string='App Port', required=False, default=80, 
+        track_visibility='always'
+    )
+    virtual_env = fields.Char(
+        string='Virtual Env', required=False,
+        default=lambda self: '/home/%s/venv' % self.service_name,
+        track_visibility='always',
     )
 
     # App Access
     base_url = fields.Char(
-        string='Login URL', required=True, track_visibility='always',
-        default=lambda self: 'http://%s' % self.service_name,
+        string='Base URL', required=True, track_visibility='always',
+        default=lambda self: 'https://%s' % self.service_name,
     )
     admin_user = fields.Char(
         string='Admin User', required=False, track_visibility='always', default='admin',
