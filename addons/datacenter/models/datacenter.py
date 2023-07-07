@@ -14,7 +14,7 @@ class AppServer(models.Model):
     host = fields.Char(
         string='Host', required=True, track_visibility='always',
     )
-    port = fields.Integer(
+    ssh_port = fields.Integer(
         string='Port', required=True, default=22,
         track_visibility='always'
     )
@@ -87,7 +87,7 @@ class AppServer(models.Model):
             raise exceptions.ValidationError('Private PEM file is empty')
         private_key = RSAKey.from_private_key(StringIO(private_pem_file_str))
         ssh_client.connect(
-            hostname=self.host, port=self.port, 
+            hostname=self.host, port=self.ssh_port, 
             username=self.os_user, pkey=private_key,
         )
         return ssh_client
@@ -186,6 +186,11 @@ class Application(models.Model):
         default=lambda self: 'sudo systemctl status %s' % self.service_name,
         track_visibility='always',
     )
+    status_pattern = fields.Char(
+        string='Status Pattern', required=False,
+        default=lambda self: 'Active: active (running)',
+        track_visibility='always',
+    )
     install_command = fields.Text(
         string='Install Command', required=False,
         default=lambda self: 'sudo apt-get install %s' % self.name,
@@ -202,28 +207,47 @@ class Application(models.Model):
         track_visibility='always',
     )
 
+    # Expected status of the service
+    expected_status = fields.Selection(
+        string='Expected Status', required=True,
+        selection=[
+            ('running', 'Running'),
+            ('stopped', 'Stopped'),
+        ],
+        default='stopped',
+        track_visibility='always',
+    )
+
     def start(self):
+        self.expected_status = 'running'
+        self.flush()
         self.server_id.run_command(
             command=self.start_command, app_id=self.id,
         )
         self.server_id.flush()
     
     def stop(self):
+        self.expected_status = 'stopped'
+        self.flush()
         self.server_id.run_command(
             command=self.stop_command, app_id=self.id,
         )
         self.server_id.flush()
 
     def restart(self):
+        self.expected_status = 'running'
+        self.flush()
         self.server_id.run_command(
             command=self.restart_command, app_id=self.id,
         )
         self.server_id.flush()
         
     def status(self):
-        return self.server_id.run_command(
+        result = self.server_id.run_command(
             command=self.status_command, app_id=self.id,
         )
+        if self.status_pattern in result:
+            return 'running'
     
     def install(self):
         self.server_id.run_command(
@@ -260,12 +284,3 @@ class AppDatabase(models.Model):
         string='DB User', required=True,
         help='The DB user must have access without a password',
     )
-
-    # Run SQL query
-    def run_sql(self, query):
-        ssh = self.application_id.server_id.get_ssh()
-        command = 'psql -h %s -U %s -d %s -c "%s"' % (
-            self.ip_address, self.db_user, self.name, query,
-        )
-        stdin, stdout, stderr = ssh.exec_command(command)
-        return stdout.read().decode()
