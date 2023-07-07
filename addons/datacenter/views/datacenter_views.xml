@@ -21,7 +21,7 @@
                     <group string="Commands">
                         <field name="command" class="big-field"/>
                         <field name="stdout"/>
-                        <field name="sterr"/>
+                        <field name="stderr"/>
                     </group>
                     <group string="Applications">
                         <field name="application_ids">
