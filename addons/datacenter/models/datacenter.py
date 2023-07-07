@@ -155,13 +155,13 @@ class Application(models.Model):
 
     # Configuration
     service_name = fields.Char(
-        string='Service Name', required=False,
+        string='Service Name', required=True,
         default=lambda self: self.name,
         track_visibility='always',
     )
     base_path = fields.Char(
         string='Base Path', required=False,
-        default=lambda self: '/home/%s' % self.os_user,
+        default=lambda self: '/home/%s' % self.service_name,
         track_visibility='always',
     )
 
