@@ -141,18 +141,6 @@ class Application(models.Model):
         string='Databases', comodel_name='datacenter.app.database',
         inverse_name='application_id', track_visibility='always',
     )
-    
-    # App Access
-    base_url = fields.Char(
-        string='Login URL', required=True, track_visibility='always',
-        default=lambda self: 'http://%s' % name,
-    )
-    admin_user = fields.Char(
-        string='Admin User', required=False, track_visibility='always', default='admin',
-    )
-    admin_secret = fields.Char(
-        string='Admin Secret', required=False, track_visibility='always'
-    )
 
     # Configuration
     service_name = fields.Char(
@@ -167,6 +155,18 @@ class Application(models.Model):
     )
     app_port = fields.Integer(
         string='App Port', required=False, default=80, track_visibility='always'
+    )
+
+    # App Access
+    base_url = fields.Char(
+        string='Login URL', required=True, track_visibility='always',
+        default=lambda self: 'http://%s' % self.service_name,
+    )
+    admin_user = fields.Char(
+        string='Admin User', required=False, track_visibility='always', default='admin',
+    )
+    admin_secret = fields.Char(
+        string='Admin Secret', required=False, track_visibility='always'
     )
 
     # State machine commands (7-step lifecycle)
@@ -197,7 +197,7 @@ class Application(models.Model):
     )
     install_command = fields.Text(
         string='Install Command', required=False,
-        default=lambda self: 'sudo apt-get install %s' % self.name,
+        default=lambda self: 'sudo apt-get install %s' % self.service_name,
         track_visibility='always',
     )
     update_command = fields.Text(
@@ -207,7 +207,7 @@ class Application(models.Model):
     )
     uninstall_command = fields.Text(
         string='Uninstall Command', required=False,
-        default=lambda self: 'sudo apt-get remove %s' % self.name,
+        default=lambda self: 'sudo apt-get remove %s' % self.service_name,
         track_visibility='always',
     )
 
