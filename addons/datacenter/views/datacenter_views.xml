@@ -7,52 +7,32 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <label for="name" string="Server name:"/>
-                    <field name="name" class="big-field"/>
-                    <div>
-                        <group>
-                            <field name="host"/>
-                            <field name="ssh_port"/>
-                        </group>
-                    </div>
-                    <div>
-                        <group>
-                            <field name="state" readonly="1"/>
-                            <field name="error_count" readonly="1"/>
-                        </group>
-                    </div>
-                    <notebook>
-                        <page string="Credentials">
-                            <group>
-                                <field name="os_user"/>
-                                <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
-                            </group>
-                        </page>
-                        <page string="Applications">
-                            <field name="application_ids">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="admin_user"/>
-                                    <field name="app_port"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Commands">
-                            <label for="command" string="Last/next command to execute:"/>
-                            <field name="command" class="big-field" />
-                            <button name="run_command" string="Execute" type="object" class="oe_highlight"/>
-                            <separator/>
-                            <group>
-                                <field name="stdout" readonly="1"/>
-                                <field name="stderr" readonly="1"/>
-                            </group>
-                        </page>
-                        <page string="Settings">
-                            <group>
-                                <field name="base_path"/>
-                            </group>
-                        </page>
-                    </notebook>
+                    <group string="Configuration">
+                        <field name="name"/>
+                        <field name="host"/>
+                        <field name="ssh_port"/>
+                        <field name="os_user"/>
+                        <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
+                        <field name="state" readonly="1"/>
+                        <field name="error_count" readonly="1"/>
+                    </group>
+                </sheet>
+                <sheet>
+                    <group string="Commands">
+                        <field name="command" class="big-field"/>
+                        <field name="stdout"/>
+                        <field name="sterr"/>
+                    </group>
+                    <group string="Applications">
+                        <field name="application_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="app_port"/>
+                                <field name="admin_user"/>
+                                <field name="expected_status"/>
+                            </tree>
+                        </field>
+                    </group>
                 </sheet>
             </form>
         </field>
