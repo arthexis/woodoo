@@ -108,10 +108,12 @@
                 </sheet>
                 <sheet>
                     <group string="Operations">
-                        <button name="start" string="Start" type="object" class="oe_highlight"/>
-                        <button name="stop" string="Stop" type="object" class="oe_highlight"/>
-                        <button name="restart" string="Restart" type="object" class="oe_highlight"/>
-                        <button name="status" string="Status" type="object" class="oe_highlight"/>
+                        <group cols="4">
+                            <button name="start" string="Start" type="object" class="oe_highlight"/>
+                            <button name="stop" string="Stop" type="object" class="oe_highlight"/>
+                            <button name="restart" string="Restart" type="object" class="oe_highlight"/>
+                            <button name="status" string="Status" type="object" class="oe_highlight"/>
+                        </group>
                         <separator/>
                         <field name="start_command"/>
                         <field name="stop_command"/>
