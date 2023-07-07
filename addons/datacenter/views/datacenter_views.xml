@@ -108,12 +108,12 @@
                 </sheet>
                 <sheet>
                     <group string="Operations">
-                        <group col="4">
+                        <header>
                             <button name="start" string="Start" type="object" class="oe_highlight" colspan="1"/>
                             <button name="stop" string="Stop" type="object" class="oe_highlight" colspan="1"/>
                             <button name="restart" string="Restart" type="object" class="oe_highlight" colspan="1"/>
                             <button name="status" string="Status" type="object" class="oe_highlight" colspan="1"/>
-                        </group>
+                        </header>
                         <separator/>
                         <group>
                             <field name="start_command"/>
@@ -124,11 +124,11 @@
                         </group>
                     </group>
                     <group string="Lifecycle">
-                        <group col="4">
+                        <header>
                             <button name="install" string="Install" type="object" class="oe_highlight" colspan="1"/>
                             <button name="update" string="Update" type="object" class="oe_highlight" colspan="1"/>
                             <button name="uninstall" string="Uninstall" type="object" class="oe_highlight" colspan="1"/>
-                        </group>
+                        </header>
                         <separator/>
                         <group>
                             <field name="install_command"/>
