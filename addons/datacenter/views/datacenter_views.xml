@@ -98,6 +98,7 @@
                     <group string="Configuration">
                         <field name="name"/>
                         <field name="server_id"/>
+                        <field name="service_name"/>
                         <field name="base_url"/>
                         <field name="base_path"/>
                         <field name="app_port"/>
