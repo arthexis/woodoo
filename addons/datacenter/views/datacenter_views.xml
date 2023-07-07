@@ -108,27 +108,33 @@
                 </sheet>
                 <sheet>
                     <group string="Operations">
-                        <group cols="4">
+                        <group col="4">
                             <button name="start" string="Start" type="object" class="oe_highlight"/>
                             <button name="stop" string="Stop" type="object" class="oe_highlight"/>
                             <button name="restart" string="Restart" type="object" class="oe_highlight"/>
                             <button name="status" string="Status" type="object" class="oe_highlight"/>
                         </group>
                         <separator/>
-                        <field name="start_command"/>
-                        <field name="stop_command"/>
-                        <field name="restart_command"/>
-                        <field name="status_command"/>
-                        <field name="status_pattern"/>
+                        <group>
+                            <field name="start_command"/>
+                            <field name="stop_command"/>
+                            <field name="restart_command"/>
+                            <field name="status_command"/>
+                            <field name="status_pattern"/>
+                        </group>
                     </group>
                     <group string="Lifecycle">
-                        <button name="install" string="Install" type="object" class="oe_highlight"/>
-                        <button name="update" string="Update" type="object" class="oe_highlight"/>
-                        <button name="uninstall" string="Uninstall" type="object" class="oe_highlight"/>
+                        <group col="4">
+                            <button name="install" string="Install" type="object" class="oe_highlight"/>
+                            <button name="update" string="Update" type="object" class="oe_highlight"/>
+                            <button name="uninstall" string="Uninstall" type="object" class="oe_highlight"/>
+                        </group>
                         <separator/>
-                        <field name="install_command"/>
-                        <field name="update_command"/>
-                        <field name="uninstall_command"/>
+                        <group>
+                            <field name="install_command"/>
+                            <field name="update_command"/>
+                            <field name="uninstall_command"/>
+                        </group>
                     </group>
                     <group string="Databases">
                         <field name="database_ids">
