@@ -20,6 +20,12 @@ class Inspection(models.Model):
         ('other', 'Other'),
     ], string='Purpose', default='pre')
 
+    # Status of the inspection
+    # Allow the engineer to set the status of the inspection
+    # even though the workflow will do it automatically
+    # This is to allow the engineer to cancel the inspection or
+    # archive it if it is no longer needed
+    
     status = fields.Selection([
         ('pending', 'Pending'), 
         ('validated', 'Validated'),
@@ -230,7 +236,7 @@ class ElectricalInspection(models.Model):
                 return key
         # If no match is found then return None
         _logger.error('No cable size defined for amperage and temp. rating')
-        return None    
+        raise exceptions.UserError('No cable size defined for amperage and temp. rating')
 
     def _get_ac_loss(self, base_cable_size: str) -> float:
         resistivity = RESISTIVITY[self.cable_material]

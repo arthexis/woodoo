@@ -21,6 +21,7 @@ class GameServer(models.Model):
         ],
         default='stopped',
     )
-    game_pid = fields.Integer(
-        string='Game PID', required=False,
-    )
+
+    def start(self):
+        self.game_status = 'starting'
+        evennia.start_evennia()

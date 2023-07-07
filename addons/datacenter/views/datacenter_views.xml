@@ -24,8 +24,7 @@
                     <notebook>
                         <page string="Credentials">
                             <group>
-                                <field name="user"/>
-                                <field name="password" password="1"/>
+                                <field name="os_user"/>
                                 <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
                             </group>
                         </page>
@@ -85,7 +84,7 @@
                 <field name="name"/>
                 <field name="host"/>
                 <field name="port"/>
-                <field name="user"/>
+                <field name="os_user"/>
                 <field name="state"/>
             </search>
         </field>
@@ -98,12 +97,24 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
+                    <group string="Configuration">
                         <field name="name" class="big-field"/>
                         <field name="server_id"/>
+                        <field name="database_ids"/>
                         <field name="app_port"/>
-                        <field name="user"/>
-                        <field name="password" password="1"/>
+                        <field name="admin_user"/>
+                        <field name="admin_password" password="1"/>
+                    </group>
+                </sheet>
+                <sheet>
+                    <group string="Lifecycle">
+                        <field name="start_command"/>
+                        <field name="stop_command"/>
+                        <field name="restart_command"/>
+                        <field name="status_command"/>
+                        <field name="install_command"/>
+                        <field name="update_command"/>
+                        <field name="uninstall_command"/>
                     </group>
                 </sheet>
             </form>
@@ -119,7 +130,7 @@
                 <field name="name"/>
                 <field name="server_id"/>
                 <field name="app_port"/>
-                <field name="user"/>
+                <field name="admin_user"/>
             </tree>
         </field>
     </record>
@@ -181,8 +192,11 @@
 
     <!-- Menu -->
     <menuitem id="datacenter_menu" name="Datacenter" sequence="1"/>
-    <menuitem id="datacenter_menu_app" name="Applications" parent="datacenter_menu" action="datacenter_application_action"/>
-    <menuitem id="datacenter_menu_app_server" name="Servers" parent="datacenter_menu" action="datacenter_app_server_action"/>
-    <menuitem id="datacenter_menu_app_database" name="Databases" parent="datacenter_menu" action="datacenter_app_database_action"/>
+    <menuitem id="datacenter_menu_app" name="Applications" 
+        parent="datacenter_menu" action="datacenter_application_action"/>
+    <menuitem id="datacenter_menu_app_server" name="Servers" 
+        parent="datacenter_menu" action="datacenter_app_server_action"/>
+    <menuitem id="datacenter_menu_app_database" name="Databases" 
+        parent="datacenter_menu" action="datacenter_app_database_action"/>
 
 </odoo>

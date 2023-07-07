@@ -20,11 +20,8 @@ class AppServer(models.Model):
     )
 
     # SSH credentials
-    user = fields.Char(
-        string='User', required=False, track_visibility='always',
-    )
-    password = fields.Char(
-        string='Password', required=False, track_visibility='always',
+    os_user = fields.Char(
+        string='OS User', required=False, track_visibility='always', default='ubuntu',
     )
     private_pem_file = fields.Binary(
         string='Private PEM File', attachment=True, required=False,
@@ -63,7 +60,7 @@ class AppServer(models.Model):
     )
 
     command = fields.Text(
-        string='Original Command', required=False,
+        string='Command', required=False,
         default='echo "Hello World"',
         track_visibility='always',
     )
@@ -142,29 +139,113 @@ class Application(models.Model):
     name = fields.Char(string='Name', required=True)
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.app.server',
+        track_visibility='always',
     )
     database_ids = fields.One2many(
         string='Databases', comodel_name='datacenter.app.database',
-        inverse_name='application_id',
+        inverse_name='application_id', track_visibility='always',
     )
     app_port = fields.Integer(
-        string='App Port', required=False, default=80,
+        string='App Port', required=False, default=80, track_visibility='always'
     )
 
     # Credentials
-    user = fields.Char(string='User', required=False)
-    password = fields.Char(string='Password', required=False)
+    admin_user = fields.Char(
+        string='Admin User', required=False, track_visibility='always', default='admin',
+    )
+    admin_password = fields.Char(
+        string='Admin Password', required=False, track_visibility='always'
+    )
 
     # Configuration
     service_name = fields.Char(
         string='Service Name', required=False,
         default=lambda self: self.name,
+        track_visibility='always',
     )
     base_path = fields.Char(
         string='Base Path', required=False,
         default=lambda self: '/home/%s' % self.user,
         track_visibility='always',
     )
+
+    # State machine commands (7-step lifecycle)
+    start_command = fields.Text(
+        string='Start Command', required=False,
+        default=lambda self: 'sudo systemctl start %s' % self.service_name,
+        track_visibility='always',
+    )
+    stop_command = fields.Text(
+        string='Stop Command', required=False,
+        default=lambda self: 'sudo systemctl stop %s' % self.service_name,
+        track_visibility='always',
+    )
+    restart_command = fields.Text(
+        string='Restart Command', required=False,
+        default=lambda self: 'sudo systemctl restart %s' % self.service_name,
+        track_visibility='always',
+    )
+    status_command = fields.Text(
+        string='Status Command', required=False,
+        default=lambda self: 'sudo systemctl status %s' % self.service_name,
+        track_visibility='always',
+    )
+    install_command = fields.Text(
+        string='Install Command', required=False,
+        default=lambda self: 'sudo apt-get install %s' % self.name,
+        track_visibility='always',
+    )
+    update_command = fields.Text(
+        string='Update Command', required=False,
+        default=lambda self: 'sudo apt-get update && sudo apt-get upgrade',
+        track_visibility='always',
+    )
+    uninstall_command = fields.Text(
+        string='Uninstall Command', required=False,
+        default=lambda self: 'sudo apt-get remove %s' % self.name,
+        track_visibility='always',
+    )
+
+    def start(self):
+        self.server_id.run_command(
+            command=self.start_command, app_id=self.id,
+        )
+        self.server_id.flush()
+    
+    def stop(self):
+        self.server_id.run_command(
+            command=self.stop_command, app_id=self.id,
+        )
+        self.server_id.flush()
+
+    def restart(self):
+        self.server_id.run_command(
+            command=self.restart_command, app_id=self.id,
+        )
+        self.server_id.flush()
+        
+    def status(self):
+        return self.server_id.run_command(
+            command=self.status_command, app_id=self.id,
+        )
+    
+    def install(self):
+        self.server_id.run_command(
+            command=self.install_command, app_id=self.id,
+        )
+        self.server_id.flush()
+
+    def update(self):
+        self.server_id.run_command(
+            command=self.update_command, app_id=self.id,
+        )
+        self.server_id.flush()
+
+    def uninstall(self):
+        self.server_id.run_command(
+            command=self.uninstall_command, app_id=self.id,
+        )
+        self.server_id.flush()
 
 
 class AppDatabase(models.Model):
