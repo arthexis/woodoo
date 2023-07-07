@@ -248,6 +248,8 @@ class Application(models.Model):
         )
         if self.status_pattern in result:
             return 'running'
+        else:
+            return 'stopped'
     
     def install(self):
         self.server_id.run_command(
