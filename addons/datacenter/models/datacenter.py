@@ -150,7 +150,7 @@ class Application(models.Model):
     )
     base_path = fields.Char(
         string='Base Path', required=False,
-        default=lambda self: '/home/%s' % self.service_name,
+        default=lambda self: '/home/%s/%s' % (self.server_id.os_user, self.service_name, ),
         track_visibility='always',
     )
     app_port = fields.Integer(

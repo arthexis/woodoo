@@ -145,7 +145,6 @@
                             <tree>
                                 <field name="name"/>
                                 <field name="ip_address"/>
-                                <field name="db_port"/>
                                 <field name="db_user"/>
                             </tree>
                         </field>
