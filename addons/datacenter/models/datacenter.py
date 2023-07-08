@@ -73,7 +73,7 @@ class AppServer(models.Model):
     # Server scripts
     script_ids = fields.One2many(
         string='Scripts', comodel_name='datacenter.script',
-        inverse_name='server_id',
+        inverse_name=None,
     )
 
     # SSH connection
@@ -226,7 +226,7 @@ class Application(models.Model):
     # App Scripts
     script_ids = fields.One2many(
         string='Scripts', comodel_name='datacenter.script',
-        inverse_name='application_ids',
+        inverse_name=None,
     )
 
     # Operations (buttons)
@@ -309,7 +309,7 @@ class AppDatabase(models.Model):
     # Database scripts
     script_ids = fields.One2many(
         string='Scripts', comodel_name='datacenter.script',
-        inverse_name='database_ids',
+        inverse_name=None
     )
 
 
