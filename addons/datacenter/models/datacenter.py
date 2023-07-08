@@ -71,9 +71,9 @@ class AppServer(models.Model):
     )
 
     # Server scripts
-    script_ids = fields.One2many(
+    script_ids = fields.Many2many(
         string='Scripts', comodel_name='datacenter.script',
-        inverse_name=None,
+        relation='datacenter_script_server_rel',
     )
 
     # SSH connection
@@ -224,9 +224,9 @@ class Application(models.Model):
     )
 
     # App Scripts
-    script_ids = fields.One2many(
+    script_ids = fields.Many2many(
         string='Scripts', comodel_name='datacenter.script',
-        inverse_name=None,
+        relation='datacenter_script_application_rel',
     )
 
     # Operations (buttons)
@@ -307,9 +307,9 @@ class AppDatabase(models.Model):
     )
 
     # Database scripts
-    script_ids = fields.One2many(
+    script_ids = fields.Many2many(
         string='Scripts', comodel_name='datacenter.script',
-        inverse_name=None
+        relation='datacenter_script_database_rel',
     )
 
 
