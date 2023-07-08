@@ -12,38 +12,34 @@ class AppServer(models.Model):
 
     name = fields.Char(string='Name', required=True)
     host = fields.Char(
-        string='Host', required=True, track_visibility='always',
+        string='Host', required=True,
     )
     ssh_port = fields.Integer(
         string='Port', required=True, default=22,
-        track_visibility='always'
     )
 
     # SSH credentials
     os_user = fields.Char(
-        string='OS User', required=False, track_visibility='always', default='ubuntu',
+        string='OS User', required=False, default='ubuntu',
     )
     private_pem_file = fields.Binary(
         string='Private PEM File', attachment=True, required=False,
-        track_visibility='always',
     )
     private_pem_filename = fields.Char(
         string='Private PEM File Name', required=False,
-        track_visibility='always',
     )
 
     # SSH settings
     base_path = fields.Char(
         string='Base Path', required=False,
         default=lambda self: '/home/%s' % self.os_user,
-        track_visibility='always',
+        help='The base path where all applications will be installed',
     )
 
     # Applications
     application_ids = fields.One2many(
         string='Applications', comodel_name='datacenter.application',
         inverse_name='server_id',
-        track_visibility='always',
     )
 
     # State machine
@@ -56,26 +52,28 @@ class AppServer(models.Model):
             ('pending', 'Pending'),
         ],
         default='unknown',
-        track_visibility='always',
     )
 
     command = fields.Text(
         string='Command', required=False,
         default='echo "Hello World"',
-        track_visibility='always',
+    )
+    error_count = fields.Integer(
+        string='Error Count', required=False, default=0, readonly=True,
     )
 
     # Output
     stdout = fields.Text(
         string='Stdout', required=False, readonly=True,
-        track_visibility='always',
     )
     stderr = fields.Text(
         string='Stderr', required=False, readonly=True,
-        track_visibility='always',
     )
-    error_count = fields.Integer(
-        string='Error Count', required=False, default=0, readonly=True,
+
+    # Server scripts
+    script_ids = fields.One2many(
+        string='Scripts', comodel_name='datacenter.script',
+        inverse_name='server_id',
     )
 
     # SSH connection
@@ -92,18 +90,26 @@ class AppServer(models.Model):
         )
         return ssh_client
 
+    def upload(self, content, file_path, chmod_exec=False):
+        ssh_client = self._get_ssh_client()
+        sftp_client = ssh_client.open_sftp()
+        sftp_client.open(file_path, 'w').write(content)
+        if chmod_exec:
+            sftp_client.chmod(file_path, 0o755)
+        sftp_client.close()
+        return file_path
+
     # Run command
-    def run_command(self, command=None, cwd=None, force=False, app_id=None):
+    def run_command(self, command=None, base_path=None, force=False):
         if self.state == 'pending' and not force:
             return 'Server is busy'
         if command:
-            base_path = self.base_path if not app_id else self.application_ids.filtered(
-                lambda x: x.id == app_id
-            ).base_path
-            if cwd:
-                command = 'cd %s && %s' % (cwd, command)
-            elif base_path:
+            if base_path:
+                if not base_path.startswith('/'):
+                    base_path = '%s/%s' % (self.base_path, base_path)
                 command = 'cd %s && %s' % (base_path, command)
+            elif self.base_path:
+                command = 'cd %s && %s' % (self.base_path, command)
             self.command = command
         else:
             command = self.command
@@ -135,86 +141,76 @@ class Application(models.Model):
     name = fields.Char(string='Name', required=True)
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.app.server',
-        track_visibility='always',
     )
     database_ids = fields.One2many(
         string='Databases', comodel_name='datacenter.app.database',
-        inverse_name='application_id', track_visibility='always',
+        inverse_name='application_id', 
     )
 
     # Configuration
     service_name = fields.Char(
         string='Service Name', required=True,
         default=lambda self: self.name,
-        track_visibility='always',
     )
     base_path = fields.Char(
         string='Base Path', required=False,
         default=lambda self: '/home/%s/%s' % (self.server_id.os_user, self.service_name, ),
-        track_visibility='always',
+        help='The base path is where the application will be installed',
     )
     app_port = fields.Integer(
         string='App Port', required=False, default=80, 
-        track_visibility='always'
     )
     virtual_env = fields.Char(
         string='Virtual Env', required=False,
         default=lambda self: '/home/%s/venv' % self.service_name,
-        track_visibility='always',
     )
 
     # App Access
     base_url = fields.Char(
-        string='Base URL', required=True, track_visibility='always',
+        string='Base URL', required=True, 
         default=lambda self: 'https://%s' % self.service_name,
     )
     admin_user = fields.Char(
-        string='Admin User', required=False, track_visibility='always', default='admin',
+        string='Admin User', required=False, default='admin',
     )
     admin_secret = fields.Char(
-        string='Admin Secret', required=False, track_visibility='always'
+        string='Admin Secret', required=False, 
     )
 
-    # State machine commands (7-step lifecycle)
+    # Operations
     start_command = fields.Text(
         string='Start Command', required=False,
         default=lambda self: 'sudo systemctl start %s' % self.service_name,
-        track_visibility='always',
     )
     stop_command = fields.Text(
         string='Stop Command', required=False,
         default=lambda self: 'sudo systemctl stop %s' % self.service_name,
-        track_visibility='always',
     )
     restart_command = fields.Text(
         string='Restart Command', required=False,
         default=lambda self: 'sudo systemctl restart %s' % self.service_name,
-        track_visibility='always',
     )
     status_command = fields.Text(
         string='Status Command', required=False,
         default=lambda self: 'sudo systemctl status %s' % self.service_name,
-        track_visibility='always',
     )
     status_pattern = fields.Char(
         string='Status Pattern', required=False,
         default=lambda self: 'Active: active (running)',
-        track_visibility='always',
     )
-    install_command = fields.Text(
-        string='Install Command', required=False,
+
+    # Lifecycle
+    install_script = fields.Text(
+        string='Install Script', required=False,
         default=lambda self: 'sudo apt-get install %s' % self.service_name,
-        track_visibility='always',
     )
-    update_command = fields.Text(
-        string='Update Command', required=False,
+    update_script = fields.Text(
+        string='Update Script', required=False,
         default=lambda self: 'sudo apt-get update && sudo apt-get upgrade',
-        track_visibility='always',
     )
-    uninstall_command = fields.Text(
-        string='Uninstall Command', required=False,
+    uninstall_script = fields.Text(
+        string='Uninstall Script', required=False,
         default=lambda self: 'sudo apt-get remove %s' % self.service_name,
-        track_visibility='always',
     )
 
     # Expected status of the service
@@ -225,16 +221,21 @@ class Application(models.Model):
             ('stopped', 'Stopped'),
         ],
         default='stopped',
-        track_visibility='always',
     )
 
+    # App Scripts
+    script_ids = fields.One2many(
+        string='Scripts', comodel_name='datacenter.script',
+        inverse_name='application_ids',
+    )
+
+    # Operations (buttons)
     def start(self):
         self.expected_status = 'running'
         self.flush()
         self.server_id.run_command(
             command=self.start_command, app_id=self.id,
         )
-        self.server_id.flush()
     
     def stop(self):
         self.expected_status = 'stopped'
@@ -242,7 +243,6 @@ class Application(models.Model):
         self.server_id.run_command(
             command=self.stop_command, app_id=self.id,
         )
-        self.server_id.flush()
 
     def restart(self):
         self.expected_status = 'running'
@@ -250,7 +250,6 @@ class Application(models.Model):
         self.server_id.run_command(
             command=self.restart_command, app_id=self.id,
         )
-        self.server_id.flush()
         
     def status(self):
         result = self.server_id.run_command(
@@ -261,24 +260,33 @@ class Application(models.Model):
         else:
             return 'stopped'
     
+    # Lifecycle (buttons)
     def install(self):
-        self.server_id.run_command(
-            command=self.install_command, app_id=self.id,
+        if not self.server_id or not self.install_script:
+            raise exceptions.ValidationError('Missing server or install script')
+        filename = self.server_id.upload(
+            content=self.install_script, 
+            file_path='%s/install.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.flush()
+        self.server_id.run_command(command=filename, app_id=self.id)
 
     def update(self):
-        self.server_id.run_command(
-            command=self.update_command, app_id=self.id,
+        if not self.server_id or not self.update_script:
+            raise exceptions.ValidationError('Missing server or update script')
+        filename = self.server_id.upload(
+            content=self.update_script, 
+            file_path='%s/update.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.flush()
+        self.server_id.run_command(command=filename, app_id=self.id)
 
     def uninstall(self):
-        self.server_id.run_command(
-            command=self.uninstall_command, app_id=self.id,
+        if not self.server_id or not self.uninstall_script:
+            raise exceptions.ValidationError('Missing server or uninstall script') 
+        filename = self.server_id.upload(
+            content=self.uninstall_script, 
+            file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.flush()
-
+        self.server_id.run_command(command=filename, app_id=self.id)
 
 class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
@@ -289,6 +297,7 @@ class AppDatabase(models.Model):
         string='Application', comodel_name='datacenter.application',
     )
     ip_address = fields.Char(string='IP Address', required=True)
+    db_name = fields.Char(string='DB Name', required=True)
     db_port = fields.Integer(string='DB Port', required=False, default=5432)
 
     # Credentials
@@ -296,3 +305,46 @@ class AppDatabase(models.Model):
         string='DB User', required=True,
         help='The DB user must have access without a password',
     )
+
+    # Database scripts
+    script_ids = fields.One2many(
+        string='Scripts', comodel_name='datacenter.script',
+        inverse_name='database_ids',
+    )
+
+
+class Script(models.Model):
+    _name = 'datacenter.script'
+    _description = 'Script'
+
+    name = fields.Char(string='Name', required=True)
+    script = fields.Text(
+        string='Script Content', required=True)
+    server_id = fields.Many2one(
+        string='Server', comodel_name='datacenter.app.server',
+    )
+    application_ids = fields.Many2many(
+        string='Applications', comodel_name='datacenter.application',
+        relation='datacenter_script_application_rel',
+        column1='script_id', column2='application_id',
+    )
+    file_path = fields.Char(
+        string='File Path', required=False,
+        default=lambda self: '/home/%s/bin/%s' % (self.server_id.os_user, self.name, ),
+    )
+
+    # Script dependencies
+    dependency_ids = fields.Many2many(
+        string='Dependencies', comodel_name='datacenter.script',
+        relation='datacenter_script_dependency_rel',
+        column1='script_id', column2='dependency_id',
+    )
+
+    def upload(self):
+        self.server_id.upload(
+            content=self.script, file_path=self.file_path, chmod_exec=True,
+        )
+
+    def run(self, force=False):
+        self.upload()
+        self.server_id.run_command(command=self.file_path, force=force)

@@ -80,11 +80,11 @@
                         <field name="server_id"/>
                         <field name="service_name"/>
                         <field name="base_url"/>
-                        <field name="base_path"/>
+                        
                         <field name="app_port"/>
                         <field name="admin_user"/>
                         <field name="admin_secret" password="1"/>
-                        <field name="virtual_env"/>
+                        
                     </group>
                     <group string="Status">
                         <field name="expected_status" readonly="1"/>
@@ -115,10 +115,20 @@
                         </header>
                         <separator/>
                         <group>
-                            <field name="install_command"/>
-                            <field name="update_command"/>
-                            <field name="uninstall_command"/>
+                            <field name="install_script"/>
+                            <field name="update_script"/>
+                            <field name="uninstall_script"/>
+                            <field name="base_path"/>
+                            <field name="virtual_env"/>
                         </group>
+                    </group>
+                    <group string="Custom Scripts">
+                        <field name="script_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="script"/>
+                            </tree>
+                        </field>
                     </group>
                     <group string="Databases">
                         <field name="database_ids">
@@ -155,12 +165,22 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
+                    <group string="Configuration">	
                         <field name="name" class="big-field"/>
                         <field name="application_id"/>
                         <field name="ip_address"/>
                         <field name="db_port"/>
                         <field name="db_user"/>
+                    </group>
+                </sheet>
+                <sheet>
+                    <group string="Custom Scripts">
+                        <field name="script_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="script"/>
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>
