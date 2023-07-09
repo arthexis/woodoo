@@ -86,13 +86,14 @@ class SigilFieldMixin:
         self.help = kwargs.get('help', '') + " You can use %[] Sigils in this field."
 
     def convert_to_read(self, value, record, use_name_get=True):
-        if hasattr(record, '__dict__'):
-            return Sigil(value) % vars(record) if value else super().convert_to_read(value, record, use_name_get)
+        if isinstance(record, models.BaseModel):
+            # Use the record's fields as the Context data
+            data = record.read()[0]
+            return Sigil(value) % data if value else super().convert_to_read(value, record, use_name_get)
         else:
-            # Handle the case where record doesn't have a __dict__ attribute
-            _logger.warning("SigilFieldMixin: record %s doesn't have a __dict__ attribute", record)
+            # Handle the case where record is not an Odoo model instance
+            _logger.warning("SigilFieldMixin: record %s is not an Odoo model instance", record)
             return value
-
 
 class SigilChar(SigilFieldMixin, fields.Char):
     pass
