@@ -1,6 +1,9 @@
 import re
 import threading
 from odoo import fields
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class Context:
@@ -87,6 +90,7 @@ class SigilFieldMixin:
             return Sigil(value) % vars(record) if value else super().convert_to_read(value, record, use_name_get)
         else:
             # Handle the case where record doesn't have a __dict__ attribute
+            _logger.warning("SigilFieldMixin: record %s doesn't have a __dict__ attribute", record)
             return value
 
 
