@@ -320,14 +320,6 @@ class Script(models.Model):
     name = fields.Char(string='Name', required=True)
     script = fields.Text(
         string='Script Content', required=True)
-    server_id = fields.Many2one(
-        string='Server', comodel_name='datacenter.app.server',
-    )
-    application_ids = fields.Many2many(
-        string='Applications', comodel_name='datacenter.application',
-        relation='datacenter_script_application_rel',
-        column1='script_id', column2='application_id',
-    )
     file_path = fields.Char(
         string='File Path', required=False,
         default=lambda self: '/home/%s/bin/%s' % (self.server_id.os_user, self.name, ),
@@ -337,7 +329,6 @@ class Script(models.Model):
     dependency_ids = fields.Many2many(
         string='Dependencies', comodel_name='datacenter.script',
         relation='datacenter_script_dependency_rel',
-        column1='script_id', column2='dependency_id',
     )
 
     def upload(self):
