@@ -148,7 +148,6 @@ class AppServer(models.Model):
             self.stderr = str(e)
             self.state = 'failure'
             self.error_count += 1
-        self.flush()
         return self.stdout
     
 
