@@ -2,7 +2,6 @@ from odoo import models, fields, exceptions
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
-from . import sigils
 
 
 # Datacenter models
@@ -110,9 +109,11 @@ class AppServer(models.Model):
         if not command:
             command = self.command
         try:
-            with sigils.Context(self):
-                resolved = sigils.Sigil(command) % None
-            return resolved
+            return command % {
+                'host': self.host,
+                'os_user': self.os_user,
+                'base_path': self.base_path,
+            }
         except Exception as e:
             raise exceptions.ValidationError(str(e))
 
