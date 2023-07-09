@@ -239,6 +239,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="filename"/>
             </tree>
         </field>
     </record>
@@ -251,6 +252,9 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
+                <field name="filename"/>
+                <field name="dependency_ids"/>
+                <field name="script"/>
             </search>
         </field>
     </record>
