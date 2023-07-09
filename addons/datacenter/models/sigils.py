@@ -79,6 +79,13 @@ class Sigil(str):
             else:
                 yield part
 
+    def __format__(self, format_spec):
+        # Handle format strings that contain square brackets
+        if '[' in format_spec and ']' in format_spec:
+            return self.__mod__(format_spec)
+        # For other format strings, fall back to the standard string formatting
+        return super().__format__(format_spec)
+
 
 class SigilFieldMixin:
     def __init__(self, string=fields.Default, **kwargs):
