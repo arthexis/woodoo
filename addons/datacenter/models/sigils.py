@@ -78,26 +78,22 @@ class Sigil(str):
 
 
 class SigilFieldMixin:
-    sigil_info = " You can use Sigils in this field. For example, %[foo.bar] will be replaced with the value of 'foo.bar'."
-
-    def __init__(self, string=None, **kwargs):
+    def __init__(self, string=fields.Default, **kwargs):
         super().__init__(string=string, **kwargs)
-
-        # If sigil_info flag is True, append sigil information to help
-        if kwargs.get('sigil_info', False):
-            self.help = (self.help or "") + self.sigil_info
-
-
-class SigilChar(fields.Char):
-    type = 'sigilchar'
+        self.help = kwargs.get('help', '') + " You can use %[] Sigils in this field."
 
     def convert_to_read(self, value, record, use_name_get=True):
-        return Sigil(value) % vars(record) if value else super().convert_to_read(value, record, use_name_get)
+        if hasattr(record, '__dict__'):
+            return Sigil(value) % vars(record) if value else super().convert_to_read(value, record, use_name_get)
+        else:
+            # Handle the case where record doesn't have a __dict__ attribute
+            return value
 
 
-class SigilText(fields.Text):
-    type = 'sigiltext'
+class SigilChar(SigilFieldMixin, fields.Char):
+    pass
 
-    def convert_to_read(self, value, record, use_name_get=True):
-        return Sigil(value) % vars(record) if value else super().convert_to_read(value, record, use_name_get)
+
+class SigilText(SigilFieldMixin, fields.Text):
+    pass
 
