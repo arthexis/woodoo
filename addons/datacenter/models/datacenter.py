@@ -4,17 +4,6 @@ from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 
-# Functions
-
-def is_format_string(s):
-    try:
-        s % {"d": 0, "i": 0, "o": 0, "u": 0, "x": 0, "X": 0, "e": 0.0, "E": 0.0, 
-             "f": 0.0, "F": 0.0, "g": 0.0, "G": 0.0, "c": 'a', "r": "", "s": "", "%": ""}
-        return True
-    except:
-        return False
-
-
 # Datacenter models
     
 class AppServer(models.Model):
@@ -118,9 +107,10 @@ class AppServer(models.Model):
     def resolve(self, command=None):
         if not command:
             command = self.command
-        if not is_format_string(command):
-            raise exceptions.ValidationError('Command is not a valid %% format string')
-        return command % self
+        try:
+            return command % self
+        except Exception as e:
+            raise exceptions.ValidationError(str(e))
 
     # Run command
     def execute(self, command=None, base_path=None, force=False):
