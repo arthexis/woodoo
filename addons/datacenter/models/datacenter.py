@@ -110,7 +110,8 @@ class AppServer(models.Model):
         if not command:
             command = self.command
         try:
-            resolved = sigils.Sigil(command) % self
+            with sigils.Context(self):
+                resolved = sigils.Sigil(command) % None
             _logger.info('Resolved command: %s' % resolved)
             return resolved
         except Exception as e:
