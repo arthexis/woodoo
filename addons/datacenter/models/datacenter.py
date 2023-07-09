@@ -329,6 +329,7 @@ class Script(models.Model):
     dependency_ids = fields.Many2many(
         string='Dependencies', comodel_name='datacenter.script',
         relation='datacenter_script_dependency_rel',
+        column1='script_id', column2='dependency_id',
     )
 
     def upload(self):
@@ -339,3 +340,6 @@ class Script(models.Model):
     def run(self, force=False):
         self.upload()
         self.server_id.run_command(command=self.file_path, force=force)
+
+
+
