@@ -1,6 +1,6 @@
 <odoo>
 
-    <!-- Server Form View -->
+    <!-- App Server Form View -->
     <record id="datacenter_app_server_form_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.form.view</field>
         <field name="model">datacenter.app.server</field>
@@ -19,6 +19,10 @@
                 </sheet>
                 <sheet>
                     <group string="Commands">
+
+                        <button name="execute" string="Execute" type="object" class="oe_highlight" colspan="1"/>
+                        <separator />
+
                         <field name="command" class="big-field"/>
                         <field name="stdout"/>
                         <field name="stderr"/>
@@ -38,7 +42,7 @@
         </field>
     </record>
 
-    <!-- Server Tree View -->
+    <!-- App Server Tree View -->
     <record id="datacenter_app_server_tree_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.tree.view</field>
         <field name="model">datacenter.app.server</field>
@@ -53,7 +57,7 @@
         </field>
     </record>
 
-    <!-- Server search view, group by state -->
+    <!-- App Server search view, group by state -->
 
     <record id="datacenter_app_server_search_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.search.view</field>

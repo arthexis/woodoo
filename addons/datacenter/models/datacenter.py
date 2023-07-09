@@ -100,7 +100,7 @@ class AppServer(models.Model):
         return file_path
 
     # Run command
-    def run_command(self, command=None, base_path=None, force=False):
+    def execute(self, command=None, base_path=None, force=False):
         if self.state == 'pending' and not force:
             return 'Server is busy'
         if command:
@@ -233,26 +233,26 @@ class Application(models.Model):
     def start(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.run_command(
+        self.server_id.execute(
             command=self.start_command, app_id=self.id,
         )
     
     def stop(self):
         self.expected_status = 'stopped'
         self.flush()
-        self.server_id.run_command(
+        self.server_id.execute(
             command=self.stop_command, app_id=self.id,
         )
 
     def restart(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.run_command(
+        self.server_id.execute(
             command=self.restart_command, app_id=self.id,
         )
         
     def status(self):
-        result = self.server_id.run_command(
+        result = self.server_id.execute(
             command=self.status_command, app_id=self.id,
         )
         if self.status_pattern in result:
@@ -268,7 +268,7 @@ class Application(models.Model):
             content=self.install_script, 
             file_path='%s/install.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.run_command(command=filename, app_id=self.id)
+        self.server_id.execute(command=filename, app_id=self.id)
 
     def update(self):
         if not self.server_id or not self.update_script:
@@ -277,7 +277,7 @@ class Application(models.Model):
             content=self.update_script, 
             file_path='%s/update.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.run_command(command=filename, app_id=self.id)
+        self.server_id.execute(command=filename, app_id=self.id)
 
     def uninstall(self):
         if not self.server_id or not self.uninstall_script:
@@ -286,7 +286,7 @@ class Application(models.Model):
             content=self.uninstall_script, 
             file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.run_command(command=filename, app_id=self.id)
+        self.server_id.execute(command=filename, app_id=self.id)
 
 class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
@@ -339,7 +339,5 @@ class Script(models.Model):
 
     def run(self, force=False):
         self.upload()
-        self.server_id.run_command(command=self.file_path, force=force)
-
-
+        self.server_id.execute(command=self.file_path, force=force)
 
