@@ -110,7 +110,9 @@ class AppServer(models.Model):
         if not command:
             command = self.command
         try:
-            return command % self
+            resolved = command % self
+            _logger.info('Resolved command: %s' % resolved)
+            return resolved
         except Exception as e:
             raise exceptions.ValidationError(str(e))
 
