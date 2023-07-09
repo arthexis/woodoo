@@ -12,7 +12,8 @@ class AppServer(models.Model):
 
     name = fields.Char(string='Name', required=True)
     host = fields.Char(
-        string='Host', required=True,
+        string='Host IP', required=True,
+        help='The IP address of the server',
     )
     ssh_port = fields.Integer(
         string='Port', required=True, default=22,
@@ -23,10 +24,11 @@ class AppServer(models.Model):
         string='OS User', required=False, default='ubuntu',
     )
     private_pem_file = fields.Binary(
-        string='Private PEM File', attachment=True, required=False,
+        string='PEM File', attachment=True, required=False,
+        help='The PEM file should contain the SSH private key',
     )
     private_pem_filename = fields.Char(
-        string='Private PEM File Name', required=False,
+        string='PEM File Name', required=False,
     )
 
     # SSH settings
@@ -90,7 +92,9 @@ class AppServer(models.Model):
         )
         return ssh_client
 
-    def upload(self, content, file_path, chmod_exec=False):
+    def upload(self, file_path, content=None, chmod_exec=False):
+        if not content:
+            content = self.command
         ssh_client = self._get_ssh_client()
         sftp_client = ssh_client.open_sftp()
         sftp_client.open(file_path, 'w').write(content)
@@ -98,6 +102,10 @@ class AppServer(models.Model):
             sftp_client.chmod(file_path, 0o755)
         sftp_client.close()
         return file_path
+
+    # Show just the command after resolving variables
+    def resolve(self):
+        return self.command % self
 
     # Run command
     def execute(self, command=None, base_path=None, force=False):
@@ -110,7 +118,7 @@ class AppServer(models.Model):
                 command = 'cd %s && %s' % (base_path, command)
             elif self.base_path:
                 command = 'cd %s && %s' % (self.base_path, command)
-            self.command = command
+            self.command = command % self
         else:
             command = self.command
         self.state = 'pending'
@@ -233,32 +241,21 @@ class Application(models.Model):
     def start(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.execute(
-            command=self.start_command, app_id=self.id,
-        )
+        self.server_id.execute(command=self.start_command)
     
     def stop(self):
         self.expected_status = 'stopped'
         self.flush()
-        self.server_id.execute(
-            command=self.stop_command, app_id=self.id,
-        )
+        self.server_id.execute(command=self.stop_command)
 
     def restart(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.execute(
-            command=self.restart_command, app_id=self.id,
-        )
+        self.server_id.execute(command=self.restart_command)
         
     def status(self):
-        result = self.server_id.execute(
-            command=self.status_command, app_id=self.id,
-        )
-        if self.status_pattern in result:
-            return 'running'
-        else:
-            return 'stopped'
+        result = self.server_id.execute(command=self.status_command)
+        return 'running' if if self.status_pattern in result else 'stopped'
     
     # Lifecycle (buttons)
     def install(self):
@@ -277,7 +274,7 @@ class Application(models.Model):
             content=self.update_script, 
             file_path='%s/update.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename, app_id=self.id)
+        self.server_id.execute(command=filename)
 
     def uninstall(self):
         if not self.server_id or not self.uninstall_script:
@@ -286,7 +283,7 @@ class Application(models.Model):
             content=self.uninstall_script, 
             file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename, app_id=self.id)
+        self.server_id.execute(command=filename)
 
 class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
