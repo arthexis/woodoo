@@ -1,6 +1,6 @@
 import re
 import threading
-from odoo import fields
+from odoo import models, fields
 import logging
 
 _logger = logging.getLogger(__name__)
