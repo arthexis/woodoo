@@ -320,9 +320,9 @@ class Script(models.Model):
     name = fields.Char(string='Name', required=True)
     script = fields.Text(
         string='Script Content', required=True)
-    file_path = fields.Char(
-        string='File Path', required=False,
-        default=lambda self: '/home/%s/bin/%s' % (self.server_id.os_user, self.name, ),
+    filename = fields.Char(
+        string='File Name', required=False,
+        default=lambda self: '%s.sh' % self.name,
     )
 
     # Script dependencies

@@ -211,10 +211,15 @@
                 <sheet>
                     <group string="Configuration">
                         <field name="name"/>
+                        <field name="filename"/>
                     </group>
-                    <group string="Dependencies">
+
+                    <group string="Code">
                         <field name="script"/>
-                        <field name="file_path"/>
+                    </group>
+
+                    <group string="Dependencies">
+
                         <field name="dependency_ids">
                             <tree>
                                 <field name="name"/>
