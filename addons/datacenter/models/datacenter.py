@@ -2,6 +2,7 @@ from odoo import models, fields, exceptions
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
+from . import sigils
 
 
 # Datacenter models
@@ -56,9 +57,10 @@ class AppServer(models.Model):
         default='unknown',
     )
 
-    command = fields.Text(
+    command = sigils.SigilText(
         string='Command', required=False,
-        default='echo "Hello World"',
+        default='echo "%[host]"',
+        sigil_info=True,
     )
     error_count = fields.Integer(
         string='Error Count', required=False, default=0, readonly=True,
