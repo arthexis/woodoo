@@ -57,10 +57,10 @@ class AppServer(models.Model):
         default='unknown',
     )
 
-    command = sigils.SigilText(
+    command = fields.Text(
         string='Command', required=False,
         default='echo "%[host]"',
-        sigil_info=True,
+        help='The command to be executed on the server. Sigils are supported.',
     )
     error_count = fields.Integer(
         string='Error Count', required=False, default=0, readonly=True,

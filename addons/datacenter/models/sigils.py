@@ -67,36 +67,3 @@ class Sigil(str):
             return modified_str % flat_dict
         except (KeyError, AttributeError):
             return self
-
-    def __iter__(self):
-        # Split the string into text and sigil parts
-        parts = re.split(r'(%\[[^\]]+\])', self)
-
-        # Wrap the parts that contain sigils in Sigil()
-        for part in parts:
-            if '%[' in part and ']' in part:
-                yield Sigil(part)
-            else:
-                yield part
-
-    def __format__(self, format_spec):
-        # Handle format strings that contain square brackets
-        if '[' in format_spec and ']' in format_spec:
-            return self.__mod__(format_spec)
-        # For other format strings, fall back to the standard string formatting
-        return super().__format__(format_spec)
-
-
-class SigilFieldMixin:
-    def __init__(self, string=fields.Default, **kwargs):
-        super().__init__(string=string, **kwargs)
-        self.help = kwargs.get('help', '') + " You can use %[] Sigils in this field."
-
-
-class SigilChar(SigilFieldMixin, fields.Char):
-    pass
-
-
-class SigilText(SigilFieldMixin, fields.Text):
-    pass
-
