@@ -265,7 +265,7 @@ class Application(models.Model):
             content=self.install_script, 
             file_path='%s/install.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename, app_id=self.id)
+        self.server_id.execute(command=filename)
 
     def update(self):
         if not self.server_id or not self.update_script:
