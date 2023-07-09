@@ -21,6 +21,7 @@
                     <group string="Commands">
 
                         <button name="execute" string="Execute" type="object" class="oe_highlight" colspan="1"/>
+                        <button name="resolve" string="Resolve" type="object" class="oe_highlight" colspan="1"/>
                         <separator />
 
                         <field name="command" class="big-field"/>
