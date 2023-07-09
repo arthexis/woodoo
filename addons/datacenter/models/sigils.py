@@ -88,12 +88,13 @@ class SigilFieldMixin:
     def convert_to_read(self, value, record, use_name_get=True):
         if isinstance(record, models.BaseModel):
             # Use the record's fields as the Context data
-            data = record.read()[0]
+            data = {field: record[field] for field in record._fields}
             return Sigil(value) % data if value else super().convert_to_read(value, record, use_name_get)
         else:
             # Handle the case where record is not an Odoo model instance
             _logger.warning("SigilFieldMixin: record %s is not an Odoo model instance", record)
             return value
+
 
 class SigilChar(SigilFieldMixin, fields.Char):
     pass
