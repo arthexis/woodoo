@@ -112,7 +112,6 @@ class AppServer(models.Model):
         try:
             with sigils.Context(self):
                 resolved = sigils.Sigil(command) % None
-            _logger.info('Resolved command: %s' % resolved)
             return resolved
         except Exception as e:
             raise exceptions.ValidationError(str(e))
