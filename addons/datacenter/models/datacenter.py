@@ -134,8 +134,6 @@ class AppServer(models.Model):
         self.state = 'pending'
         self.stdout = None
         self.stderr = None
-        # Save changes before running command
-        self.flush()
         try:
             ssh_client = self._get_ssh_client()
             _, stdout, stderr = ssh_client.exec_command(command)
