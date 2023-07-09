@@ -1,5 +1,6 @@
 import re
 import threading
+from odoo import fields
 
 
 class Context:
