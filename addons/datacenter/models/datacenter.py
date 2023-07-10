@@ -2,6 +2,32 @@ from odoo import models, fields, exceptions
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
+from functools import reduce
+import re
+
+
+def interpolate(text, data):
+    pattern = r'%\[[\w\.]+\]'
+
+    def replacement(match):
+        token = match.group(0)[2:-1]  # remove the %[ and ] from the match
+        try:
+            if isinstance(data, dict):
+                # for dictionary data, split token into keys and get nested value
+                keys = token.split('.')
+                value = reduce(dict.get, keys, data)
+            else:
+                # for object data, get attribute value
+                value = getattr(data, token)
+            if value is None:
+                # if value is None, return the original token
+                return match.group(0)
+            return str(value)
+        except AttributeError:
+            # if an AttributeError is raised, return the original token
+            return match.group(0)
+
+    return re.sub(pattern, replacement, text)
 
 
 # Datacenter models
@@ -83,12 +109,6 @@ class AppServer(models.Model, MagicFieldMixin):
     )
     stderr = fields.Text(
         string='Stderr', required=False, readonly=True,
-    )
-
-    # Server scripts
-    script_ids = fields.Many2many(
-        string='Scripts', comodel_name='datacenter.script',
-        relation='datacenter_script_server_rel',
     )
 
     # SSH connection
@@ -232,6 +252,18 @@ class Application(models.Model, MagicFieldMixin):
         string='Uninstall Script', required=False,
         default=lambda self: 'sudo apt-get remove %s' % self.service_name,
     )
+    webserver_script = fields.Text(
+        string='Webserver Script', required=False,
+        default=lambda self: ''''
+            sudo apt-get install nginx
+            cat <<EOF > /etc/nginx/sites-enabled/%s.conf
+            server {
+                listen 80;
+                server_name domain.com subdomain.domain.com;
+                return 301 https://subdomain.domain.com$request_uri;
+            }
+            ''' % (self.service_name, self.service_name, ),
+    )
 
     # Expected status of the service
     expected_status = fields.Selection(
@@ -247,43 +279,42 @@ class Application(models.Model, MagicFieldMixin):
         default=lambda self: 'No messages',
     )
 
-    # App Scripts
-    script_ids = fields.Many2many(
-        string='Scripts', comodel_name='datacenter.script',
-        relation='datacenter_script_application_rel',
-    )
+    def _expect_status(self, status):
+        self.expected_status = status
+        self.flush()
 
     # Operations (buttons)
     def start(self):
-        self.expected_status = 'running'
-        self.flush()
+        self._expect_status('running')
+        command = interpolate(self.start_command, self)
         self.last_message = self.server_id.execute(
-            command=self.start_command, base_path=self.base_path)
+            command=command, base_path=self.base_path)
     
     def stop(self):
-        self.expected_status = 'stopped'
-        self.flush()
+        self._expect_status('stopped')
+        command = interpolate(self.stop_command, self)
         self.last_message = self.server_id.execute(
-            command=self.stop_command, base_path=self.base_path)
+            command=command, base_path=self.base_path)
 
     def restart(self):
-        self.expected_status = 'running'
-        self.flush()
+        self._expect_status('running')
+        command = interpolate(self.restart_command, self)
         self.last_message = self.server_id.execute(
-            command=self.restart_command, base_path=self.base_path)
+            command=command, base_path=self.base_path)
         
     def status(self):
+        command = interpolate(self.status_command, self)
         result = self.server_id.execute(
-            command=self.status_command, base_path=self.base_path)
+            command=command, base_path=self.base_path)
         status = 'running' if self.status_pattern in result else 'stopped'
-        self.expected_status = status
         self.last_message = result
-        self.flush()
+        self._expect_status(status)
         return status
 
     def journal(self):
+        command = interpolate(self.journal_command, self)
         self.last_message = self.server_id.execute(
-            command=self.journal_command, base_path=self.base_path)
+            command=command, base_path=self.base_path)
     
     # Lifecycle (buttons)
     def install(self):
@@ -291,8 +322,9 @@ class Application(models.Model, MagicFieldMixin):
             raise exceptions.ValidationError('Missing server or install script')
         self.server_id.execute(
             command='mkdir -p %s' % self.base_path, base_path=None)
+        content = interpolate(self.install_script, self)
         filename = self.server_id.upload(
-            content=self.install_script, 
+            content=content,
             file_path='%s/install.sh' % self.base_path, 
             chmod_exec=True,
         )
@@ -302,8 +334,9 @@ class Application(models.Model, MagicFieldMixin):
     def update(self):
         if not self.server_id or not self.update_script:
             raise exceptions.ValidationError('Missing server or update script')
+        content = interpolate(self.update_script, self)
         filename = self.server_id.upload(
-            content=self.update_script, 
+            content=content, 
             file_path='%s/update.sh' % self.base_path, 
             chmod_exec=True,
         )
@@ -316,8 +349,9 @@ class Application(models.Model, MagicFieldMixin):
             raise exceptions.ValidationError('Application must be stopped first')
         if not self.server_id or not self.uninstall_script:
             raise exceptions.ValidationError('Missing server or uninstall script') 
+        content = interpolate(self.uninstall_script, self)
         filename = self.server_id.upload(
-            content=self.uninstall_script, 
+            content=content,
             file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
         )
         self.last_message = self.server_id.execute(
@@ -341,39 +375,4 @@ class AppDatabase(models.Model, MagicFieldMixin):
         string='DB User', required=True,
         help='The DB user must have access without a password',
     )
-
-    # Database scripts
-    script_ids = fields.Many2many(
-        string='Scripts', comodel_name='datacenter.script',
-        relation='datacenter_script_database_rel',
-    )
-
-
-class Script(models.Model, MagicFieldMixin):
-    _name = 'datacenter.script'
-    _description = 'Script'
-
-    name = fields.Char(string='Name', required=True)
-    script = fields.Text(
-        string='Script Content', required=True)
-    filename = fields.Char(
-        string='File Name', required=False,
-        default=lambda self: '%s.sh' % self.name,
-    )
-
-    # Script dependencies
-    dependency_ids = fields.Many2many(
-        string='Dependencies', comodel_name='datacenter.script',
-        relation='datacenter_script_dependency_rel',
-        column1='script_id', column2='dependency_id',
-    )
-
-    def upload(self):
-        self.server_id.upload(
-            content=self.script, file_path=self.file_path, chmod_exec=True,
-        )
-
-    def run(self, force=False):
-        self.upload()
-        self.server_id.execute(command=self.file_path, force=force)
 
