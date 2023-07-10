@@ -14,7 +14,7 @@ class DefaultFieldMixin(models.AbstractModel):
     def write(self, values):
         for field_name, field in self._fields.items():
             # Only override if the field currently has no value in self
-            if field.default and getattr(self, field_name) is None:
+            if field.default and values.get(field_name) is None:
                 values[field_name] = field.default(self)
         return super().write(values)
 
