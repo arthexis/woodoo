@@ -238,6 +238,10 @@ class Application(models.Model, MagicFieldMixin):
         ],
         default='stopped',
     )
+    last_message = fields.Text(
+        string='Last Message', required=False, readonly=True,
+        default=lambda self: 'No messages',
+    )
 
     # App Scripts
     script_ids = fields.Many2many(
@@ -249,22 +253,27 @@ class Application(models.Model, MagicFieldMixin):
     def start(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.execute(command=self.start_command, base_path=self.base_path)
+        self.last_message = self.server_id.execute(
+            command=self.start_command, base_path=self.base_path)
     
     def stop(self):
         self.expected_status = 'stopped'
         self.flush()
-        self.server_id.execute(command=self.stop_command, base_path=self.base_path)
+        self.last_message = self.server_id.execute(
+            command=self.stop_command, base_path=self.base_path)
 
     def restart(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.execute(command=self.restart_command, base_path=self.base_path)
+        self.last_message = self.server_id.execute(
+            command=self.restart_command, base_path=self.base_path)
         
     def status(self):
-        result = self.server_id.execute(command=self.status_command, base_path=self.base_path)
+        result = self.server_id.execute(
+            command=self.status_command, base_path=self.base_path)
         status = 'running' if self.status_pattern in result else 'stopped'
         self.expected_status = status
+        self.last_message = result
         self.flush()
         return status
     
@@ -276,7 +285,8 @@ class Application(models.Model, MagicFieldMixin):
             content=self.install_script, 
             file_path='%s/install.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename, base_path=self.base_path)
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
 
     def update(self):
         if not self.server_id or not self.update_script:
@@ -285,7 +295,8 @@ class Application(models.Model, MagicFieldMixin):
             content=self.update_script, 
             file_path='%s/update.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename, base_path=self.base_path)
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
 
     def uninstall(self):
         # Check the server is stopped first
@@ -297,7 +308,8 @@ class Application(models.Model, MagicFieldMixin):
             content=self.uninstall_script, 
             file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename, base_path=self.base_path)
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
 
 
 class AppDatabase(models.Model, MagicFieldMixin):

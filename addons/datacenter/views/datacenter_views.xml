@@ -98,6 +98,7 @@
                 <sheet>
                     <group string="Operations">
                         <header>
+                            <field name="last_message" readonly="1" label="Last Message" colspan="4"/>
                             <button name="start" string="Start" type="object" class="oe_highlight" colspan="1"/>
                             <button name="stop" string="Stop" type="object" class="oe_highlight" colspan="1"/>
                             <button name="restart" string="Restart" type="object" class="oe_highlight" colspan="1"/>
