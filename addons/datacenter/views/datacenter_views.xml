@@ -130,14 +130,6 @@
                             <field name="virtual_env"/>
                         </group>
                     </group>
-                    <group string="Custom Scripts">
-                        <field name="script_ids">
-                            <tree>
-                                <field name="name"/>
-                                <field name="script"/>
-                            </tree>
-                        </field>
-                    </group>
                     <group string="Databases">
                         <field name="database_ids">
                             <tree>
@@ -211,71 +203,6 @@
         </field>
     </record>
 
-    <!-- Script Form View -->
-    <record id="datacenter_script_form_view" model="ir.ui.view">
-        <field name="name">datacenter.script.form.view</field>
-        <field name="model">datacenter.script</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group string="Configuration">
-                        <field name="name"/>
-                        <field name="filename"/>
-                    </group>
-
-                    <group string="Code">
-                        <field name="script"/>
-                    </group>
-
-                    <group string="Dependencies">
-
-                        <field name="dependency_ids">
-                            <tree>
-                                <field name="name"/>
-                            </tree>
-                        </field>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!-- Script Tree View -->
-
-    <record id="datacenter_script_tree_view" model="ir.ui.view">
-        <field name="name">datacenter.script.tree.view</field>
-        <field name="model">datacenter.script</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="filename"/>
-            </tree>
-        </field>
-    </record>
-
-    <!-- Script Search View -->
-
-    <record id="datacenter_script_search_view" model="ir.ui.view">
-        <field name="name">datacenter.script.search.view</field>
-        <field name="model">datacenter.script</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="name"/>
-                <field name="filename"/>
-                <field name="dependency_ids"/>
-                <field name="script"/>
-            </search>
-        </field>
-    </record>
-
-    <!-- Script Action -->
-
-    <record id="datacenter_script_action" model="ir.actions.act_window">
-        <field name="name">Scripts</field>
-        <field name="res_model">datacenter.script</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
     <!-- App Server Action -->
     <record id="datacenter_app_server_action" model="ir.actions.act_window">
         <field name="name">Servers</field>
@@ -309,8 +236,5 @@
 
     <menuitem id="datacenter_menu_application" name="Applications"
         parent="datacenter_menu" action="datacenter_application_action"/>
-
-    <menuitem id="datacenter_menu_script" name="Scripts"
-        parent="datacenter_menu" action="datacenter_script_action"/>
 
 </odoo>
