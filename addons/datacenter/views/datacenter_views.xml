@@ -106,7 +106,7 @@
                             <button name="status" string="Status" type="object" class="oe_highlight" colspan="1"/>
                         </header>
                         <separator/>
-                        <group>
+                        <group colspan="2">
                             <field name="start_command" class="console"/>
                             <field name="stop_command" class="console"/>
                             <field name="restart_command" class="console"/>
