@@ -217,6 +217,7 @@
                     <group string="Configuration">
                         <field name="name"/>
                         <field name="filename"/>
+                        <field name="executable" widget="selection"/>
                     </group>
 
                     <group string="Code">

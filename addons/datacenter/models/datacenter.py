@@ -151,8 +151,9 @@ class Application(models.Model):
 
     # Configuration
     service_name = fields.Char(
-        string='Service Name', required=True,
+        string='Service', required=True,
         default=lambda self: self.name,
+        help='The service name is used for the systemd service unit',
     )
     base_path = fields.Char(
         string='Base Path', required=False,
@@ -314,6 +315,14 @@ class Script(models.Model):
     filename = fields.Char(
         string='File Name', required=False,
         default=lambda self: '%s.sh' % self.name,
+    )
+    executable = fields.Selection(
+        string='Executable', required=True,
+        selection=[
+            ('bash', 'Bash'),
+            ('python3', 'Python'),
+        ],
+        default='bash',
     )
 
     # Script dependencies
