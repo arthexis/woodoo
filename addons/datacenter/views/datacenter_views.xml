@@ -103,6 +103,7 @@
                             <button name="stop" string="Stop" type="object" class="oe_highlight" colspan="1"/>
                             <button name="restart" string="Restart" type="object" class="oe_highlight" colspan="1"/>
                             <button name="status" string="Status" type="object" class="oe_highlight" colspan="1"/>
+                            <button name="journal" string="Journal" type="object" class="oe_highlight" colspan="1"/>
                         </header>
                         <separator/>
                         <group>

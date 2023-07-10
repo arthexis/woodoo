@@ -214,6 +214,10 @@ class Application(models.Model, MagicFieldMixin):
         string='Status Pattern', required=False,
         default=lambda self: 'Active: active (running)',
     )
+    journal_command = fields.Text(
+        string='Journal Command', required=False,
+        default=lambda self: 'sudo journalctl -u %s -n 30' % self.service_name,
+    )
 
     # Lifecycle
     install_script = fields.Text(
@@ -276,6 +280,10 @@ class Application(models.Model, MagicFieldMixin):
         self.last_message = result
         self.flush()
         return status
+
+    def journal(self):
+        self.last_message = self.server_id.execute(
+            command=self.journal_command, base_path=self.base_path)
     
     # Lifecycle (buttons)
     def install(self):
