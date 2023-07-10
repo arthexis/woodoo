@@ -250,7 +250,10 @@ class Application(models.Model):
         
     def status(self):
         result = self.server_id.execute(command=self.status_command, base_path=self.base_path)
-        return 'running' if self.status_pattern in result else 'stopped'
+        status = 'running' if self.status_pattern in result else 'stopped'
+        self.expected_status = status
+        self.flush()
+        return status
     
     # Lifecycle (buttons)
     def install(self):
