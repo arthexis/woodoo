@@ -98,7 +98,7 @@
                 <sheet>
                     <field name="last_message" readonly="1"/>
                     <group string="Operations">
-                        <header>
+                        <header colspan="2">
                             <button name="start" string="Start" type="object" class="oe_highlight" colspan="1"/>
                             <button name="stop" string="Stop" type="object" class="oe_highlight" colspan="1"/>
                             <button name="restart" string="Restart" type="object" class="oe_highlight" colspan="1"/>
@@ -116,13 +116,13 @@
                         </group>
                     </group>
                     <group string="Lifecycle">
-                        <header>
+                        <header colspan="2">
                             <button name="install" string="Install" type="object" class="oe_highlight" colspan="1"/>
                             <button name="update" string="Update" type="object" class="oe_highlight" colspan="1"/>
                             <button name="uninstall" string="Uninstall" type="object" class="oe_highlight" colspan="1"/>
                         </header>
                         <separator/>
-                        <group>
+                        <group colspan="2">
                             <field name="install_script" class="console"/>
                             <field name="update_script" class="console"/>
                             <field name="uninstall_script" class="console"/>
