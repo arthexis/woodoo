@@ -289,9 +289,12 @@ class Application(models.Model, MagicFieldMixin):
     def install(self):
         if not self.server_id or not self.install_script:
             raise exceptions.ValidationError('Missing server or install script')
+        self.server_id.execute(
+            command='mkdir -p %s' % self.base_path, base_path=None)
         filename = self.server_id.upload(
             content=self.install_script, 
-            file_path='%s/install.sh' % self.base_path, chmod_exec=True,
+            file_path='%s/install.sh' % self.base_path, 
+            chmod_exec=True,
         )
         self.last_message = self.server_id.execute(
             command=filename, base_path=self.base_path)
@@ -301,7 +304,8 @@ class Application(models.Model, MagicFieldMixin):
             raise exceptions.ValidationError('Missing server or update script')
         filename = self.server_id.upload(
             content=self.update_script, 
-            file_path='%s/update.sh' % self.base_path, chmod_exec=True,
+            file_path='%s/update.sh' % self.base_path, 
+            chmod_exec=True,
         )
         self.last_message = self.server_id.execute(
             command=filename, base_path=self.base_path)
