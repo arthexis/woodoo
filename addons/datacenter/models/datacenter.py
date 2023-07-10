@@ -13,7 +13,8 @@ class DefaultFieldMixin(models.AbstractModel):
 
     def write(self, values):
         for field_name, field in self._fields.items():
-            if field.default:
+            # Only override if the field currently has no value
+            if field.default and field_name not in values:
                 values[field_name] = field.default(self)
         return super().write(values)
 
