@@ -5,8 +5,20 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 
 # Datacenter models
+
+
+class DefaultFieldMixin(models.AbstractModel):
+    _name = 'datacenter.default_field_mixin'
+    _description = 'Default Field Mixin'
+
+    def write(self, values):
+        for field_name, field in self._fields.items():
+            if field.default:
+                values[field_name] = field.default(self)
+        return super(YourModel, self).write(values)
+
     
-class AppServer(models.Model):
+class AppServer(models.Model, DefaultFieldMixin):
     _name = 'datacenter.app.server'
     _description = 'App Server'
 
@@ -134,9 +146,9 @@ class AppServer(models.Model):
             self.state = 'failure'
             self.error_count += 1
         return self.stdout
-    
 
-class Application(models.Model):
+
+class Application(models.Model, DefaultFieldMixin):
     _name = 'datacenter.application'
     _description = 'Application'
 
@@ -283,7 +295,8 @@ class Application(models.Model):
         )
         self.server_id.execute(command=filename, base_path=self.base_path)
 
-class AppDatabase(models.Model):
+
+class AppDatabase(models.Model, DefaultFieldMixin):
     _name = 'datacenter.app.database'
     _description = 'Database'
 
@@ -308,7 +321,7 @@ class AppDatabase(models.Model):
     )
 
 
-class Script(models.Model):
+class Script(models.Model, DefaultFieldMixin):
     _name = 'datacenter.script'
     _description = 'Script'
 

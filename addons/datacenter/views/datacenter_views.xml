@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group string="Configuration">
+                    <group string="Connection">
                         <field name="name"/>
                         <field name="host"/>
                         <field name="ssh_port" widget="char"/>
@@ -19,7 +19,7 @@
                     </group>
                 </sheet>
                 <sheet>
-                    <group string="Commands">
+                    <group string="Command Buffer">
 
                         <button name="execute" string="Execute" type="object" class="oe_highlight" colspan="1"/>
                         <separator />
@@ -80,7 +80,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group string="Configuration">
+                    <group string="Connection">
                         <field name="name"/>
                         <field name="server_id"/>
                         <field name="service_name"/>
@@ -171,7 +171,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group string="Configuration">	
+                    <group string="Connection">	
                         <field name="name" class="big-field"/>
                         <field name="application_id"/>
                         <field name="ip_address"/>
@@ -301,10 +301,13 @@
 
     <menuitem id="datacenter_menu_app_server" name="Servers" 
         parent="datacenter_menu" action="datacenter_app_server_action"/>
+        
     <menuitem id="datacenter_menu_app_database" name="Databases" 
         parent="datacenter_menu" action="datacenter_app_database_action"/>
+
     <menuitem id="datacenter_menu_application" name="Applications"
         parent="datacenter_menu" action="datacenter_application_action"/>
+
     <menuitem id="datacenter_menu_script" name="Scripts"
         parent="datacenter_menu" action="datacenter_script_action"/>
 
