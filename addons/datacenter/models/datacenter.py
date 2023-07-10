@@ -7,7 +7,7 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 # Datacenter models
 
 
-class DefaultFieldMixin(models.AbstractModel):
+class MagicFieldMixin(models.AbstractModel):
     _name = 'datacenter.default_field_mixin'
     _description = 'Default Field Mixin'
 
@@ -15,10 +15,10 @@ class DefaultFieldMixin(models.AbstractModel):
         for field_name, field in self._fields.items():
             if field.default and not self[field_name] and (field_name not in values or values[field_name] is None):
                 values[field_name] = field.default(self)
-        return super(YourModel, self).write(values)
+        return super().write(values)
 
     
-class AppServer(models.Model, DefaultFieldMixin):
+class AppServer(models.Model, MagicFieldMixin):
     _name = 'datacenter.app.server'
     _description = 'App Server'
 
@@ -149,7 +149,7 @@ class AppServer(models.Model, DefaultFieldMixin):
         return self.stdout
 
 
-class Application(models.Model, DefaultFieldMixin):
+class Application(models.Model, MagicFieldMixin):
     _name = 'datacenter.application'
     _description = 'Application'
 
@@ -300,7 +300,7 @@ class Application(models.Model, DefaultFieldMixin):
         self.server_id.execute(command=filename, base_path=self.base_path)
 
 
-class AppDatabase(models.Model, DefaultFieldMixin):
+class AppDatabase(models.Model, MagicFieldMixin):
     _name = 'datacenter.app.database'
     _description = 'Database'
 
@@ -325,7 +325,7 @@ class AppDatabase(models.Model, DefaultFieldMixin):
     )
 
 
-class Script(models.Model, DefaultFieldMixin):
+class Script(models.Model, MagicFieldMixin):
     _name = 'datacenter.script'
     _description = 'Script'
 
