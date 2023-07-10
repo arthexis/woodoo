@@ -174,16 +174,6 @@
                         <field name="db_user"/>
                     </group>
                 </sheet>
-                <sheet>
-                    <group string="Custom Scripts">
-                        <field name="script_ids">
-                            <tree>
-                                <field name="name"/>
-                                <field name="script"/>
-                            </tree>
-                        </field>
-                    </group>
-                </sheet>
             </form>
         </field>
     </record>
