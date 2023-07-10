@@ -145,6 +145,7 @@ class AppServer(models.Model, DefaultFieldMixin):
             self.stderr = str(e)
             self.state = 'failure'
             self.error_count += 1
+        self.flush()
         return self.stdout
 
 
@@ -287,6 +288,9 @@ class Application(models.Model, DefaultFieldMixin):
         self.server_id.execute(command=filename, base_path=self.base_path)
 
     def uninstall(self):
+        # Check the server is stopped first
+        if self.status() == 'running':
+            raise exceptions.ValidationError('Application must be stopped first')
         if not self.server_id or not self.uninstall_script:
             raise exceptions.ValidationError('Missing server or uninstall script') 
         filename = self.server_id.upload(
