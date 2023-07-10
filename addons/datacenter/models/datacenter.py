@@ -8,8 +8,8 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 
 class MagicFieldMixin(models.AbstractModel):
-    _name = 'datacenter.default_field_mixin'
-    _description = 'Default Field Mixin'
+    _name = 'datacenter.magic_field_mixin'
+    _description = 'Magic Field Mixin'
 
     def write(self, values):
         for field_name, field in self._fields.items():
