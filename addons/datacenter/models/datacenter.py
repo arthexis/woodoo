@@ -252,19 +252,7 @@ class Application(models.Model, MagicFieldMixin):
         string='Uninstall Script', required=False,
         default=lambda self: 'sudo apt-get remove %s' % self.service_name,
     )
-    webserver_script = fields.Text(
-        string='Webserver Script', required=False,
-        default=lambda self: ''''
-            sudo apt-get install nginx
-            cat <<EOF > /etc/nginx/sites-enabled/%s.conf
-            server {
-                listen 80;
-                server_name domain.com subdomain.domain.com;
-                return 301 https://subdomain.domain.com$request_uri;
-            }
-            ''' % (self.service_name, self.service_name, ),
-    )
-
+    
     # Expected status of the service
     expected_status = fields.Selection(
         string='Expected Status', required=True,
