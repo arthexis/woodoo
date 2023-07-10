@@ -112,6 +112,7 @@
                             <field name="restart_command"/>
                             <field name="status_command"/>
                             <field name="status_pattern"/>
+                            <field name="journal_command"/>
                         </group>
                     </group>
                     <group string="Lifecycle">
