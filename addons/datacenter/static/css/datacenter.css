@@ -5,3 +5,7 @@
     font-weight: bold;  
     max-height: 50px;
 }
+.console {
+    /* Use console font */
+    font-family: "Lucida Console", Monaco, monospace;
+}

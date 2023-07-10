@@ -24,7 +24,7 @@
                         <button name="execute" string="Execute" type="object" class="oe_highlight" colspan="1"/>
                         <separator />
 
-                        <field name="command" class="big-field"/>
+                        <field name="command" class="console"/>
                         <field name="stdout"/>
                         <field name="stderr"/>
                     </group>
@@ -102,17 +102,17 @@
                             <button name="start" string="Start" type="object" class="oe_highlight" colspan="1"/>
                             <button name="stop" string="Stop" type="object" class="oe_highlight" colspan="1"/>
                             <button name="restart" string="Restart" type="object" class="oe_highlight" colspan="1"/>
-                            <button name="status" string="Status" type="object" class="oe_highlight" colspan="1"/>
                             <button name="journal" string="Journal" type="object" class="oe_highlight" colspan="1"/>
+                            <button name="status" string="Status" type="object" class="oe_highlight" colspan="1"/>
                         </header>
                         <separator/>
                         <group>
-                            <field name="start_command"/>
-                            <field name="stop_command"/>
-                            <field name="restart_command"/>
-                            <field name="status_command"/>
-                            <field name="status_pattern"/>
-                            <field name="journal_command"/>
+                            <field name="start_command" class="console"/>
+                            <field name="stop_command" class="console"/>
+                            <field name="restart_command" class="console"/>
+                            <field name="journal_command" class="console"/>
+                            <field name="status_command" class="console"/>
+                            <field name="status_pattern" class="console"/>
                         </group>
                     </group>
                     <group string="Lifecycle">
@@ -123,9 +123,9 @@
                         </header>
                         <separator/>
                         <group>
-                            <field name="install_script"/>
-                            <field name="update_script"/>
-                            <field name="uninstall_script"/>
+                            <field name="install_script" class="console"/>
+                            <field name="update_script" class="console"/>
+                            <field name="uninstall_script" class="console"/>
                             <field name="base_path"/>
                             <field name="virtual_env"/>
                         </group>
@@ -221,7 +221,6 @@
                     <group string="Configuration">
                         <field name="name"/>
                         <field name="filename"/>
-                        <field name="executable" widget="selection"/>
                     </group>
 
                     <group string="Code">

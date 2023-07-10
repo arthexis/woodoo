@@ -356,14 +356,6 @@ class Script(models.Model, MagicFieldMixin):
         string='File Name', required=False,
         default=lambda self: '%s.sh' % self.name,
     )
-    executable = fields.Selection(
-        string='Executable', required=True,
-        selection=[
-            ('bash', 'Bash'),
-            ('python3', 'Python'),
-        ],
-        default='bash',
-    )
 
     # Script dependencies
     dependency_ids = fields.Many2many(
