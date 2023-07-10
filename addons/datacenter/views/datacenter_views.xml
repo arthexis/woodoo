@@ -85,7 +85,7 @@
                         <field name="server_id"/>
                         <field name="service_name"/>
                         <field name="base_url"/>
-                        
+                        <field name="base_path"/>
                         <field name="app_port"/>
                         <field name="admin_user"/>
                         <field name="admin_secret" password="1"/>

@@ -235,20 +235,20 @@ class Application(models.Model):
     def start(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.execute(command=self.start_command)
+        self.server_id.execute(command=self.start_command, base_path=self.base_path)
     
     def stop(self):
         self.expected_status = 'stopped'
         self.flush()
-        self.server_id.execute(command=self.stop_command)
+        self.server_id.execute(command=self.stop_command, base_path=self.base_path)
 
     def restart(self):
         self.expected_status = 'running'
         self.flush()
-        self.server_id.execute(command=self.restart_command)
+        self.server_id.execute(command=self.restart_command, base_path=self.base_path)
         
     def status(self):
-        result = self.server_id.execute(command=self.status_command)
+        result = self.server_id.execute(command=self.status_command, base_path=self.base_path)
         return 'running' if self.status_pattern in result else 'stopped'
     
     # Lifecycle (buttons)
@@ -259,7 +259,7 @@ class Application(models.Model):
             content=self.install_script, 
             file_path='%s/install.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename)
+        self.server_id.execute(command=filename, base_path=self.base_path)
 
     def update(self):
         if not self.server_id or not self.update_script:
@@ -268,7 +268,7 @@ class Application(models.Model):
             content=self.update_script, 
             file_path='%s/update.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename)
+        self.server_id.execute(command=filename, base_path=self.base_path)
 
     def uninstall(self):
         if not self.server_id or not self.uninstall_script:
@@ -277,7 +277,7 @@ class Application(models.Model):
             content=self.uninstall_script, 
             file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
         )
-        self.server_id.execute(command=filename)
+        self.server_id.execute(command=filename, base_path=self.base_path)
 
 class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
