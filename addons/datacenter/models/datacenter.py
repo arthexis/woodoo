@@ -58,8 +58,8 @@ class AppServer(models.Model):
 
     command = fields.Text(
         string='Command', required=False,
-        default='echo "%[host]"',
-        help='The command to be executed on the server. Sigils are supported.',
+        default='hostname',
+        help='The last/next command to be executed on the server.',
     )
     error_count = fields.Integer(
         string='Error Count', required=False, default=0, readonly=True,
@@ -104,19 +104,6 @@ class AppServer(models.Model):
         sftp_client.close()
         return file_path
 
-    # Show just the command after resolving variables
-    def resolve(self, command=None):
-        if not command:
-            command = self.command
-        try:
-            return command % {
-                'host': self.host,
-                'os_user': self.os_user,
-                'base_path': self.base_path,
-            }
-        except Exception as e:
-            raise exceptions.ValidationError(str(e))
-
     # Run command
     def execute(self, command=None, base_path=None, force=False):
         if self.state == 'pending' and not force:
@@ -128,7 +115,7 @@ class AppServer(models.Model):
                 command = 'cd %s && %s' % (base_path, command)
             elif self.base_path:
                 command = 'cd %s && %s' % (self.base_path, command)
-            self.command = self.resolve(command)
+            self.command = command
         else:
             command = self.command
         self.state = 'pending'

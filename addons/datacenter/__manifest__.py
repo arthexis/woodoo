@@ -1,6 +1,6 @@
 {
     'name': 'Datacenter',
-    'version': '1.3.2',
+    'version': '1.3.3',
     'category': 'Tools',
     'summary': 'Tools for managing the Enterprise Datacenter',
     'sequence': 8,
