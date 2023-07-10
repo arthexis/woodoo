@@ -8,6 +8,4 @@
 .console {
     /* Use console font */
     font-family: "Lucida Console", Monaco, monospace;
-    /* Min width 80 chars */
-    min-width: 80ch;
 }
