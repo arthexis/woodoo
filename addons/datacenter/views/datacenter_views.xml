@@ -12,6 +12,7 @@
                         <field name="host"/>
                         <field name="ssh_port"/>
                         <field name="os_user"/>
+                        <field name="base_path"/>
                         <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
                         <field name="state" readonly="1"/>
                         <field name="error_count" readonly="1"/>
