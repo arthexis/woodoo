@@ -15,7 +15,7 @@ class DefaultFieldMixin(models.AbstractModel):
         for field_name, field in self._fields.items():
             if field.default:
                 values[field_name] = field.default(self)
-        return super(YourModel, self).write(values)
+        return super().write(values)
 
     
 class AppServer(models.Model, DefaultFieldMixin):
