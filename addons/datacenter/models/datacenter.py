@@ -1,4 +1,4 @@
-from odoo import models, fields, exceptions, api
+from odoo import models, fields, exceptions
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
@@ -49,7 +49,6 @@ class DuplicateMixin(models.AbstractModel):
     _name = 'duplicate.mixin'
     _description = 'Mixin to duplicate records'
 
-    @api.multi
     def duplicate_record(self):
         for record in self:
             record.copy()
