@@ -15,6 +15,7 @@
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
         'views/datacenter_views.xml',
+        'views/datacenter_actions.xml',
         'security/ir.model.access.csv',
     ],
     'assets': {
@@ -32,11 +33,11 @@ Datacenter
 =================
 Tools for enterprise datacenter administration.
 
-- Models for:
-    - Servers
-    - Applications
-    - Databases
-    - Commands
+- Includes models for:
+    - Server management
+    - Application management
+    - Database management
+    - Domain management
 
 """,
 }
