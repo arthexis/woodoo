@@ -363,15 +363,23 @@ class AppDatabase(models.Model):
         inverse_name='database_id',
     )
     ip_address = fields.Char(string='Endpoint', required=True)
-    db_name = fields.Char(
-        string='DB Name', required=True, 
+    admin_db_name = fields.Char(
+        string='Admin DB Name', required=True, 
+        default=lambda self: 'postgres',
+    )
+    app_db_name = fields.Char(
+        string='App DB Name', required=True, 
         default=lambda self: self.name,
     )
     db_port = fields.Integer(string='DB Port', required=False, default=5432)
 
     # Credentials
-    db_user = fields.Char(
-        string='DB User', required=True,
+    admin_db_user = fields.Char(
+        string='Admin DB User', required=True,
+        help='This DB user must have access without a password',
+    )
+    app_db_user = fields.Char(
+        string='App DB User', required=True,
         help='This DB user must have access without a password',
     )
 

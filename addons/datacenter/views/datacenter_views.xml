@@ -172,8 +172,10 @@
                     </group>
                     <group string="Connection">	
                         <field name="ip_address"/>
-                        <field name="db_name"/>
-                        <field name="db_user"/>
+                        <field name="admin_db_name"/>
+                        <field name="app_db_name"/>
+                        <field name="admin_db_user"/>
+                        <field name="app_db_user"/>
                         <field name="db_port"  widget="char"/>
                     </group>
                 </sheet>
