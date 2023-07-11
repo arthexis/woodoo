@@ -204,10 +204,6 @@ class Application(models.Model):
     app_port = fields.Integer(
         string='App Port', required=False, default=80, 
     )
-    virtual_env = fields.Char(
-        string='Virtual Env', required=False,
-        default=lambda self: 'venv' 
-    )
 
     # App Access
     base_url = fields.Char(

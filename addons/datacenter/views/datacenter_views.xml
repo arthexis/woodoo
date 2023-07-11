@@ -127,8 +127,6 @@
                             <field name="install_script" class="console"/>
                             <field name="update_script" class="console"/>
                             <field name="uninstall_script" class="console"/>
-                            <field name="base_path"/>
-                            <field name="virtual_env"/>
                         </group>
                     </group>
                     <group string="Databases">
