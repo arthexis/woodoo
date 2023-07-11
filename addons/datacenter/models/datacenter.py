@@ -401,12 +401,23 @@ class AppDatabase(models.Model):
 
         # Split the content into separate commands
         commands = content.split(";")
+        errors = []  # List to store any error messages
         for command in commands:
-            if command.strip() == '':
+            command = command.strip()  # Remove leading/trailing whitespace
+            if not command:  # Skip empty commands
                 continue
-            cur.execute(command)
+            try:
+                cur.execute(command)
+            except Exception as e:
+                errors.append(str(e))  # Add the error message to the list
 
-        self.last_message = str(cur.fetchall())
+        # If there were any errors, store them in last_message
+        if errors:
+            self.last_message = "\n".join(errors)
+        else:
+            self.last_message = str(cur.fetchall())
+
         conn.commit()
         cur.close()
         conn.close()
+
