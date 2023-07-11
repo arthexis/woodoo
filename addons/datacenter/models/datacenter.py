@@ -396,6 +396,7 @@ class AppDatabase(models.Model):
             host=self.ip_address, port=self.db_port, 
             user=self.db_user, database=self.db_name,
         )
+        conn.autocommit = True
         cur = conn.cursor()
         # Store the result in the last_message field
         # Convert the result to a string
