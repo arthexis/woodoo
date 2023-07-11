@@ -178,6 +178,7 @@
                     </group>
                 </sheet>
                 <sheet>
+                    <field name="last_message" readonly="1"/>
                     <group string="Operations">
                         <header colspan="2">
                             <button name="setup" string="Setup" type="object" class="oe_highlight" colspan="1"/>
