@@ -159,72 +159,6 @@
         </field>
     </record>
 
-    <!-- 
-        class AppDatabase(models.Model):
-    _name = 'datacenter.app.database'
-    _description = 'Database'
-    _inherit = ['duplicate.mixin']
-
-    name = fields.Char(string='Name', required=True)
-    application_ids = fields.One2many(
-        string='Applications', comodel_name='datacenter.application',
-        inverse_name='database_id',
-    )
-    ip_address = fields.Char(string='IP Address', required=True)
-    db_name = fields.Char(string='DB Name', required=True)
-    db_port = fields.Integer(string='DB Port', required=False, default=5432)
-
-    # Credentials
-    db_user = fields.Char(
-        string='DB User', required=True,
-        help='The DB user must have access without a password',
-    )
-
-    setup_script = fields.Text(
-        string='Setup Script', required=False,
-    )
-    backup_script = fields.Text(
-        string='Backup Script', required=False,
-    )
-    restore_script = fields.Text(
-        string='Restore Script', required=False,
-    )
-
-    def setup(self):
-        if not self.setup_script:
-            raise exceptions.ValidationError('Missing setup script')
-        content = interpolate(self.setup_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/setup.sh' % self.base_path, chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
-
-    def backup(self):
-        if not self.backup_script:
-            raise exceptions.ValidationError('Missing backup script')
-        content = interpolate(self.backup_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/backup.sh' % self.base_path, chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
-    
-    def restore(self):
-        if not self.restore_script:
-            raise exceptions.ValidationError('Missing restore script')
-        content = interpolate(self.restore_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/restore.sh' % self.base_path, chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
-
-    -->
-
     <!-- App Database Form View -->
     <record id="datacenter_app_database_form_view" model="ir.ui.view">
         <field name="name">datacenter.app.database.form.view</field>
@@ -234,6 +168,7 @@
                 <sheet>
                     <group string="Datacenter">
                         <field name="name"/>
+                        <field name="server_name"/>
                     </group>
                     <group string="Connection">	
                         <field name="ip_address"/>

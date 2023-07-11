@@ -365,12 +365,19 @@ class AppDatabase(models.Model):
     _inherit = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
+    server_name = fields.Char(
+        string='Server', required=True,
+        help='Name of the Server where the database is installed',
+    )
     application_ids = fields.One2many(
         string='Applications', comodel_name='datacenter.application',
         inverse_name='database_id',
     )
     ip_address = fields.Char(string='Endpoint', required=True)
-    db_name = fields.Char(string='DB Name', required=True)
+    db_name = fields.Char(
+        string='DB Name', required=True, 
+        default=lambda self: self.name,
+    )
     db_port = fields.Integer(string='DB Port', required=False, default=5432)
 
     # Credentials
