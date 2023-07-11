@@ -6,31 +6,42 @@ from functools import reduce
 import re
 
 
-def interpolate(text, data):
+def interpolate(text, data, depth=0, max_depth=8):
+    cache = {}  # initialize the cache
+
+    if depth > max_depth:
+        return text
+
     pattern = r'%\[[\w\.]+\]'
 
     def replacement(match):
-        token = match.group(0)[2:-1]  # remove the %[ and ] from the match
+        token = match.group(0)  # include the %[ and ] in the token
+        if token in cache:
+            return cache[token]  # if the token is in the cache, return the cached result
+
+        key = token[2:-1]  # remove the %[ and ] from the token
         try:
             if isinstance(data, dict):
-                # for dictionary data, split token into keys and get nested value
-                keys = token.split('.')
+                keys = key.split('.')
                 value = reduce(dict.get, keys, data)
             else:
-                # for object data, get attribute value
-                value = getattr(data, token)
+                value = getattr(data, key)
             if value is None:
-                # if value is None, return the original token
-                return match.group(0)
-            return str(value)
+                value = token  # if value is None, return the original token
+            else:
+                value = str(value)
         except AttributeError:
-            # if an AttributeError is raised, return the original token
-            return match.group(0)
+            value = token  # if an AttributeError is raised, return the original token
 
-    return re.sub(pattern, replacement, text)
+        cache[token] = value  # store the result in the cache
+        return value
 
+    interpolated = re.sub(pattern, replacement, text)
 
-# Datacenter models
+    if re.search(pattern, interpolated):
+        return interpolate(interpolated, data, depth=depth+1, max_depth=max_depth)
+    else:
+        return interpolated
 
 
 class MagicFieldMixin(models.AbstractModel):
@@ -42,6 +53,9 @@ class MagicFieldMixin(models.AbstractModel):
             if field.default and not self[field_name] and (field_name not in values or values[field_name] is None):
                 values[field_name] = field.default(self)
         return super().write(values)
+
+
+# Datacenter models
 
     
 class AppServer(models.Model, MagicFieldMixin):
@@ -252,7 +266,7 @@ class Application(models.Model, MagicFieldMixin):
         string='Uninstall Script', required=False,
         default=lambda self: 'sudo apt-get remove %s' % self.service_name,
     )
-    
+
     # Expected status of the service
     expected_status = fields.Selection(
         string='Expected Status', required=True,
