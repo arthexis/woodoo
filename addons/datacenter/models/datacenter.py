@@ -402,7 +402,7 @@ class AppDatabase(models.Model):
         # Run the SQL using psycopg2
         conn = psycopg2.connect(
             host=self.ip_address, port=self.db_port, 
-            user=self.db_user, database=self.db_name,
+            user=self.admin_db_user, database=self.admin_db_name,
         )
         conn.autocommit = True
         cur = conn.cursor()
