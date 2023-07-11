@@ -1,4 +1,4 @@
-from odoo import models, fields, exceptions
+from odoo import models, fields, exceptions, api
 from base64 import b64decode
 from io import StringIO
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
@@ -44,12 +44,25 @@ def interpolate(text, data, depth=0, max_depth=20):
         return interpolated
 
 
+
+class DuplicateMixin(models.AbstractModel):
+    _name = 'duplicate.mixin'
+    _description = 'Mixin to duplicate records'
+
+    @api.multi
+    def duplicate_record(self):
+        for record in self:
+            record.copy()
+
+
+
 # Datacenter models
 
     
 class AppServer(models.Model):
     _name = 'datacenter.app.server'
     _description = 'App Server'
+    _inherit = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
     host = fields.Char(
