@@ -217,6 +217,7 @@
                 <field name="ip_address"/>
                 <field name="db_port" widget="char"/>
                 <field name="app_db_user"/>
+                <field name="app_db_password" widget="password"/>
                 <button name="duplicate_record" type="object" string="Copy"/>
             </tree>
         </field>

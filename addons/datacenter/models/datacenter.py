@@ -379,8 +379,10 @@ class AppDatabase(models.Model):
         help='This DB user must have access without a password',
     )
     app_db_user = fields.Char(
-        string='App DB User', required=True,
-        help='This DB user must have access without a password',
+        string='App DB User', required=False,
+    )
+    app_db_password = fields.Char(
+        string='App DB Password', required=False
     )
 
     setup_script = fields.Text(
