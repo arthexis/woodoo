@@ -218,13 +218,13 @@
     <!-- Menu -->
     <menuitem id="datacenter_menu" name="Datacenter" sequence="1"/>
 
+    <menuitem id="datacenter_menu_application" name="Applications"
+        parent="datacenter_menu" action="datacenter_application_action"/>
+
     <menuitem id="datacenter_menu_app_server" name="Servers" 
         parent="datacenter_menu" action="datacenter_app_server_action"/>
         
     <menuitem id="datacenter_menu_app_database" name="Databases" 
         parent="datacenter_menu" action="datacenter_app_database_action"/>
-
-    <menuitem id="datacenter_menu_application" name="Applications"
-        parent="datacenter_menu" action="datacenter_application_action"/>
 
 </odoo>
