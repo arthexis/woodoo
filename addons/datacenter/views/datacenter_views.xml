@@ -82,6 +82,7 @@
                 <sheet>
                     <group string="Connection">
                         <field name="name"/>
+                        <field name="app_code"/>
                         <field name="server_id"/>
                         <field name="service_name"/>
                         <field name="base_url"/>
