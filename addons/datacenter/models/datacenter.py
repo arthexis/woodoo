@@ -198,13 +198,13 @@ class Application(models.Model, MagicFieldMixin):
 
     # Configuration
     service_name = fields.Char(
-        string='Service', required=True,
+        string='Service Name', required=True,
         default=lambda self: self.name,
         help='The service name is used for the systemd service unit',
     )
     base_path = fields.Char(
         string='Base Path', required=False,
-        default=lambda self: '/home/%s/%s' % (self.server_id.os_user, self.service_name, ),
+        default=lambda self: '%[service_name]',
         help='The base path is where the application will be installed',
     )
     app_port = fields.Integer(
@@ -212,13 +212,13 @@ class Application(models.Model, MagicFieldMixin):
     )
     virtual_env = fields.Char(
         string='Virtual Env', required=False,
-        default=lambda self: '/home/%s/venv' % self.service_name,
+        default=lambda self: 'venv' 
     )
 
     # App Access
     base_url = fields.Char(
         string='Base URL', required=True, 
-        default=lambda self: 'https://%s' % self.service_name,
+        default=lambda self: 'https://%[service_name]',
     )
     admin_user = fields.Char(
         string='Admin User', required=False, default='admin',
@@ -230,19 +230,19 @@ class Application(models.Model, MagicFieldMixin):
     # Operations
     start_command = fields.Text(
         string='Start Command', required=False,
-        default=lambda self: 'sudo systemctl start %s' % self.service_name,
+        default=lambda self: 'sudo systemctl start %[service_name]',
     )
     stop_command = fields.Text(
         string='Stop Command', required=False,
-        default=lambda self: 'sudo systemctl stop %s' % self.service_name,
+        default=lambda self: 'sudo systemctl stop %[service_name]',
     )
     restart_command = fields.Text(
         string='Restart Command', required=False,
-        default=lambda self: 'sudo systemctl restart %s' % self.service_name,
+        default=lambda self: 'sudo systemctl restart %[service_name]',
     )
     status_command = fields.Text(
         string='Status Command', required=False,
-        default=lambda self: 'sudo systemctl status %s' % self.service_name,
+        default=lambda self: 'sudo systemctl status %[service_name]',
     )
     status_pattern = fields.Char(
         string='Status Pattern', required=False,
@@ -250,21 +250,18 @@ class Application(models.Model, MagicFieldMixin):
     )
     journal_command = fields.Text(
         string='Journal Command', required=False,
-        default=lambda self: 'sudo journalctl -u %s -n 30' % self.service_name,
+        default=lambda self: 'sudo journalctl -u %[service_name] -n 30',
     )
 
     # Lifecycle
     install_script = fields.Text(
         string='Install Script', required=False,
-        default=lambda self: 'sudo apt-get install %s' % self.service_name,
     )
     update_script = fields.Text(
         string='Update Script', required=False,
-        default=lambda self: 'sudo apt-get update && sudo apt-get upgrade',
     )
     uninstall_script = fields.Text(
         string='Uninstall Script', required=False,
-        default=lambda self: 'sudo apt-get remove %s' % self.service_name,
     )
 
     # Expected status of the service
