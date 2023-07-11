@@ -187,6 +187,7 @@ class AppServer(models.Model):
 class Application(models.Model):
     _name = 'datacenter.application'
     _description = 'Application'
+    _inherit = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
     app_code = fields.Char(
@@ -361,6 +362,7 @@ class Application(models.Model):
 class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
     _description = 'Database'
+    _inherit = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
     application_ids = fields.One2many(
@@ -377,4 +379,46 @@ class AppDatabase(models.Model):
         help='The DB user must have access without a password',
     )
 
+    setup_script = fields.Text(
+        string='Setup Script', required=False,
+    )
+    backup_script = fields.Text(
+        string='Backup Script', required=False,
+    )
+    restore_script = fields.Text(
+        string='Restore Script', required=False,
+    )
 
+    def setup(self):
+        if not self.setup_script:
+            raise exceptions.ValidationError('Missing setup script')
+        content = interpolate(self.setup_script, self)
+        filename = self.server_id.upload(
+            content=content,
+            file_path='%s/setup.sh' % self.base_path, chmod_exec=True,
+        )
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
+
+    def backup(self):
+        if not self.backup_script:
+            raise exceptions.ValidationError('Missing backup script')
+        content = interpolate(self.backup_script, self)
+        filename = self.server_id.upload(
+            content=content,
+            file_path='%s/backup.sh' % self.base_path, chmod_exec=True,
+        )
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
+    
+    def restore(self):
+        if not self.restore_script:
+            raise exceptions.ValidationError('Missing restore script')
+        content = interpolate(self.restore_script, self)
+        filename = self.server_id.upload(
+            content=content,
+            file_path='%s/restore.sh' % self.base_path, chmod_exec=True,
+        )
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
+    

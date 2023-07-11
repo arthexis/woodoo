@@ -59,7 +59,7 @@
                 <field name="os_user"/>
                 <field name="state" readonly="1"/>
                 <field name="error_count" readonly="1"/>
-                <button name="duplicate_record" type="object" string="Duplicate"/>
+                <button name="duplicate_record" type="object" string="Copy"/>
             </tree>
         </field>
     </record>
@@ -154,9 +154,76 @@
                 <field name="server_id"/>
                 <field name="app_port" widget="char"/>
                 <field name="admin_user"/>
+                <button name="duplicate_record" type="object" string="Copy"/>
             </tree>
         </field>
     </record>
+
+    <!-- 
+        class AppDatabase(models.Model):
+    _name = 'datacenter.app.database'
+    _description = 'Database'
+    _inherit = ['duplicate.mixin']
+
+    name = fields.Char(string='Name', required=True)
+    application_ids = fields.One2many(
+        string='Applications', comodel_name='datacenter.application',
+        inverse_name='database_id',
+    )
+    ip_address = fields.Char(string='IP Address', required=True)
+    db_name = fields.Char(string='DB Name', required=True)
+    db_port = fields.Integer(string='DB Port', required=False, default=5432)
+
+    # Credentials
+    db_user = fields.Char(
+        string='DB User', required=True,
+        help='The DB user must have access without a password',
+    )
+
+    setup_script = fields.Text(
+        string='Setup Script', required=False,
+    )
+    backup_script = fields.Text(
+        string='Backup Script', required=False,
+    )
+    restore_script = fields.Text(
+        string='Restore Script', required=False,
+    )
+
+    def setup(self):
+        if not self.setup_script:
+            raise exceptions.ValidationError('Missing setup script')
+        content = interpolate(self.setup_script, self)
+        filename = self.server_id.upload(
+            content=content,
+            file_path='%s/setup.sh' % self.base_path, chmod_exec=True,
+        )
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
+
+    def backup(self):
+        if not self.backup_script:
+            raise exceptions.ValidationError('Missing backup script')
+        content = interpolate(self.backup_script, self)
+        filename = self.server_id.upload(
+            content=content,
+            file_path='%s/backup.sh' % self.base_path, chmod_exec=True,
+        )
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
+    
+    def restore(self):
+        if not self.restore_script:
+            raise exceptions.ValidationError('Missing restore script')
+        content = interpolate(self.restore_script, self)
+        filename = self.server_id.upload(
+            content=content,
+            file_path='%s/restore.sh' % self.base_path, chmod_exec=True,
+        )
+        self.last_message = self.server_id.execute(
+            command=filename, base_path=self.base_path)
+
+    -->
 
     <!-- App Database Form View -->
     <record id="datacenter_app_database_form_view" model="ir.ui.view">
@@ -175,6 +242,19 @@
                     </group>
                 </sheet>
                 <sheet>
+                    <group string="Operations">
+                        <header colspan="2">
+                            <button name="setup" string="Setup" type="object" class="oe_highlight" colspan="1"/>
+                            <button name="backup" string="Backup" type="object" class="oe_highlight" colspan="1"/>
+                            <button name="restore" string="Restore" type="object" class="oe_highlight" colspan="1"/>
+                        </header>
+                        <separator/>
+                        <group colspan="2">
+                            <field name="setup_script" class="console"/>
+                            <field name="backup_script" class="console"/>
+                            <field name="restore_script" class="console"/>
+                        </group>
+                    </group>
                     <group string="Applications">
                         <field name="application_ids">
                             <tree>
@@ -201,6 +281,7 @@
                 <field name="ip_address"/>
                 <field name="db_port" widget="char"/>
                 <field name="db_user"/>
+                <button name="duplicate_record" type="object" string="Copy"/>
             </tree>
         </field>
     </record>
