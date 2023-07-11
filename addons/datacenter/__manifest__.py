@@ -15,7 +15,6 @@
     'data': [
         # XML, CSV, and YML files, etc. that you want to include
         'views/datacenter_views.xml',
-        'views/datacenter_actions.xml',
         'security/ir.model.access.csv',
     ],
     'assets': {

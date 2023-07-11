@@ -55,6 +55,7 @@
                 <field name="os_user"/>
                 <field name="state" readonly="1"/>
                 <field name="error_count" readonly="1"/>
+                <button name="duplicate_record" type="object" string="Duplicate"/>
             </tree>
         </field>
     </record>
