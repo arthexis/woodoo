@@ -1,9 +1,11 @@
-from odoo import models, fields, exceptions
-from base64 import b64decode
-from io import StringIO
-from paramiko import SSHClient, AutoAddPolicy, RSAKey
-from functools import reduce
 import re
+from io import StringIO
+from base64 import b64decode
+from functools import reduce
+
+from odoo import models, fields, exceptions
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
+import psycopg2
 
 
 def interpolate(text, data, depth=0, max_depth=20):
@@ -284,24 +286,24 @@ class Application(models.Model):
         self.expected_status = status
         self.flush()
 
-    # Operations (buttons)
-    def start(self):
-        self._expect_status('running')
-        command = interpolate(self.start_command, self)
-        self.last_message = self.server_id.execute(
-            command=command, base_path=self.base_path)
-    
-    def stop(self):
-        self._expect_status('stopped')
-        command = interpolate(self.stop_command, self)
+    def _run_command(self, command, interpolate=True):
+        if interpolate:
+            command = interpolate(command, self)
         self.last_message = self.server_id.execute(
             command=command, base_path=self.base_path)
 
+    # Operations (buttons)
+    def start(self):
+        self._expect_status('running')
+        self._run_command(self.start_command)
+
+    def stop(self):
+        self._expect_status('stopped')
+        self._run_command(self.stop_command)
+
     def restart(self):
         self._expect_status('running')
-        command = interpolate(self.restart_command, self)
-        self.last_message = self.server_id.execute(
-            command=command, base_path=self.base_path)
+        self._run_command(self.restart_command)
         
     def status(self):
         command = interpolate(self.status_command, self)
@@ -313,36 +315,29 @@ class Application(models.Model):
         return status
 
     def journal(self):
-        command = interpolate(self.journal_command, self)
+        self._run_command(self.journal_command)
+
+    def _run_as_script(self, content, filename, interpolate=True):
+        if interpolate:
+            content = interpolate(content, self)
+        file_path = '%s/%s' % (self.base_path, filename)
+        file_path = self.server_id.upload(
+            content=content, file_path=file_path, chmod_exec=True)
         self.last_message = self.server_id.execute(
-            command=command, base_path=self.base_path)
+            command=file_path, base_path=self.base_path)
     
     # Lifecycle (buttons)
     def install(self):
         if not self.server_id or not self.install_script:
             raise exceptions.ValidationError('Missing server or install script')
-        self.server_id.execute(
-            command='mkdir -p %s' % self.base_path, base_path=None)
-        content = interpolate(self.install_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/install.sh' % self.base_path, 
-            chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
+        # Make sure the base path exists or the upload will fail
+        self.server_id.execute(command='mkdir -p %s' % self.base_path)
+        self._run_as_script(self.install_script, 'install.sh')
 
     def update(self):
         if not self.server_id or not self.update_script:
             raise exceptions.ValidationError('Missing server or update script')
-        content = interpolate(self.update_script, self)
-        filename = self.server_id.upload(
-            content=content, 
-            file_path='%s/update.sh' % self.base_path, 
-            chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
+        self._run_as_script(self.update_script, 'update.sh')
 
     def uninstall(self):
         # Check the server is stopped first
@@ -350,13 +345,7 @@ class Application(models.Model):
             raise exceptions.ValidationError('Application must be stopped first')
         if not self.server_id or not self.uninstall_script:
             raise exceptions.ValidationError('Missing server or uninstall script') 
-        content = interpolate(self.uninstall_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/uninstall.sh' % self.base_path, chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
+        self._run_as_script(self.uninstall_script, 'uninstall.sh')
 
 
 class AppDatabase(models.Model):
@@ -399,14 +388,19 @@ class AppDatabase(models.Model):
         if not self.setup_script:
             raise exceptions.ValidationError('Missing setup script')
         content = interpolate(self.setup_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/setup.sql' % self.base_path, 
-            chmod_exec=False,
+        self._run_sql(content)
+
+    def _run_sql(self, content):
+        # Run the SQL using psycopg2
+        conn = psycopg2.connect(
+            host=self.ip_address, port=self.db_port, 
+            user=self.db_user, database=self.db_name,
         )
-        command = 'psql -h %s -p %s -U %s -d %s -f %s' % (
-            self.ip_address, self.db_port, self.db_user, self.db_name, filename)
-        self.last_message = self.server_id.execute(
-            command=command, base_path=self.base_path)
-            
-    
+        cur = conn.cursor()
+        # Store the result in the last_message field
+        # Convert the result to a string
+        cur.execute(content)
+        self.last_message = str(cur.fetchall())
+        conn.commit()
+        cur.close()
+        conn.close()
