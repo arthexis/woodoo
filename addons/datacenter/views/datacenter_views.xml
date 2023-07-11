@@ -7,13 +7,17 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group string="Connection">
+                    <group string="Datacenter">
                         <field name="name"/>
+                    </group>
+                    <group string="Connection">
                         <field name="host"/>
                         <field name="ssh_port" widget="char"/>
                         <field name="os_user"/>
                         <field name="base_path"/>
                         <field name="private_pem_file" widget="binary" filename="private_pem_filename"/>
+                    </group>
+                    <group string="Status">
                         <field name="state" readonly="1"/>
                         <field name="error_count" readonly="1"/>
                     </group>
@@ -82,9 +86,11 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group string="Connection">
+                    <group string="Datacenter">
                         <field name="name"/>
                         <field name="app_code"/>
+                    </group>
+                    <group string="Connection">
                         <field name="server_id"/>
                         <field name="database_id"/>
                         <field name="service_name"/>
@@ -159,8 +165,10 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <group string="Datacenter">
+                        <field name="name"/>
+                    </group>
                     <group string="Connection">	
-                        <field name="name" class="big-field"/>
                         <field name="ip_address"/>
                         <field name="db_port"  widget="char"/>
                         <field name="db_user"/>
