@@ -369,7 +369,7 @@ class AppDatabase(models.Model):
         string='Applications', comodel_name='datacenter.application',
         inverse_name='database_id',
     )
-    ip_address = fields.Char(string='IP Address', required=True)
+    ip_address = fields.Char(string='Endpoint', required=True)
     db_name = fields.Char(string='DB Name', required=True)
     db_port = fields.Integer(string='DB Port', required=False, default=5432)
 

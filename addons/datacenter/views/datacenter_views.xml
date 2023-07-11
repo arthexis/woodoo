@@ -237,8 +237,9 @@
                     </group>
                     <group string="Connection">	
                         <field name="ip_address"/>
-                        <field name="db_port"  widget="char"/>
+                        <field name="db_name"/>
                         <field name="db_user"/>
+                        <field name="db_port"  widget="char"/>
                     </group>
                 </sheet>
                 <sheet>
