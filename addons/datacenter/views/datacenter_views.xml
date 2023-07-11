@@ -1,6 +1,6 @@
 <odoo>
 
-    <!-- App Server Form View -->
+    <!-- Server Form View -->
     <record id="datacenter_app_server_form_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.form.view</field>
         <field name="model">datacenter.app.server</field>
@@ -48,7 +48,7 @@
         </field>
     </record>
 
-    <!-- App Server Tree View -->
+    <!-- Server Tree View -->
     <record id="datacenter_app_server_tree_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.tree.view</field>
         <field name="model">datacenter.app.server</field>
@@ -64,7 +64,7 @@
         </field>
     </record>
 
-    <!-- App Server search view, group by state -->
+    <!-- Server search view -->
 
     <record id="datacenter_app_server_search_view" model="ir.ui.view">
         <field name="name">datacenter.app.server.search.view</field>
@@ -159,7 +159,7 @@
         </field>
     </record>
 
-    <!-- App Database Form View -->
+    <!-- Database Form View -->
     <record id="datacenter_app_database_form_view" model="ir.ui.view">
         <field name="name">datacenter.app.database.form.view</field>
         <field name="model">datacenter.app.database</field>
@@ -206,7 +206,7 @@
         </field>
     </record>
 
-    <!-- App Database Tree View -->
+    <!-- Database Tree View -->
     <record id="datacenter_app_database_tree_view" model="ir.ui.view">
         <field name="name">datacenter.app.database.tree.view</field>
         <field name="model">datacenter.app.database</field>
@@ -216,13 +216,13 @@
                 <field name="server_name"/>
                 <field name="ip_address"/>
                 <field name="db_port" widget="char"/>
-                <field name="db_user"/>
+                <field name="app_db_user"/>
                 <button name="duplicate_record" type="object" string="Copy"/>
             </tree>
         </field>
     </record>
 
-    <!-- App Server Action -->
+    <!-- Server Action -->
     <record id="datacenter_app_server_action" model="ir.actions.act_window">
         <field name="name">Servers</field>
         <field name="res_model">datacenter.app.server</field>
