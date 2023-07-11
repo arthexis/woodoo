@@ -44,21 +44,10 @@ def interpolate(text, data, depth=0, max_depth=8):
         return interpolated
 
 
-class MagicFieldMixin(models.AbstractModel):
-    _name = 'datacenter.magic_field_mixin'
-    _description = 'Magic Field Mixin'
-
-    def write(self, values):
-        for field_name, field in self._fields.items():
-            if field.default and not self[field_name] and (field_name not in values or values[field_name] is None):
-                values[field_name] = field.default(self)
-        return super().write(values)
-
-
 # Datacenter models
 
     
-class AppServer(models.Model, MagicFieldMixin):
+class AppServer(models.Model):
     _name = 'datacenter.app.server'
     _description = 'App Server'
 
@@ -183,7 +172,7 @@ class AppServer(models.Model, MagicFieldMixin):
         return self.stdout
 
 
-class Application(models.Model, MagicFieldMixin):
+class Application(models.Model):
     _name = 'datacenter.application'
     _description = 'Application'
 
@@ -357,7 +346,7 @@ class Application(models.Model, MagicFieldMixin):
             command=filename, base_path=self.base_path)
 
 
-class AppDatabase(models.Model, MagicFieldMixin):
+class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
     _description = 'Database'
 
