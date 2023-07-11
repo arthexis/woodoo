@@ -61,7 +61,7 @@ class DuplicateMixin(models.AbstractModel):
 class AppServer(models.Model):
     _name = 'datacenter.app.server'
     _description = 'App Server'
-    _inherit = ['duplicate.mixin']
+    _inherits = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
     host = fields.Char(
@@ -187,7 +187,7 @@ class AppServer(models.Model):
 class Application(models.Model):
     _name = 'datacenter.application'
     _description = 'Application'
-    _inherit = ['duplicate.mixin']
+    _inherits = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
     app_code = fields.Char(
@@ -362,7 +362,7 @@ class Application(models.Model):
 class AppDatabase(models.Model):
     _name = 'datacenter.app.database'
     _description = 'Database'
-    _inherit = ['duplicate.mixin']
+    _inherits = ['duplicate.mixin']
 
     name = fields.Char(string='Name', required=True)
     application_ids = fields.One2many(
