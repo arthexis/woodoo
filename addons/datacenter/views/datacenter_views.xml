@@ -210,6 +210,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="server"/>
                 <field name="ip_address"/>
                 <field name="db_port" widget="char"/>
                 <field name="db_user"/>
