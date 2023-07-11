@@ -1,16 +1,16 @@
 {
     'name': 'Datacenter',
-    'version': '1.4.7',
+    'version': '1.4.8',
     'category': 'Tools',
     'summary': 'Tools for managing the Enterprise Datacenter',
     'sequence': 8,
     'license': 'LGPL-3',
     'author': 'Rafa Guillén',
     'maintainer': 'Rafa Guillén',
-    'website': 'https://www.gelectriic.com',
+    'website': 'https://www.arthexis.com',
     'depends': ['base', ],
     'external_dependencies': {
-        'python': ['psutil', 'paramiko', ],
+        'python': ['psutil', 'paramiko', 'psycopg2'],
     },
     'data': [
         # XML, CSV, and YML files, etc. that you want to include

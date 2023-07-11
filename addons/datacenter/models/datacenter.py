@@ -398,16 +398,13 @@ class AppDatabase(models.Model):
         )
         conn.autocommit = True
         cur = conn.cursor()
-        
+
         # Split the content into separate commands
         commands = content.split(";")
         for command in commands:
-            if "CREATE DATABASE" in command:
-                conn.autocommit = True
-                cur.execute(command)
-                conn.autocommit = False
-            else:
-                cur.execute(command)
+            if command.strip() == '':
+                continue
+            cur.execute(command)
 
         self.last_message = str(cur.fetchall())
         conn.commit()
