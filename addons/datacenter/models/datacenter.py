@@ -185,9 +185,8 @@ class Application(models.Model):
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.app.server',
     )
-    database_ids = fields.One2many(
-        string='Databases', comodel_name='datacenter.app.database',
-        inverse_name='application_id', 
+    database_id = fields.Many2one(
+        string='Database', comodel_name='datacenter.app.database',
     )
 
     # Configuration
@@ -352,8 +351,9 @@ class AppDatabase(models.Model):
     _description = 'Database'
 
     name = fields.Char(string='Name', required=True)
-    application_id = fields.Many2one(
-        string='Application', comodel_name='datacenter.application',
+    application_ids = fields.One2many(
+        string='Applications', comodel_name='datacenter.application',
+        inverse_name='database_id',
     )
     ip_address = fields.Char(string='IP Address', required=True)
     db_name = fields.Char(string='DB Name', required=True)
@@ -364,4 +364,5 @@ class AppDatabase(models.Model):
         string='DB User', required=True,
         help='The DB user must have access without a password',
     )
+
 

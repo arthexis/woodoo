@@ -32,6 +32,7 @@
                         <field name="application_ids">
                             <tree>
                                 <field name="name"/>
+                                <field name="app_code"/>
                                 <field name="app_port" widget="char"/>
                                 <field name="admin_user"/>
                                 <field name="expected_status"/>
@@ -84,6 +85,7 @@
                         <field name="name"/>
                         <field name="app_code"/>
                         <field name="server_id"/>
+                        <field name="database_id"/>
                         <field name="service_name"/>
                         <field name="base_url"/>
                         <field name="base_path"/>
@@ -129,15 +131,6 @@
                             <field name="uninstall_script" class="console"/>
                         </group>
                     </group>
-                    <group string="Databases">
-                        <field name="database_ids">
-                            <tree>
-                                <field name="name"/>
-                                <field name="ip_address"/>
-                                <field name="db_user"/>
-                            </tree>
-                        </field>
-                    </group>
                 </sheet>
             </form>
         </field>
@@ -167,10 +160,22 @@
                 <sheet>
                     <group string="Connection">	
                         <field name="name" class="big-field"/>
-                        <field name="application_id"/>
                         <field name="ip_address"/>
                         <field name="db_port"  widget="char"/>
                         <field name="db_user"/>
+                    </group>
+                </sheet>
+                <sheet>
+                    <group string="Applications">
+                        <field name="application_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="app_code"/>
+                                <field name="app_port" widget="char"/>
+                                <field name="admin_user"/>
+                                <field name="expected_status"/>
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>
