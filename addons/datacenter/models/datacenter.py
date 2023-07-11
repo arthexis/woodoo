@@ -383,17 +383,16 @@ class AppDatabase(models.Model):
     # Credentials
     db_user = fields.Char(
         string='DB User', required=True,
-        help='The DB user must have access without a password',
+        help='This DB user must have access without a password',
     )
 
     setup_script = fields.Text(
         string='Setup Script', required=False,
     )
-    backup_script = fields.Text(
-        string='Backup Script', required=False,
-    )
-    restore_script = fields.Text(
-        string='Restore Script', required=False,
+
+    last_message = fields.Text(
+        string='Last Message', required=False, readonly=True,
+        default=lambda self: 'No messages',
     )
 
     def setup(self):
@@ -402,30 +401,12 @@ class AppDatabase(models.Model):
         content = interpolate(self.setup_script, self)
         filename = self.server_id.upload(
             content=content,
-            file_path='%s/setup.sh' % self.base_path, chmod_exec=True,
+            file_path='%s/setup.sql' % self.base_path, 
+            chmod_exec=False,
         )
+        command = 'psql -h %s -p %s -U %s -d %s -f %s' % (
+            self.ip_address, self.db_port, self.db_user, self.db_name, filename)
         self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
-
-    def backup(self):
-        if not self.backup_script:
-            raise exceptions.ValidationError('Missing backup script')
-        content = interpolate(self.backup_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/backup.sh' % self.base_path, chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
-    
-    def restore(self):
-        if not self.restore_script:
-            raise exceptions.ValidationError('Missing restore script')
-        content = interpolate(self.restore_script, self)
-        filename = self.server_id.upload(
-            content=content,
-            file_path='%s/restore.sh' % self.base_path, chmod_exec=True,
-        )
-        self.last_message = self.server_id.execute(
-            command=filename, base_path=self.base_path)
+            command=command, base_path=self.base_path)
+            
     

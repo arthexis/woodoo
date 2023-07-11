@@ -181,14 +181,10 @@
                     <group string="Operations">
                         <header colspan="2">
                             <button name="setup" string="Setup" type="object" class="oe_highlight" colspan="1"/>
-                            <button name="backup" string="Backup" type="object" class="oe_highlight" colspan="1"/>
-                            <button name="restore" string="Restore" type="object" class="oe_highlight" colspan="1"/>
                         </header>
                         <separator/>
                         <group colspan="2">
                             <field name="setup_script" class="console"/>
-                            <field name="backup_script" class="console"/>
-                            <field name="restore_script" class="console"/>
                         </group>
                     </group>
                     <group string="Applications">
