@@ -6,7 +6,7 @@ from functools import reduce
 import re
 
 
-def interpolate(text, data, depth=0, max_depth=8):
+def interpolate(text, data, depth=0, max_depth=20):
     cache = {}  # initialize the cache
 
     if depth > max_depth:
@@ -178,7 +178,7 @@ class Application(models.Model):
 
     name = fields.Char(string='Name', required=True)
     app_code = fields.Char(
-        string='App Code', required=True, unique=True,
+        string='App Code', required=False, unique=True,
         help='Unique identifier for the application',
     )
 
