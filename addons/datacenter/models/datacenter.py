@@ -177,6 +177,11 @@ class Application(models.Model):
     _description = 'Application'
 
     name = fields.Char(string='Name', required=True)
+    app_code = fields.Char(
+        string='App Code', required=True, unique=True,
+        help='Unique identifier for the application',
+    )
+
     server_id = fields.Many2one(
         string='Server', comodel_name='datacenter.app.server',
     )
