@@ -286,9 +286,8 @@ class Application(models.Model):
         self.expected_status = status
         self.flush()
 
-    def _run_command(self, command, interpolate=True):
-        if interpolate:
-            command = interpolate(command, self)
+    def _run_command(self, command):
+        command = interpolate(command, self)
         self.last_message = self.server_id.execute(
             command=command, base_path=self.base_path)
 
