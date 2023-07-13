@@ -316,9 +316,8 @@ class Application(models.Model):
     def journal(self):
         self._run_command(self.journal_command)
 
-    def _run_as_script(self, content, filename, interpolate=True):
-        if interpolate:
-            content = interpolate(content, self)
+    def _run_as_script(self, content, filename):
+        content = interpolate(content, self)
         file_path = '%s/%s' % (self.base_path, filename)
         file_path = self.server_id.upload(
             content=content, file_path=file_path, chmod_exec=True)
@@ -387,17 +386,14 @@ class AppDatabase(models.Model):
     setup_script = fields.Text(
         string='Setup Script', required=False,
     )
+    remove_script = fields.Text(
+        string='Remove Script', required=False,
+    )
 
     last_message = fields.Text(
         string='Last Message', required=False, readonly=True,
         default=lambda self: 'No messages',
     )
-
-    def setup(self):
-        if not self.setup_script:
-            raise exceptions.ValidationError('Missing setup script')
-        content = interpolate(self.setup_script, self)
-        self._run_sql(content)
 
     def _run_sql(self, content):
         # Run the SQL using psycopg2
@@ -430,3 +426,15 @@ class AppDatabase(models.Model):
         cur.close()
         conn.close()
 
+    def setup(self):
+        if not self.setup_script:
+            raise exceptions.ValidationError('Missing setup script')
+        content = interpolate(self.setup_script, self)
+        self._run_sql(content)
+
+    def remove(self):
+        if not self.remove_script:
+            raise exceptions.ValidationError('Missing remove script')
+        content = interpolate(self.remove_script, self)
+        self._run_sql(content)
+        

@@ -185,10 +185,12 @@
                     <group string="Operations">
                         <header colspan="2">
                             <button name="setup" string="Setup" type="object" class="oe_highlight" colspan="1"/>
+                            <button name="remove" string="Remove" type="object" class="oe_highlight" colspan="1"/>
                         </header>
                         <separator/>
                         <group colspan="2">
                             <field name="setup_script" class="console"/>
+                            <field name="remove_script" class="console"/>
                         </group>
                     </group>
                     <group string="Applications">
