@@ -158,19 +158,20 @@ class ElectricalInspection(models.Model):
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
     def checks(self) -> None:
-        error = None
+        error_msg = None
         try:
             self._validate_observations()
             self.status = 'validated'
         except AssertionError as error:
             _logger.error(error)
+            error_msg = error.args[0]
         return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': 'Checks Passed' if not error else 'Checks Failed',
-                    'message': 'Proceed to calculations.' if not error else error.args[0],
-                    'type': 'success' if not error else 'danger',
+                    'title': 'Checks Passed' if not error_msg else 'Checks Failed',
+                    'message': 'Proceed to calculations.' if not error_msg else error_msg,
+                    'type': 'success' if not error_msg else 'danger',
                     'sticky': False,
                 }
             }
