@@ -158,22 +158,22 @@ class ElectricalInspection(models.Model):
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
     def checks(self) -> None:
+        error = None
         try:
             self._validate_observations()
             self.status = 'validated'
-            return {
+        except AssertionError as error:
+            _logger.error(error)
+        return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': 'Checks Passed',
-                    'message': 'Checks Passed. Proceed to calculations.',
-                    'type': 'success',
+                    'title': 'Checks Passed' if not error else 'Checks Failed',
+                    'message': 'Proceed to calculations.' if not error else error.args[0],
+                    'type': 'success' if not error else 'danger',
                     'sticky': False,
                 }
             }
-        except AssertionError as error:
-            _logger.error(error)
-            raise exceptions.UserError(error)
 
     def calculate(self) -> None:
         self._calculate_cable_size_recursive()
