@@ -126,7 +126,7 @@ class ElectricalInspection(models.Model):
     ], string='Cable Size')
     
     # Sizing for the pipes that will contain the cable
-    # TODO: Ask Regis what the options are for pipe size and material
+    # TODO: Check pipe size and material against NEC 2017 and the sheet from Regis
     pipe_size = fields.Selection([
         ('1/2', '1/2"'),
         ('3/4', '3/4"'),
@@ -161,6 +161,16 @@ class ElectricalInspection(models.Model):
         try:
             self._validate_observations()
             self.status = 'validated'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Checks Passed',
+                    'message': 'Checks Passed. Proceed to calculations.',
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
         except AssertionError as error:
             _logger.error(error)
             raise exceptions.UserError(error)
