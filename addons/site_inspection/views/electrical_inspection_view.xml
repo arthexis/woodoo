@@ -14,6 +14,7 @@
                         <field name="purpose"/>
                         <field name="location"/>
                         <field name="date"/>
+                        <field name="num_chargers"/>
                         <field name="status"/>
                     </group>
                 </sheet>
@@ -25,6 +26,7 @@
 
                         <field name="amperage"/>
                         <field name="distance"/>
+                        <field name="num_cables"/>
                         <field name="cable_material"/>
                         <field name="supply_voltage"/>
                         <field name="temperature_rating"/>
