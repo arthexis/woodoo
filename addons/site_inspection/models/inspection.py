@@ -97,14 +97,6 @@ AWG_DIAMETER_INCHES = {
     '10': 0.1019,
 }
 
-# Calculate the circular area for an AWG cable based on its diameter
-def awg_area(diameter: str) -> float:
-    d = AWG_DIAMETER_INCHES.get(diameter)
-    if d is None:
-        raise ValueError(f"Invalid AWG size: {diameter}")
-    # Calculate the area using the formula for area of a circle
-    return math.pi * (d / 2)**2
-
 
 class ElectricalInspection(models.Model):
     
@@ -182,7 +174,7 @@ class ElectricalInspection(models.Model):
         try:
             self._validate_observations()
             self.status = 'validated'
-        except AssertionError as error:
+        except Exception as error:
             error_msg = error.args[0]
             self.status = 'pending'
         return {
@@ -203,7 +195,7 @@ class ElectricalInspection(models.Model):
             self._calculate_required_pipe_size()
             self._validate_calculation()
             self.status = 'calculated'
-        except AssertionError as error:
+        except Exception as error:
             error_msg = error.args[0]
             self.status = 'validated'
         return {
@@ -219,17 +211,17 @@ class ElectricalInspection(models.Model):
 
     def quote(self) -> None:
         error_msg = None
-        self._draft_sales_order()
-        if not self.sales_order_id:
-            error_msg = 'Sales order not created'
-            self.status = 'calculated'
-        else:
+        try:
+            self._draft_sales_order()
             self.status = 'drafted'
+        except Exception as error:
+            error_msg = error.args[0]
+            self.status = 'calculated'
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Estimate drafted' if not error_msg else 'Draft Failed',
+                'title': 'Estimate drafted' if not error_msg else 'Estimate failed',
                 'message': 'Please review the estimate.' if not error_msg else error_msg,
                 'type': 'success' if not error_msg else 'danger',
                 'sticky': False,
@@ -255,33 +247,46 @@ class ElectricalInspection(models.Model):
         # TODO: Check for additional required validations
         _logger.info('Calculation validated')
 
+    # First we calculate the cable size based on the amperage and distance
+    # Then we increase the cable size until the AC loss is less than 3%
+    # This is required by NEC 2017
     def _calculate_cable_size_recursive(self) -> None:
-        base_cable_size = self._get_base_cable_size()
-        ac_loss = self._get_ac_loss(base_cable_size)
-        # Increase the cable size until the AC loss is less than 3%
-        # This is required by NEC 2017
-        while ac_loss > 3 and base_cable_size != '4/0':
-            base_cable_size = self._increase_cable_size(base_cable_size)
-            ac_loss = self._get_ac_loss(base_cable_size)
-        self.cable_size = base_cable_size
-
+        cable_size = self._get_base_cable_size()
+        ac_loss = self._get_ac_loss(cable_size)
+        while ac_loss > 3 and cable_size != '4/0':
+            cable_size = self._increase_cable_size(cable_size)
+            ac_loss = self._get_ac_loss(cable_size)
+        self.cable_size = cable_size
+        _logger.info(f'Final cable size: {cable_size}')  
+        
     def _get_base_cable_size(self) -> str:
         amperage = self.amperage
-        temperature_rating = self.temperature_rating
-        for key, value in AWG_TEMP_AMPACITY.items():
-            if value[f'C{temperature_rating}'] >= amperage:
-                return key
-        raise exceptions.UserError('No cable size defined for amperage and temp. rating')
+        temp_rating = self.temperature_rating
+        for cable_size, temp_to_amps in AWG_TEMP_AMPACITY.items():
+            if temp_to_amps[f'C{temp_rating}'] >= amperage:
+                _logger.info(f'Base cable size: {cable_size}')
+                return cable_size
+        raise exceptions.UserError('No cable size defined for amperage and temperature')
 
+    # Calculate the AC loss for the cable based on the amperage and distance
     def _get_ac_loss(self, base_cable_size: str) -> float:
         resistivity = RESISTIVITY[self.cable_material]
-        area = awg_area(base_cable_size)
-        resistance = resistivity * self.distance / area
+        conduit_area = self._get_awg_area(base_cable_size)
+        resistance = resistivity * self.distance / conduit_area
         voltage_drop = self.amperage * resistance
         power_loss = self.amperage * voltage_drop
         total_power = int(self.supply_voltage) * self.amperage
         ac_loss_percentage = 100 * power_loss / total_power
+        _logger.info(f'AC loss: {ac_loss_percentage}')
         return ac_loss_percentage
+
+    # Calculate the circular area for an AWG cable based on its diameter
+    def _get_awg_area(self, diameter: str) -> float:
+        d = AWG_DIAMETER_INCHES.get(diameter)
+        if d is None:
+            raise ValueError(f"Invalid AWG size: {diameter}")
+        # Calculate the area using the formula for area of a circle
+        return math.pi * (d / 2)**2
 
     def _increase_cable_size(self, base_cable_size: str) -> str:
         index = list(AWG_TEMP_AMPACITY.keys()).index(base_cable_size)
@@ -301,16 +306,15 @@ class ElectricalInspection(models.Model):
 
     def _add_cable_to_order(self, order: models.Model, color=None) -> None:
         units = self._get_cable_units()
-        cable = self.env['product.product'].search([
+        if not (cable := self.env['product.product'].search([
             ('name', '=', 'Cable'),
             ('type', '=', 'product'),
             ('material', '=', self.cable_material),
             ('color', '=', color or 'black'),
-        ], limit=1)
-        if not cable:
-            _logger.error('Cable not found in product list')
-            # TODO: Decide how to handle the error. Maybe raise an exception or add a warning.
+        ], limit=1)):
+            raise exceptions.UserError('Cable not found in product list')
         else:
+            _logger.info(f'Adding {units} units of {cable.name} to order')
             self.env['sale.order.line'].create({
                 'order_id': order.id,
                 'product_id': cable.id,
@@ -318,9 +322,10 @@ class ElectricalInspection(models.Model):
                 'product_uom': cable.uom_id.id,
                 'price_unit': cable.list_price,
             })
+            _logger.info(f'Added {units} units of {cable.name} to order')
 
     def _get_cable_units(self) -> int:
-        return int(self.distance / 3) + 1
+        return math.ceil(self.distance / 3) * self.num_chargers * self.num_cables
 
     # TODO: Implement the _calculate_required_pipe_size and _find_smallest_suitable_conduit methods
 
