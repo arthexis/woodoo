@@ -189,43 +189,47 @@ class ElectricalInspection(models.Model):
         }
 
     def calculate(self) -> None:
-        error_msg = None
         try:
             self._calculate_cable_size_recursive()
             self._calculate_required_pipe_size()
             self._validate_calculation()
             self.status = 'calculated'
         except Exception as error:
-            error_msg = error.args[0]
             self.status = 'validated'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Calculate Failed',
+                    'message': error.args[0],
+                    'type': 'danger',
+                    'sticky': False,
+                }
+            }
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Calculate complete' if not error_msg else 'Calculate Failed',
-                'message': 'Ready for estimate.' if not error_msg else error_msg,
-                'type': 'success' if not error_msg else 'danger',
-                'sticky': False,
-            }
+            'tag': 'reload',
         }
 
     def quote(self) -> None:
-        error_msg = None
         try:
             self._draft_sales_order()
             self.status = 'drafted'
         except Exception as error:
-            error_msg = error.args[0]
             self.status = 'calculated'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Estimate failed',
+                    'message': error.args[0],
+                    'type': 'danger',
+                    'sticky': False,
+                }
+            }
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Estimate drafted' if not error_msg else 'Estimate failed',
-                'message': 'Please review the estimate.' if not error_msg else error_msg,
-                'type': 'success' if not error_msg else 'danger',
-                'sticky': False,
-            }
+            'tag': 'reload',
         }
 
     def _validate_observations(self) -> None:
