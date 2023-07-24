@@ -99,6 +99,16 @@ AWG_DIAMETER_INCHES = {
     '10': 0.1019,
 }
 
+CONDUIT_SIZES_INCHES = {
+    '1/2': 0.5,
+    '3/4': 0.75,
+    '1': 1.0,
+    '1 1/4': 1.25,
+    '1 1/2': 1.5,
+    '2': 2.0,
+    '2 1/2': 2.5,
+}
+
 
 class ElectricalInspection(models.Model):
     
@@ -148,15 +158,8 @@ class ElectricalInspection(models.Model):
     ], string='Cable Size')
     
     # Sizing for the pipes that will contain the cable
-    # TODO: Check pipe size and material against NEC 2017 and the sheet from Regis
     pipe_size = fields.Selection([
-        ('1/2', '1/2"'),
-        ('3/4', '3/4"'),
-        ('1', '1"'),
-        ('1 1/4', '1 1/4"'),
-        ('1 1/2', '1 1/2"'),
-        ('2', '2"'),
-        ('2 1/2', '2 1/2"'),
+        (key, f'{key}"') for key in CONDUIT_SIZES_INCHES.keys()
     ], string='Pipe Size')
 
     pipe_material = fields.Selection([
@@ -260,7 +263,7 @@ class ElectricalInspection(models.Model):
         cable_size = self._get_base_cable_size()
         ac_loss = self._get_ac_loss(cable_size)
         while ac_loss > 3 and cable_size != '4/0':
-            cable_size = self._increase_cable_size(cable_size)
+            cable_size = self._get_next_cable_size(cable_size)
             ac_loss = self._get_ac_loss(cable_size)
         self.cable_size = cable_size
         _logger.info(f'Final cable size: {cable_size}')  
@@ -294,7 +297,7 @@ class ElectricalInspection(models.Model):
         # Calculate the area using the formula for area of a circle
         return math.pi * (d / 2)**2
 
-    def _increase_cable_size(self, base_cable_size: str) -> str:
+    def _get_next_cable_size(self, base_cable_size: str) -> str:
         index = list(AWG_TEMP_AMPACITY.keys()).index(base_cable_size)
         next_cable_size = list(AWG_TEMP_AMPACITY.keys())[index + 1]
         return next_cable_size
@@ -357,10 +360,9 @@ class ElectricalInspection(models.Model):
 
     def _find_smallest_suitable_conduit(self, required_pipe_diameter: float) -> str:
         # Use the pipe sizes, picking the smallest one that is larger than the required diameter
-        for pipe_size in self.pipe_size.selection:
-            if float(pipe_size) > required_pipe_diameter:
-                return pipe_size
-        raise exceptions.UserError('No suitable pipe size found')
+        # From CONDUIT_SIZES_INCHES
+        for pipe_size, pipe_diameter in CONDUIT_SIZES_INCHES:
+
 
 
         
