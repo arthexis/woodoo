@@ -4,6 +4,12 @@ from odoo import models, fields, exceptions
 
 _logger = logging.getLogger(__name__)
 
+# Notes:
+
+# _calculate functions should change fields in the model in-place
+# _validate functions should raise an exception if the validation fails
+# _get functions should return a value
+
 # General Inspection Model
 # This applies to all inspections, regardless of type
 
@@ -157,7 +163,7 @@ class ElectricalInspection(models.Model):
         ('PVC', 'PVC'),
         ('Steel', 'Steel'),
         ('Aluminum', 'Aluminum'),
-    ], string='Pipe Material')
+    ], string='Pipe Material', default='PVC')
 
     # Special requirements for the cable
     req_burrowing = fields.Boolean(string='Requires Burrowing')
@@ -186,8 +192,8 @@ class ElectricalInspection(models.Model):
 
     def calculate(self) -> None:
         try:
-            self._calculate_cable_size_recursive()
-            self._calculate_required_pipe_size()
+            self._calculate_cable()
+            self._calculate_pipe()
             self._validate_calculation()
             self.status = 'calculated'
         except Exception as error:
@@ -250,7 +256,7 @@ class ElectricalInspection(models.Model):
     # First we calculate the cable size based on the amperage and distance
     # Then we increase the cable size until the AC loss is less than 3%
     # This is required by NEC 2017
-    def _calculate_cable_size_recursive(self) -> None:
+    def _calculate_cable(self) -> None:
         cable_size = self._get_base_cable_size()
         ac_loss = self._get_ac_loss(cable_size)
         while ac_loss > 3 and cable_size != '4/0':
@@ -329,9 +335,32 @@ class ElectricalInspection(models.Model):
 
     # TODO: Implement the _calculate_required_pipe_size and _find_smallest_suitable_conduit methods
 
-    def _calculate_required_pipe_size(self) -> None:
-        pass
+    def _calculate_pipe(self) -> None:
+        # First use the AWG diameter to calculate the area of the cable
+        # The NEC specifications are: One wire: maximum fill is 53% of the space inside a conduit. 
+        # Two wires: maximum fill is 31% 
+        # Three wires or more: maximum fill is 40% of the conduit's total available space.
+        cable_area = self._get_awg_area(self.cable_size)
+        if self.num_cables == 1:
+            max_fill = 0.53
+        elif self.num_cables == 2:
+            max_fill = 0.31
+        else:
+            max_fill = 0.4
+        # Then calculate the required pipe area
+        required_pipe_area = cable_area * self.num_cables / max_fill
+        # Then calculate the required pipe diameter
+        required_pipe_diameter = math.sqrt(required_pipe_area / math.pi) * 2
+        # Then find the smallest suitable conduit using the table (inline)
+        self.pipe_size = self._find_smallest_suitable_conduit(required_pipe_diameter)
+        _logger.info(f'Final pipe size: {self.pipe_size}')
 
-    def _find_smallest_suitable_conduit(self) -> None:
-        pass
+    def _find_smallest_suitable_conduit(self, required_pipe_diameter: float) -> str:
+        # Use the pipe sizes, picking the smallest one that is larger than the required diameter
+        for pipe_size in self.pipe_size.selection:
+            if float(pipe_size) > required_pipe_diameter:
+                return pipe_size
+        raise exceptions.UserError('No suitable pipe size found')
 
+
+        
