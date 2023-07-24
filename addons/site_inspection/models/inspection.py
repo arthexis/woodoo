@@ -355,14 +355,13 @@ class ElectricalInspection(models.Model):
         # Then calculate the required pipe diameter
         required_pipe_diameter = math.sqrt(required_pipe_area / math.pi) * 2
         # Then find the smallest suitable conduit using the table (inline)
-        self.pipe_size = self._find_smallest_suitable_conduit(required_pipe_diameter)
+        self.pipe_size = self._get_smallest_suitable_conduit(required_pipe_diameter)
         _logger.info(f'Final pipe size: {self.pipe_size}')
 
-    def _find_smallest_suitable_conduit(self, required_pipe_diameter: float) -> str:
+    def _get_smallest_suitable_conduit(self, required_pipe_diameter: float) -> str:
         # Use the pipe sizes, picking the smallest one that is larger than the required diameter
         # From CONDUIT_SIZES_INCHES
         for pipe_size, pipe_diameter in CONDUIT_SIZES_INCHES:
-
-
-
-        
+            if pipe_diameter >= required_pipe_diameter:
+                return pipe_size
+        raise exceptions.UserError('No suitable pipe size found')
