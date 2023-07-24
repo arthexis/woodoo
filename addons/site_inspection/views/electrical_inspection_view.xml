@@ -14,8 +14,8 @@
                         <field name="purpose"/>
                         <field name="location"/>
                         <field name="date"/>
-                        <field name="planner_notes"/>
                         <field name="num_chargers"/>
+                        <field name="planner_notes"/>
                         <field name="status"/>
                     </group>
                 </sheet>
