@@ -174,7 +174,7 @@ class ElectricalInspection(models.Model):
 
     sales_order_id = fields.Many2one('sale.order', string='Sales Order')
 
-    def checks(self) -> None:
+    def validations(self) -> None:
         error_msg = None
         try:
             self._validate_observations()
@@ -193,7 +193,7 @@ class ElectricalInspection(models.Model):
             }
         }
 
-    def calculate(self) -> None:
+    def calculations(self) -> None:
         try:
             self._calculate_cable()
             self._calculate_pipe()
@@ -216,7 +216,7 @@ class ElectricalInspection(models.Model):
             'tag': 'reload',
         }
 
-    def quote(self) -> None:
+    def draft_quote(self) -> None:
         try:
             self._draft_sales_order()
             self.status = 'drafted'

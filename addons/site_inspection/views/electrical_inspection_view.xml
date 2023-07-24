@@ -21,7 +21,7 @@
                 <sheet >
                     <group string="Observations">
 
-                        <button name="checks" string="Checks" type="object" class="oe_highlight"/>
+                        <button name="validations" string="Validations" type="object" class="oe_highlight"/>
                         <separator/>
 
                         <field name="amperage"/>
@@ -34,13 +34,14 @@
                         <field name="pipe_material"/>
                         <field name="req_burrowing"/>
                         <field name="req_wall_drilling"/>
+                        
                     </group>
                 </sheet>
                 <sheet >
                     <group string="Calculations">
                    
-                        <button name="calculate" string="Calculate" type="object" class="oe_highlight"/>
-                        <button name="quote" string="Quote" type="object" class="oe_highlight"/>
+                        <button name="calculations" string="Calculations" type="object" class="oe_highlight"/>
+                        <button name="draft_quote" string="Draft Quote" type="object" class="oe_highlight"/>
                         <separator/>
 
                         <field name="cable_size"/>
