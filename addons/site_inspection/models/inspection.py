@@ -22,11 +22,7 @@ class Inspection(models.Model):
     ], string='Purpose', default='pre')
 
     # Status of the inspection
-    # Allow the engineer to set the status of the inspection
-    # even though the workflow will do it automatically
-    # This is to allow the engineer to cancel the inspection or
-    # archive it if it is no longer needed
-    
+    # Allow the engineer to set the status manually or automatically
     status = fields.Selection([
         ('pending', 'Pending'), 
         ('validated', 'Validated'),
@@ -264,7 +260,7 @@ class ElectricalInspection(models.Model):
         _logger.info(f'Final cable size: {cable_size}')  
         
     def _get_base_cable_size(self) -> str:
-        amperage = self.amperage
+        amperage = int(self.amperage)
         temp_rating = self.temperature_rating
         for cable_size, temp_to_amps in AWG_TEMP_AMPACITY.items():
             if temp_to_amps[f'C{temp_rating}'] >= amperage:
