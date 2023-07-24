@@ -31,25 +31,21 @@
                         <field name="supply_voltage"/>
                         <field name="temperature_rating"/>
                         <field name="turns"/>
-                    </group>
-                </sheet>
-                <sheet >
-                    <group string="Calculations">
-                   
-                        <button name="calculate" string="Calculate" type="object" class="oe_highlight"/>
-                        <separator/>
-
-                        <field name="cable_size"/>
-                        <field name="pipe_size"/>
                         <field name="pipe_material"/>
                         <field name="req_burrowing"/>
                         <field name="req_wall_drilling"/>
                     </group>
                 </sheet>
                 <sheet >
-                    <group string="Estimate">
-
+                    <group string="Calculations">
+                   
+                        <button name="calculate" string="Calculate" type="object" class="oe_highlight"/>
                         <button name="quote" string="Quote" type="object" class="oe_highlight"/>
+                        <separator/>
+
+                        <field name="cable_size"/>
+                        <field name="pipe_size"/>
+                        
                         <separator/>
 
                         <field name="engineer_notes"/>

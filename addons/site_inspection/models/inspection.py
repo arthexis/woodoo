@@ -246,14 +246,12 @@ class ElectricalInspection(models.Model):
         assert self.supply_voltage, 'Supply voltage not defined'
         assert self.temperature_rating, 'Temperature rating not defined'
         assert self.turns > 0, 'Number of turns not counted'
-        # TODO: Check for additional required validations
+        assert self.pipe_material, 'Pipe material not calculated'
         _logger.info('Observations validated')
 
     def _validate_calculation(self) -> None:
         assert self.cable_size, 'Cable size not calculated'
         assert self.pipe_size, 'Pipe size not calculated'
-        assert self.pipe_material, 'Pipe material not calculated'
-        # TODO: Check for additional required validations
         _logger.info('Calculation validated')
 
     # First we calculate the cable size based on the amperage and distance
@@ -336,8 +334,6 @@ class ElectricalInspection(models.Model):
     def _get_cable_units(self) -> int:
         return math.ceil(self.distance / 3) * self.num_chargers * self.num_cables
 
-    # TODO: Implement the _calculate_required_pipe_size and _find_smallest_suitable_conduit methods
-
     def _calculate_pipe(self) -> None:
         # First use the AWG diameter to calculate the area of the cable
         # The NEC specifications are: One wire: maximum fill is 53% of the space inside a conduit. 
@@ -350,11 +346,8 @@ class ElectricalInspection(models.Model):
             max_fill = 0.31
         else:
             max_fill = 0.4
-        # Then calculate the required pipe area
         required_pipe_area = cable_area * self.num_cables / max_fill
-        # Then calculate the required pipe diameter
         required_pipe_diameter = math.sqrt(required_pipe_area / math.pi) * 2
-        # Then find the smallest suitable conduit using the table (inline)
         self.pipe_size = self._get_smallest_suitable_conduit(required_pipe_diameter)
         _logger.info(f'Final pipe size: {self.pipe_size}')
 
