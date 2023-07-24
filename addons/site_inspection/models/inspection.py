@@ -46,7 +46,8 @@ class Inspection(models.Model):
     location = fields.Char(string='Location', help='Describe the location')
 
     customer_notes = fields.Text(string='Customer Notes')
-    engineer_notes = fields.Text(string='Engineer Notes')
+    inspector_notes = fields.Text(string='Inspector Notes')
+    planner_notes = fields.Text(string='Planner Notes')
 
     # Name for the inspection = customer name + short date
     def name_get(self):

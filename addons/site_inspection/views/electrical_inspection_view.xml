@@ -14,6 +14,7 @@
                         <field name="purpose"/>
                         <field name="location"/>
                         <field name="date"/>
+                        <field name="planner_notes"/>
                         <field name="num_chargers"/>
                         <field name="status"/>
                     </group>
@@ -34,7 +35,7 @@
                         <field name="pipe_material"/>
                         <field name="req_burrowing"/>
                         <field name="req_wall_drilling"/>
-                        
+
                     </group>
                 </sheet>
                 <sheet >
@@ -49,7 +50,7 @@
                         
                         <separator/>
 
-                        <field name="engineer_notes"/>
+                        <field name="inspector_notes"/>
                         <field name="customer_notes"/>
                         <field name="sales_order_id"/>
                     </group>

@@ -14,14 +14,15 @@
                         <field name="engineer_id"/>
                         <field name="customer_id" context="{'show_address': 1}"/>
                         <field name="purpose"/>
-                        <field name="date"/>
                         <field name="location"/>
+                        <field name="date"/>
+                        <field name="planner_notes"/>
                         <field name="status"/>
                     </group>
                 </sheet>
                 <sheet >
                     <group string="Observations">
-                        <field name="engineer_notes"/>
+                        <field name="inspector_notes"/>
                         <field name="customer_notes"/>
                     </group>
                 </sheet>
