@@ -7,9 +7,8 @@
         <field name="model">electrical.inspection.record</field>
         <field name="arch" type="xml">
             <form string="Electrical Inspection">
-                <group col="3">
                 <sheet>
-                    <group string="Planning">
+                    <group string="Planning" cols="1">
 
                         <field name="engineer_id"/>
                         <field name="customer_id" context="{'show_address': 1}"/>
@@ -23,7 +22,7 @@
                     </group>
                 </sheet>
                 <sheet >
-                    <group string="Observations">
+                    <group string="Observations"  cols="1">
 
                         <button name="validations" string="Validations" type="object" class="oe_highlight"/>
                         <separator/>
@@ -42,7 +41,7 @@
                     </group>
                 </sheet>
                 <sheet >
-                    <group string="Calculations">
+                    <group string="Calculations"  cols="1">
                    
                         <button name="calculations" string="Calculations" type="object" class="oe_highlight"/>
                         <button name="draft_quote" string="Draft Quote" type="object" class="oe_highlight"/>
@@ -58,7 +57,6 @@
                         <field name="sales_order_id"/>
                     </group>
                 </sheet>
-                </group>
             </form>
         </field>
     </record>
