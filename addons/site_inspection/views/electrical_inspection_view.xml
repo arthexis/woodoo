@@ -7,8 +7,10 @@
         <field name="model">electrical.inspection.record</field>
         <field name="arch" type="xml">
             <form string="Electrical Inspection">
+                <group col="3">
                 <sheet>
                     <group string="Planning">
+
                         <field name="engineer_id"/>
                         <field name="customer_id" context="{'show_address': 1}"/>
                         <field name="purpose"/>
@@ -17,6 +19,7 @@
                         <field name="num_chargers"/>
                         <field name="planner_notes"/>
                         <field name="status"/>
+
                     </group>
                 </sheet>
                 <sheet >
@@ -55,6 +58,7 @@
                         <field name="sales_order_id"/>
                     </group>
                 </sheet>
+                </group>
             </form>
         </field>
     </record>

@@ -310,15 +310,15 @@ class ElectricalInspection(models.Model):
             'state': 'draft',
         })
         self.sales_order_id = order.id
-        self._add_cable_to_order(order)
+        self._add_cable_to_order(order, color='black')
 
-    def _add_cable_to_order(self, order: models.Model, color=None) -> None:
+    def _add_cable_to_order(self, order: models.Model, color='black') -> None:
         units = self._get_cable_units()
         if not (cable := self.env['product.product'].search([
             ('name', '=', 'Cable'),
             ('type', '=', 'product'),
             ('material', '=', self.cable_material),
-            ('color', '=', color or 'black'),
+            ('color', '=', color),
         ], limit=1)):
             raise exceptions.UserError('Cable not found in product list')
         else:
